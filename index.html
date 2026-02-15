@@ -817,6 +817,7 @@
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('evaluation')">📝 ارزیابی جدید</button>
             <button class="nav-tab" onclick="switchTab('employees')">👥 لیست کارمندان</button>
+            <button class="nav-tab" onclick="switchTab('manage-employees')">👤 مدیریت کارمندان</button>
             <button class="nav-tab" onclick="switchTab('reports')">📊 گزارش‌ها</button>
             <button class="nav-tab" onclick="switchTab('history')">📅 تاریخچه</button>
             <button class="nav-tab" onclick="switchTab('departments')">🏢 مدیریت بخش‌ها</button>
@@ -845,14 +846,9 @@
                     </div>
                     <div class="form-group">
                         <label>نام کارمند *</label>
-                        <select id="employee-name" required onchange="handleEmployeeSelection()">
+                        <select id="employee-name" required>
                             <option value="">انتخاب کنید...</option>
-                            <option value="__ADD_NEW__">➕ افزودن کارمند جدید...</option>
                         </select>
-                    </div>
-                    <div class="form-group" id="new-employee-input-group" style="display: none;">
-                        <label>نام کارمند جدید *</label>
-                        <input type="text" id="new-employee-name" placeholder="نام و نام خانوادگی">
                     </div>
                     <div class="form-group">
                         <label>بخش (دپارتمان) *</label>
@@ -888,6 +884,55 @@
             <div class="card">
                 <h2 class="card-title">👥 لیست کارمندان و امتیازات</h2>
                 <div class="employee-list" id="employee-list"></div>
+            </div>
+        </div>
+
+        <!-- Manage Employees Section -->
+        <div id="manage-employees-section" class="section">
+            <div class="card">
+                <h2 class="card-title">👤 مدیریت کارمندان</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ کارمندان را از اینجا مدیریت کنید. کارمندان اضافه شده در لیست ارزیابی قابل انتخاب هستند.
+                </div>
+
+                <!-- Add New Employee Form -->
+                <div class="card" style="background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); margin-bottom: 25px;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">➕ افزودن کارمند جدید</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>نام و نام خانوادگی *</label>
+                            <input type="text" id="new-emp-name" placeholder="مثال: علی احمدی" required>
+                        </div>
+                        <div class="form-group">
+                            <label>بخش (دپارتمان) *</label>
+                            <select id="new-emp-department" required>
+                                <option value="">انتخاب کنید...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>سمت</label>
+                            <input type="text" id="new-emp-position" placeholder="مثال: کارشناس فروش">
+                        </div>
+                        <div class="form-group">
+                            <label>کد پرسنلی</label>
+                            <input type="text" id="new-emp-code" placeholder="مثال: 1001">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-success" onclick="addNewEmployee()">✅ افزودن کارمند</button>
+                        <button class="btn btn-secondary" onclick="clearEmployeeForm()">🔄 پاک کردن فرم</button>
+                    </div>
+                </div>
+
+                <!-- Employees List -->
+                <div class="card">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">📋 لیست کارمندان</h3>
+                    
+                    <div class="criteria-list" id="employees-management-list"></div>
+                </div>
             </div>
         </div>
 
@@ -1406,6 +1451,9 @@
         // Load evaluations
         let evaluations = JSON.parse(localStorage.getItem('sharedEvaluations')) || [];
 
+        // Load or initialize employees
+        let employees = JSON.parse(localStorage.getItem('employees')) || [];
+
         // Current department being evaluated
         let currentDepartment = null;
         let currentEditingDepartment = null;
@@ -1414,57 +1462,205 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadDepartments(); // Load from Firebase or localStorage
             loadEvaluations(); // Load from Firebase or localStorage
+            loadEmployees(); // Load employees
             populateEmployeeDropdown(); // Populate employee list
+            populateNewEmployeeDepartment(); // Populate department dropdown in add employee form
             document.getElementById('evaluation-date').valueAsDate = new Date();
         });
 
-        // Populate employee dropdown from existing evaluations
+        // Populate employee dropdown from employees list
         function populateEmployeeDropdown() {
             const select = document.getElementById('employee-name');
             
-            // Keep the default options
-            const defaultOptions = `
-                <option value="">انتخاب کنید...</option>
-                <option value="__ADD_NEW__">➕ افزودن کارمند جدید...</option>
-            `;
+            // Keep the default option
+            let optionsHTML = '<option value="">انتخاب کنید...</option>';
             
-            // Get unique employee names from evaluations
-            const employeeNames = new Set();
-            evaluations.forEach(eval => {
-                if (eval.employeeName) {
-                    employeeNames.add(eval.employeeName);
-                }
-            });
-            
-            // Sort alphabetically
-            const sortedNames = Array.from(employeeNames).sort();
+            // Sort employees alphabetically
+            const sortedEmployees = [...employees].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
             
             // Build options HTML
-            let optionsHTML = defaultOptions;
-            sortedNames.forEach(name => {
-                optionsHTML += `<option value="${name}">${name}</option>`;
+            sortedEmployees.forEach(emp => {
+                optionsHTML += `<option value="${emp.name}">${emp.name}</option>`;
             });
             
             select.innerHTML = optionsHTML;
         }
 
-        // Handle employee selection
-        function handleEmployeeSelection() {
-            const select = document.getElementById('employee-name');
-            const newEmployeeGroup = document.getElementById('new-employee-input-group');
-            const newEmployeeInput = document.getElementById('new-employee-name');
+        // Populate department dropdown in add employee form
+        function populateNewEmployeeDepartment() {
+            const select = document.getElementById('new-emp-department');
+            select.innerHTML = '<option value="">انتخاب کنید...</option>';
             
-            if (select.value === '__ADD_NEW__') {
-                // Show new employee input
-                newEmployeeGroup.style.display = 'block';
-                newEmployeeInput.required = true;
-                newEmployeeInput.focus();
+            Object.keys(departments).forEach(deptKey => {
+                const dept = departments[deptKey];
+                const option = document.createElement('option');
+                option.value = deptKey;
+                option.textContent = `${dept.icon} ${dept.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Load employees from Firebase or localStorage
+        function loadEmployees() {
+            if (isFirebaseConfigured) {
+                database.ref('employees').once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        employees = Object.values(snapshot.val());
+                    } else {
+                        employees = [];
+                    }
+                    populateEmployeeDropdown();
+                    updateEmployeesManagementList();
+                });
+
+                // Listen for real-time changes
+                database.ref('employees').on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        employees = Object.values(snapshot.val());
+                    } else {
+                        employees = [];
+                    }
+                    populateEmployeeDropdown();
+                    updateEmployeesManagementList();
+                });
             } else {
-                // Hide new employee input
-                newEmployeeGroup.style.display = 'none';
-                newEmployeeInput.required = false;
-                newEmployeeInput.value = '';
+                // Fallback to localStorage
+                employees = JSON.parse(localStorage.getItem('employees')) || [];
+                populateEmployeeDropdown();
+                updateEmployeesManagementList();
             }
+        }
+
+        // Add new employee
+        function addNewEmployee() {
+            const name = document.getElementById('new-emp-name').value.trim();
+            const department = document.getElementById('new-emp-department').value;
+            const position = document.getElementById('new-emp-position').value.trim();
+            const code = document.getElementById('new-emp-code').value.trim();
+
+            if (!name || !department) {
+                alert('⚠️ لطفاً نام و بخش کارمند را وارد کنید!');
+                return;
+            }
+
+            // Check if employee already exists
+            const exists = employees.some(emp => emp.name.toLowerCase() === name.toLowerCase());
+            if (exists) {
+                alert('⚠️ کارمندی با این نام قبلاً اضافه شده است!');
+                return;
+            }
+
+            const employee = {
+                id: Date.now(),
+                name: name,
+                department: department,
+                departmentName: departments[department].name,
+                position: position,
+                code: code,
+                createdAt: new Date().toISOString()
+            };
+
+            if (isFirebaseConfigured) {
+                database.ref('employees/' + employee.id).set(employee)
+                    .then(() => {
+                        alert('✅ کارمند با موفقیت اضافه شد!');
+                        clearEmployeeForm();
+                    })
+                    .catch((error) => {
+                        alert('❌ خطا در افزودن: ' + error.message);
+                    });
+            } else {
+                employees.push(employee);
+                localStorage.setItem('employees', JSON.stringify(employees));
+                alert('✅ کارمند با موفقیت اضافه شد!');
+                clearEmployeeForm();
+                populateEmployeeDropdown();
+                updateEmployeesManagementList();
+            }
+        }
+
+        // Clear employee form
+        function clearEmployeeForm() {
+            document.getElementById('new-emp-name').value = '';
+            document.getElementById('new-emp-department').value = '';
+            document.getElementById('new-emp-position').value = '';
+            document.getElementById('new-emp-code').value = '';
+        }
+
+        // Update employees management list
+        function updateEmployeesManagementList() {
+            const container = document.getElementById('employees-management-list');
+            
+            if (employees.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👤</div>
+                        <h3>هنوز کارمندی اضافه نشده است</h3>
+                        <p>از فرم بالا کارمند جدید اضافه کنید.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort employees
+            const sortedEmployees = [...employees].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
+
+            container.innerHTML = sortedEmployees.map(emp => {
+                const dept = departments[emp.department];
+                return `
+                    <div class="criteria-item">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 16px; margin-bottom: 5px;">${emp.name}</div>
+                            <div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-light);">
+                                <span>${dept ? dept.icon + ' ' + dept.name : emp.departmentName}</span>
+                                ${emp.position ? `<span>• ${emp.position}</span>` : ''}
+                                ${emp.code ? `<span>• کد: ${emp.code}</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${emp.id})">
+                            🗑️ حذف
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Delete employee
+        function deleteEmployee(empId) {
+            const employee = employees.find(e => e.id === empId);
+            
+            if (!employee) return;
+
+            // Check if employee has evaluations
+            const hasEvaluations = evaluations.some(e => e.employeeName === employee.name);
+            
+            let confirmMsg = `آیا از حذف "${employee.name}" مطمئن هستید؟`;
+            if (hasEvaluations) {
+                confirmMsg += '\n\n⚠️ توجه: ارزیابی‌هایی برای این کارمند ثبت شده است. با حذف کارمند، ارزیابی‌ها حفظ می‌شوند.';
+            }
+
+            if (confirm(confirmMsg)) {
+                if (isFirebaseConfigured) {
+                    database.ref('employees/' + empId).remove()
+                        .then(() => {
+                            alert('✅ کارمند حذف شد!');
+                        })
+                        .catch((error) => {
+                            alert('❌ خطا: ' + error.message);
+                        });
+                } else {
+                    employees = employees.filter(e => e.id !== empId);
+                    localStorage.setItem('employees', JSON.stringify(employees));
+                    alert('✅ کارمند حذف شد!');
+                    populateEmployeeDropdown();
+                    updateEmployeesManagementList();
+                }
+            }
+        }
+
+        // Handle employee selection (no longer needed but keeping for compatibility)
+        function handleEmployeeSelection() {
+            // This function is no longer needed but kept for backward compatibility
         }
 
         // Populate department dropdown
@@ -1566,20 +1762,9 @@
         // Save evaluation
         function saveEvaluation() {
             const managerName = document.getElementById('manager-name').value;
-            let employeeName = document.getElementById('employee-name').value;
+            const employeeName = document.getElementById('employee-name').value;
             const deptKey = document.getElementById('employee-department').value;
             const date = document.getElementById('evaluation-date').value;
-
-            // Check if adding new employee
-            if (employeeName === '__ADD_NEW__') {
-                const newEmployeeName = document.getElementById('new-employee-name').value.trim();
-                if (!newEmployeeName) {
-                    alert('⚠️ لطفاً نام کارمند جدید را وارد کنید!');
-                    document.getElementById('new-employee-name').focus();
-                    return;
-                }
-                employeeName = newEmployeeName;
-            }
 
             if (!managerName || !employeeName || !deptKey || !date) {
                 alert('⚠️ لطفاً تمام فیلدهای ضروری را پر کنید!');
@@ -1626,8 +1811,6 @@
             document.getElementById('evaluation-criteria').innerHTML = '';
             document.getElementById('department-badge-container').innerHTML = '';
             document.getElementById('total-score-container').style.display = 'none';
-            document.getElementById('new-employee-input-group').style.display = 'none';
-            document.getElementById('new-employee-name').value = '';
             currentDepartment = null;
         }
 
@@ -1640,6 +1823,7 @@
             event.target.classList.add('active');
             
             if (tab === 'employees') updateEmployeesList();
+            if (tab === 'manage-employees') updateEmployeesManagementList();
             if (tab === 'reports') updateReports();
             if (tab === 'history') updateHistory();
             if (tab === 'departments') updateDepartmentsView();
