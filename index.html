@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم ارزیابی پرسنل - Firebase (Real-time)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK v9 (Modular) -->
+    <script type="module">
+        // Firebase will be initialized here after configuration
+        window.firebaseReady = false;
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-dark: #1e3a8a;
+            --secondary: #0891b2;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --purple: #7c3aed;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --text: #374151;
+            --text-light: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(30, 64, 175, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            animation: slideDown 0.7s ease-out;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 180px;
+            padding: 15px 25px;
+            background: var(--light);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.3);
+        }
+
+        /* Content Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        /* Department Badge */
+        .department-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .dept-sales {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+
+        .dept-operations {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            color: white;
+        }
+
+        .dept-hr {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+        }
+
+        .dept-finance {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: white;
+        }
+
+        .dept-it {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+        }
+
+        .dept-production {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+        }
+
+        /* Evaluation Sections */
+        .evaluation-sections {
+            display: grid;
+            gap: 20px;
+        }
+
+        .eval-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #fbbf24;
+        }
+
+        .eval-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .eval-section-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--dark);
+        }
+
+        .eval-weight {
+            background: var(--warning);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .score-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .score-slider {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e5e7eb;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .score-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .score-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--primary-dark);
+        }
+
+        .score-display {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+            background: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .weighted-score {
+            text-align: left;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* Total Score Display */
+        .total-score-card {
+            background: linear-gradient(135deg, var(--success) 0%, #047857 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.3);
+        }
+
+        .total-score-label {
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .total-score-value {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .total-score-max {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0e7490;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-purple {
+            background: var(--purple);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        /* Department Management */
+        .departments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .department-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .department-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .department-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .department-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .criteria-count {
+            background: var(--light);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Criteria Management */
+        .criteria-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .criteria-item {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 150px 100px;
+            gap: 15px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .criteria-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+        }
+
+        .criteria-name-input {
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .criteria-weight-input {
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+            background: #b91c1c;
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: var(--warning);
+            border: 2px solid var(--warning);
+        }
+
+        /* Employee List */
+        .employee-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .employee-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .employee-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+        }
+
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .employee-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .employee-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .employee-score {
+            text-align: center;
+        }
+
+        .employee-score-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .employee-score-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            text-align: right;
+        }
+
+        .history-table tr:hover {
+            background: var(--light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-high {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .badge-medium {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .badge-low {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .departments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .criteria-item {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div style="position: absolute; top: 30px; left: 40px; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                <div id="status-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></div>
+                <span id="status-text">LocalStorage (آفلاین)</span>
+            </div>
+            <h1>⭐ سیستم ارزیابی عملکرد پرسنل (Real-time با Firebase)</h1>
+            <p>شرکت بازرگانی فولاد - همگام‌سازی خودکار بین تمام سیستم‌ها</p>
+        </div>
+
+        <!-- Firebase Setup Banner -->
+        <div id="firebase-banner" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #d97706; border-radius: 16px; padding: 25px; margin-bottom: 25px;">
+            <h3 style="color: #d97706; font-size: 20px; margin-bottom: 15px;">🔥 برای استفاده Real-time، Firebase را تنظیم کنید!</h3>
+            <p style="margin-bottom: 10px;"><strong>مراحل ساده:</strong></p>
+            <ol style="margin: 15px 0 15px 25px; color: #1f2937; line-height: 1.8;">
+                <li>فایل <code style="background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 4px;">FIREBASE_SETUP_GUIDE.md</code> را باز کنید</li>
+                <li>مراحل را دنبال کنید (فقط 10 دقیقه!)</li>
+                <li>کد Firebase خود را در خط <strong>650</strong> این فایل جایگزین کنید</li>
+                <li>فایل را ذخیره و Refresh کنید</li>
+            </ol>
+            <p style="margin-top: 15px; color: #059669; font-weight: 700;">
+                ✅ تا زمان تنظیم Firebase، سیستم با LocalStorage کار می‌کند (فقط روی همین کامپیوتر)
+            </p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('evaluation')">📝 ارزیابی جدید</button>
+            <button class="nav-tab" onclick="switchTab('employees')">👥 لیست کارمندان</button>
+            <button class="nav-tab" onclick="switchTab('reports')">📊 گزارش‌ها</button>
+            <button class="nav-tab" onclick="switchTab('history')">📅 تاریخچه</button>
+            <button class="nav-tab" onclick="switchTab('departments')">🏢 مدیریت بخش‌ها</button>
+        </div>
+
+        <!-- Evaluation Section -->
+        <div id="evaluation-section" class="section active">
+            <div class="card">
+                <h2 class="card-title">🎯 ثبت ارزیابی جدید</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ ابتدا بخش کارمند را انتخاب کنید تا معیارهای مخصوص آن بخش نمایش داده شود.
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نام مدیر ارزیاب *</label>
+                        <select id="manager-name" required>
+                            <option value="">انتخاب کنید...</option>
+                            <option value="مدیر عامل">مدیر عامل</option>
+                            <option value="مدیر فروش">مدیر فروش</option>
+                            <option value="مدیر عملیات">مدیر عملیات</option>
+                            <option value="مدیر منابع انسانی">مدیر منابع انسانی</option>
+                            <option value="مدیر مالی">مدیر مالی</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>نام کارمند *</label>
+                        <input type="text" id="employee-name" placeholder="نام و نام خانوادگی" required>
+                    </div>
+                    <div class="form-group">
+                        <label>بخش (دپارتمان) *</label>
+                        <select id="employee-department" onchange="loadDepartmentCriteria()" required>
+                            <option value="">انتخاب کنید...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ ارزیابی</label>
+                        <input type="date" id="evaluation-date">
+                    </div>
+                </div>
+
+                <div id="department-badge-container"></div>
+
+                <div class="evaluation-sections" id="evaluation-criteria"></div>
+
+                <div class="total-score-card" style="display: none;" id="total-score-container">
+                    <div class="total-score-label">امتیاز کل این ارزیابی</div>
+                    <div class="total-score-value" id="total-score">0</div>
+                    <div class="total-score-max">از <span id="max-score">1000</span></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="saveEvaluation()">✅ ذخیره ارزیابی</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">🔄 پاک کردن فرم</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees Section -->
+        <div id="employees-section" class="section">
+            <div class="card">
+                <h2 class="card-title">👥 لیست کارمندان و امتیازات</h2>
+                <div class="employee-list" id="employee-list"></div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" class="section">
+            <div class="card">
+                <h2 class="card-title">📊 گزارش‌ها و تحلیل عملکرد</h2>
+                
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: 20px;">📈 مقایسه امتیاز کارمندان</h3>
+                        <canvas id="employeesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: 20px;">🏢 توزیع کارمندان در بخش‌ها</h3>
+                        <canvas id="departmentsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ چاپ گزارش</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div id="history-section" class="section">
+            <div class="card">
+                <h2 class="card-title">📅 تاریخچه تمام ارزیابی‌ها</h2>
+                
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-danger" onclick="clearAllEvaluations()">🗑️ حذف تمام ارزیابی‌ها</button>
+                    <button class="btn btn-warning" onclick="exportEvaluations()">📥 پشتیبان‌گیری</button>
+                </div>
+                
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>نام کارمند</th>
+                            <th>بخش</th>
+                            <th>مدیر ارزیاب</th>
+                            <th>امتیاز</th>
+                            <th>رتبه</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Departments Section -->
+        <div id="departments-section" class="section">
+            <div class="card">
+                <h2 class="card-title">🏢 مدیریت بخش‌ها و معیارهای ارزیابی</h2>
+                
+                <div class="alert alert-warning">
+                    ⚠️ هر بخش معیارهای ارزیابی مخصوص به خود را دارد. می‌توانید معیارها را ویرایش یا بخش جدید اضافه کنید.
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showAddDepartmentModal()">➕ افزودن بخش جدید</button>
+                    <button class="btn btn-secondary" onclick="resetToDefaultDepartments()">🔄 بازگشت به پیش‌فرض</button>
+                </div>
+
+                <div class="departments-grid" id="departments-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Department Criteria Management -->
+    <div id="criteria-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">ویرایش بخش</h2>
+                <button class="modal-close" onclick="closeCriteriaModal()">×</button>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--dark);">⚙️ تنظیمات بخش</h3>
+                <div class="form-grid" style="margin-bottom: 0;">
+                    <div class="form-group">
+                        <label>نام بخش</label>
+                        <input type="text" id="modal-department-name-input" class="criteria-name-input" placeholder="نام بخش">
+                    </div>
+                    <div class="form-group">
+                        <label>آیکون (emoji)</label>
+                        <input type="text" id="modal-department-icon-input" class="criteria-name-input" placeholder="مثال: 💰" maxlength="2">
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-department-badge"></div>
+            
+            <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--dark);">📋 معیارهای ارزیابی</h3>
+            <div class="criteria-list" id="modal-criteria-list"></div>
+            
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="saveDepartmentCriteria()">✅ ذخیره تغییرات</button>
+                <button class="btn btn-primary" onclick="addNewCriteriaToModal()">➕ افزودن معیار جدید</button>
+                <button class="btn btn-danger" onclick="deleteDepartment()">🗑️ حذف بخش</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add Department -->
+    <div id="add-department-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">➕ افزودن بخش جدید</h2>
+                <button class="modal-close" onclick="closeAddDepartmentModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label>نام بخش</label>
+                <input type="text" id="new-department-name" placeholder="مثال: بازاریابی">
+            </div>
+            <div class="form-group">
+                <label>آیکون (emoji)</label>
+                <input type="text" id="new-department-icon" placeholder="مثال: 📢" maxlength="2">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="createNewDepartment()">✅ ایجاد بخش</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🔥 FIREBASE CONFIGURATION
+        // ==========================================
+        // جایگزین کنید با کد Firebase خودتان:
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeKK6THwUcR2hoh-VUiwAX7p79NL6UPQQ",
+            authDomain: "employee-evaluation-adva-9231e.firebaseapp.com",
+            projectId: "employee-evaluation-adva-9231e",
+            storageBucket: "employee-evaluation-adva-9231e.firebasestorage.app",
+            messagingSenderId: "151913486905",
+            appId: "1:151913486905:web:b6c183ae02c67fd4368be8",
+            measurementId: "G-ZREV957FB8"
+        };
+
+        // Initialize Firebase
+        let database = null;
+        let isFirebaseConfigured = false;
+
+        try {
+            if (firebaseConfig.apiKey !== "YOUR-API-KEY-HERE") {
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                isFirebaseConfigured = true;
+                
+                // Hide banner
+                document.getElementById('firebase-banner').style.display = 'none';
+                
+                // Update status
+                const statusDot = document.getElementById('status-dot');
+                const statusText = document.getElementById('status-text');
+                
+                statusDot.style.background = '#10b981';
+                statusDot.style.animation = 'pulse 2s infinite';
+                statusText.textContent = 'متصل به Firebase';
+                
+                // Connection monitoring
+                database.ref('.info/connected').on('value', (snap) => {
+                    if (snap.val() === true) {
+                        statusDot.style.background = '#10b981';
+                        statusText.textContent = 'متصل به Firebase';
+                    } else {
+                        statusDot.style.background = '#ef4444';
+                        statusText.textContent = 'قطع شده';
+                    }
+                });
+                
+                console.log('✅ Firebase initialized successfully!');
+            } else {
+                console.warn('⚠️ Firebase not configured - using LocalStorage');
+            }
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            isFirebaseConfigured = false;
+        }
+
+        // ==========================================
+        // DATA MANAGEMENT WITH FIREBASE
+        // ==========================================
+
+        // Load departments from Firebase or localStorage
+        function loadDepartments() {
+            if (isFirebaseConfigured) {
+                database.ref('departments').once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        departments = snapshot.val();
+                    } else {
+                        departments = JSON.parse(JSON.stringify(defaultDepartments));
+                        database.ref('departments').set(departments);
+                    }
+                    populateDepartmentDropdown();
+                    updateDepartmentsView();
+                });
+
+                // Listen for real-time changes
+                database.ref('departments').on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        departments = snapshot.val();
+                        populateDepartmentDropdown();
+                        updateDepartmentsView();
+                    }
+                });
+            } else {
+                // Fallback to localStorage
+                departments = JSON.parse(localStorage.getItem('departments')) || JSON.parse(JSON.stringify(defaultDepartments));
+                populateDepartmentDropdown();
+                updateDepartmentsView();
+            }
+        }
+
+        // Load evaluations from Firebase or localStorage
+        function loadEvaluations() {
+            if (isFirebaseConfigured) {
+                database.ref('evaluations').once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        evaluations = Object.values(snapshot.val());
+                    } else {
+                        evaluations = [];
+                    }
+                    updateAllViews();
+                });
+
+                // Listen for real-time changes
+                database.ref('evaluations').on('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        evaluations = Object.values(snapshot.val());
+                    } else {
+                        evaluations = [];
+                    }
+                    updateAllViews();
+                });
+            } else {
+                // Fallback to localStorage
+                evaluations = JSON.parse(localStorage.getItem('sharedEvaluations')) || [];
+                updateAllViews();
+            }
+        }
+
+        // Override save functions to use Firebase
+        const originalSaveEvaluation = saveEvaluation;
+        saveEvaluation = function() {
+            const managerName = document.getElementById('manager-name').value;
+            const employeeName = document.getElementById('employee-name').value;
+            const deptKey = document.getElementById('employee-department').value;
+            const date = document.getElementById('evaluation-date').value;
+
+            if (!managerName || !employeeName || !deptKey || !date) {
+                alert('⚠️ لطفاً تمام فیلدهای ضروری را پر کنید!');
+                return;
+            }
+
+            const scores = {};
+            currentDepartment.criteria.forEach(criteria => {
+                const slider = document.getElementById(`slider-${criteria.id}`);
+                if (slider) {
+                    scores[criteria.id] = parseInt(slider.value);
+                }
+            });
+
+            const evaluation = {
+                id: Date.now(),
+                managerName,
+                employeeName,
+                department: deptKey,
+                departmentName: currentDepartment.name,
+                date,
+                scores,
+                totalScore: parseInt(document.getElementById('total-score').textContent),
+                maxScore: parseInt(document.getElementById('max-score').textContent),
+                timestamp: new Date().toISOString(),
+                criteriaSnapshot: JSON.parse(JSON.stringify(currentDepartment.criteria))
+            };
+
+            if (isFirebaseConfigured) {
+                database.ref('evaluations/' + evaluation.id).set(evaluation)
+                    .then(() => {
+                        alert('✅ ارزیابی با موفقیت ذخیره شد و به صورت Real-time روی همه سیستم‌ها نمایش داده می‌شود!');
+                        resetForm();
+                    })
+                    .catch((error) => {
+                        alert('❌ خطا در ذخیره: ' + error.message);
+                    });
+            } else {
+                evaluations.push(evaluation);
+                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                alert('✅ ارزیابی ذخیره شد (حالت آفلاین - LocalStorage)');
+                resetForm();
+                updateAllViews();
+            }
+        };
+
+        // Override save departments
+        const originalSaveDepartmentCriteria = saveDepartmentCriteria;
+        saveDepartmentCriteria = function() {
+            const oldKey = currentEditingDepartment;
+            const dept = departments[oldKey];
+            
+            const newName = document.getElementById('modal-department-name-input').value.trim();
+            const newIcon = document.getElementById('modal-department-icon-input').value.trim();
+            
+            if (!newName || !newIcon) {
+                alert('⚠️ نام و آیکون بخش نمی‌تواند خالی باشد!');
+                return;
+            }
+            
+            const updatedCriteria = [];
+            dept.criteria.forEach(criteria => {
+                const nameInput = document.getElementById(`modal-criteria-name-${criteria.id}`);
+                const weightInput = document.getElementById(`modal-criteria-weight-${criteria.id}`);
+                
+                if (nameInput && weightInput) {
+                    updatedCriteria.push({
+                        id: criteria.id,
+                        name: nameInput.value,
+                        weight: parseInt(weightInput.value)
+                    });
+                }
+            });
+            
+            const newKey = newName;
+            
+            if (newKey !== oldKey) {
+                departments[newKey] = {
+                    name: newName,
+                    icon: newIcon,
+                    class: dept.class,
+                    criteria: updatedCriteria
+                };
+                delete departments[oldKey];
+            } else {
+                departments[oldKey].name = newName;
+                departments[oldKey].icon = newIcon;
+                departments[oldKey].criteria = updatedCriteria;
+            }
+            
+            if (isFirebaseConfigured) {
+                database.ref('departments').set(departments)
+                    .then(() => {
+                        alert('✅ تغییرات ذخیره شد و روی همه سیستم‌ها اعمال می‌شود!');
+                        closeCriteriaModal();
+                        populateDepartmentDropdown();
+                        updateDepartmentsView();
+                    })
+                    .catch((error) => {
+                        alert('❌ خطا: ' + error.message);
+                    });
+            } else {
+                localStorage.setItem('departments', JSON.stringify(departments));
+                alert('✅ تغییرات ذخیره شد (حالت آفلاین)');
+                closeCriteriaModal();
+                populateDepartmentDropdown();
+                updateDepartmentsView();
+            }
+        };
+
+        // Override delete evaluation
+        const originalDeleteEvaluation = deleteEvaluation;
+        deleteEvaluation = function(evalId) {
+            if (confirm('آیا از حذف این ارزیابی مطمئن هستید؟')) {
+                if (isFirebaseConfigured) {
+                    database.ref('evaluations/' + evalId).remove()
+                        .then(() => {
+                            alert('✅ ارزیابی حذف شد!');
+                        })
+                        .catch((error) => {
+                            alert('❌ خطا: ' + error.message);
+                        });
+                } else {
+                    evaluations = evaluations.filter(e => e.id !== evalId);
+                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                    alert('✅ ارزیابی حذف شد!');
+                    updateAllViews();
+                }
+            }
+        };
+
+        // Override clear all evaluations
+        const originalClearAllEvaluations = clearAllEvaluations;
+        clearAllEvaluations = function() {
+            if (evaluations.length === 0) {
+                alert('⚠️ هیچ ارزیابی برای حذف وجود ندارد!');
+                return;
+            }
+            
+            if (confirm(`⚠️ آیا از حذف تمام ${evaluations.length} ارزیابی مطمئن هستید؟`)) {
+                if (confirm('آیا واقعاً مطمئن هستید؟ این عملیات غیرقابل بازگشت است!')) {
+                    if (isFirebaseConfigured) {
+                        database.ref('evaluations').remove()
+                            .then(() => {
+                                alert('✅ تمام ارزیابی‌ها حذف شدند!');
+                            })
+                            .catch((error) => {
+                                alert('❌ خطا: ' + error.message);
+                            });
+                    } else {
+                        evaluations = [];
+                        localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                        alert('✅ تمام ارزیابی‌ها حذف شدند!');
+                        updateAllViews();
+                    }
+                }
+            }
+        };
+
+        // ==========================================
+        // DEFAULT DEPARTMENTS
+        // ==========================================
+        
+        const defaultDepartments = {
+            'فروش': {
+                name: 'فروش',
+                icon: '💰',
+                class: 'dept-sales',
+                criteria: [
+                    { id: 1, name: 'تحقق اهداف فروش', weight: 20 },
+                    { id: 2, name: 'مذاکره و ارتباط با مشتری', weight: 15 },
+                    { id: 3, name: 'جذب مشتریان جدید', weight: 15 },
+                    { id: 4, name: 'حفظ و نگهداری مشتری', weight: 12 },
+                    { id: 5, name: 'گزارش‌دهی و پیگیری', weight: 10 },
+                    { id: 6, name: 'دانش محصول', weight: 10 },
+                    { id: 7, name: 'کار تیمی', weight: 8 },
+                    { id: 8, name: 'رعایت اصول اخلاقی', weight: 10 }
+                ]
+            },
+            'عملیات': {
+                name: 'عملیات',
+                icon: '⚙️',
+                class: 'dept-operations',
+                criteria: [
+                    { id: 1, name: 'کیفیت عملیات انجام شده', weight: 18 },
+                    { id: 2, name: 'رعایت استانداردها', weight: 15 },
+                    { id: 3, name: 'مدیریت زمان و سرعت', weight: 13 },
+                    { id: 4, name: 'بهره‌وری و کارایی', weight: 15 },
+                    { id: 5, name: 'ایمنی و بهداشت', weight: 12 },
+                    { id: 6, name: 'حل مسائل فنی', weight: 10 },
+                    { id: 7, name: 'همکاری با تیم', weight: 9 },
+                    { id: 8, name: 'پیشگیری از اتلاف منابع', weight: 8 }
+                ]
+            },
+            'منابع انسانی': {
+                name: 'منابع انسانی',
+                icon: '👥',
+                class: 'dept-hr',
+                criteria: [
+                    { id: 1, name: 'جذب و استخدام مؤثر', weight: 15 },
+                    { id: 2, name: 'مدیریت عملکرد کارکنان', weight: 15 },
+                    { id: 3, name: 'آموزش و توسعه', weight: 13 },
+                    { id: 4, name: 'ارتباطات سازمانی', weight: 12 },
+                    { id: 5, name: 'رعایت قوانین کار', weight: 12 },
+                    { id: 6, name: 'حل تعارضات', weight: 11 },
+                    { id: 7, name: 'برنامه‌ریزی نیروی انسانی', weight: 12 },
+                    { id: 8, name: 'رضایت کارکنان', weight: 10 }
+                ]
+            },
+            'مالی': {
+                name: 'مالی',
+                icon: '💵',
+                class: 'dept-finance',
+                criteria: [
+                    { id: 1, name: 'دقت در محاسبات مالی', weight: 20 },
+                    { id: 2, name: 'گزارش‌دهی به موقع', weight: 15 },
+                    { id: 3, name: 'رعایت اصول حسابداری', weight: 15 },
+                    { id: 4, name: 'کنترل و بودجه‌بندی', weight: 12 },
+                    { id: 5, name: 'تحلیل مالی', weight: 12 },
+                    { id: 6, name: 'مدیریت نقدینگی', weight: 10 },
+                    { id: 7, name: 'رعایت قوانین مالیاتی', weight: 8 },
+                    { id: 8, name: 'محرمانگی اطلاعات', weight: 8 }
+                ]
+            },
+            'IT': {
+                name: 'IT',
+                icon: '💻',
+                class: 'dept-it',
+                criteria: [
+                    { id: 1, name: 'حل مسائل فنی', weight: 18 },
+                    { id: 2, name: 'پشتیبانی سیستم‌ها', weight: 15 },
+                    { id: 3, name: 'امنیت اطلاعات', weight: 16 },
+                    { id: 4, name: 'توسعه و به‌روزرسانی', weight: 13 },
+                    { id: 5, name: 'مستندسازی', weight: 10 },
+                    { id: 6, name: 'پاسخگویی به کاربران', weight: 12 },
+                    { id: 7, name: 'یادگیری تکنولوژی‌های جدید', weight: 8 },
+                    { id: 8, name: 'کار تیمی در پروژه‌ها', weight: 8 }
+                ]
+            },
+            'تولید': {
+                name: 'تولید',
+                icon: '🏭',
+                class: 'dept-production',
+                criteria: [
+                    { id: 1, name: 'کیفیت محصول تولیدی', weight: 20 },
+                    { id: 2, name: 'رعایت برنامه تولید', weight: 15 },
+                    { id: 3, name: 'بهره‌وری خط تولید', weight: 15 },
+                    { id: 4, name: 'کاهش ضایعات', weight: 12 },
+                    { id: 5, name: 'ایمنی و بهداشت کار', weight: 12 },
+                    { id: 6, name: 'نگهداری تجهیزات', weight: 10 },
+                    { id: 7, name: 'همکاری با تیم تولید', weight: 8 },
+                    { id: 8, name: 'بهبود مستمر فرآیند', weight: 8 }
+                ]
+            }
+        };
+
+        // Load or initialize departments
+        let departments = JSON.parse(localStorage.getItem('departments')) || JSON.parse(JSON.stringify(defaultDepartments));
+        
+        // Load evaluations
+        let evaluations = JSON.parse(localStorage.getItem('sharedEvaluations')) || [];
+
+        // Current department being evaluated
+        let currentDepartment = null;
+        let currentEditingDepartment = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDepartments(); // Load from Firebase or localStorage
+            loadEvaluations(); // Load from Firebase or localStorage
+            document.getElementById('evaluation-date').valueAsDate = new Date();
+        });
+
+        // Populate department dropdown
+        function populateDepartmentDropdown() {
+            const select = document.getElementById('employee-department');
+            select.innerHTML = '<option value="">انتخاب کنید...</option>';
+            
+            Object.keys(departments).forEach(deptKey => {
+                const dept = departments[deptKey];
+                const option = document.createElement('option');
+                option.value = deptKey;
+                option.textContent = `${dept.icon} ${dept.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Load department criteria when department is selected
+        function loadDepartmentCriteria() {
+            const deptKey = document.getElementById('employee-department').value;
+            
+            if (!deptKey) {
+                document.getElementById('evaluation-criteria').innerHTML = '';
+                document.getElementById('department-badge-container').innerHTML = '';
+                document.getElementById('total-score-container').style.display = 'none';
+                return;
+            }
+
+            currentDepartment = departments[deptKey];
+            
+            // Show department badge
+            const badgeContainer = document.getElementById('department-badge-container');
+            badgeContainer.innerHTML = `
+                <div class="department-badge ${currentDepartment.class}">
+                    ${currentDepartment.icon} بخش ${currentDepartment.name}
+                </div>
+            `;
+
+            // Load criteria
+            const container = document.getElementById('evaluation-criteria');
+            container.innerHTML = '';
+
+            currentDepartment.criteria.forEach(criteria => {
+                const section = document.createElement('div');
+                section.className = 'eval-section';
+                section.innerHTML = `
+                    <div class="eval-section-header">
+                        <div class="eval-section-title">${criteria.name}</div>
+                        <div class="eval-weight">ضریب: ${criteria.weight}</div>
+                    </div>
+                    <div class="score-slider-container">
+                        <input type="range" min="1" max="10" value="5" class="score-slider" 
+                               id="slider-${criteria.id}" 
+                               onchange="updateScore(${criteria.id}, ${criteria.weight})">
+                        <div class="score-display" id="display-${criteria.id}">5</div>
+                    </div>
+                    <div class="weighted-score" id="weighted-${criteria.id}">
+                        امتیاز وزنی: ${5 * criteria.weight}
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+
+            document.getElementById('total-score-container').style.display = 'block';
+            calculateTotalScore();
+        }
+
+        // Update individual score
+        function updateScore(criteriaId, weight) {
+            const slider = document.getElementById(`slider-${criteriaId}`);
+            const display = document.getElementById(`display-${criteriaId}`);
+            const weighted = document.getElementById(`weighted-${criteriaId}`);
+            
+            const value = parseInt(slider.value);
+            display.textContent = value;
+            weighted.textContent = `امتیاز وزنی: ${value * weight}`;
+            
+            calculateTotalScore();
+        }
+
+        // Calculate total score
+        function calculateTotalScore() {
+            if (!currentDepartment) return;
+
+            let total = 0;
+            let maxScore = 0;
+            
+            currentDepartment.criteria.forEach(criteria => {
+                const slider = document.getElementById(`slider-${criteria.id}`);
+                if (slider) {
+                    total += parseInt(slider.value) * criteria.weight;
+                }
+                maxScore += 10 * criteria.weight;
+            });
+            
+            document.getElementById('total-score').textContent = total;
+            document.getElementById('max-score').textContent = maxScore;
+        }
+
+        // Save evaluation
+        function saveEvaluation() {
+            const managerName = document.getElementById('manager-name').value;
+            const employeeName = document.getElementById('employee-name').value;
+            const deptKey = document.getElementById('employee-department').value;
+            const date = document.getElementById('evaluation-date').value;
+
+            if (!managerName || !employeeName || !deptKey || !date) {
+                alert('⚠️ لطفاً تمام فیلدهای ضروری را پر کنید!');
+                return;
+            }
+
+            const scores = {};
+            currentDepartment.criteria.forEach(criteria => {
+                const slider = document.getElementById(`slider-${criteria.id}`);
+                if (slider) {
+                    scores[criteria.id] = parseInt(slider.value);
+                }
+            });
+
+            const evaluation = {
+                id: Date.now(),
+                managerName,
+                employeeName,
+                department: deptKey,
+                departmentName: currentDepartment.name,
+                date,
+                scores,
+                totalScore: parseInt(document.getElementById('total-score').textContent),
+                maxScore: parseInt(document.getElementById('max-score').textContent),
+                timestamp: new Date().toISOString(),
+                criteriaSnapshot: JSON.parse(JSON.stringify(currentDepartment.criteria))
+            };
+
+            evaluations.push(evaluation);
+            localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+            
+            alert('✅ ارزیابی با موفقیت ذخیره شد!');
+            resetForm();
+            updateAllViews();
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('manager-name').value = '';
+            document.getElementById('employee-name').value = '';
+            document.getElementById('employee-department').value = '';
+            document.getElementById('evaluation-date').valueAsDate = new Date();
+            document.getElementById('evaluation-criteria').innerHTML = '';
+            document.getElementById('department-badge-container').innerHTML = '';
+            document.getElementById('total-score-container').style.display = 'none';
+            currentDepartment = null;
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(`${tab}-section`).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tab === 'employees') updateEmployeesList();
+            if (tab === 'reports') updateReports();
+            if (tab === 'history') updateHistory();
+            if (tab === 'departments') updateDepartmentsView();
+        }
+
+        // Update employees list
+        function updateEmployeesList() {
+            const container = document.getElementById('employee-list');
+            
+            const employeeData = {};
+            evaluations.forEach(eval => {
+                if (!employeeData[eval.employeeName]) {
+                    employeeData[eval.employeeName] = {
+                        name: eval.employeeName,
+                        department: eval.departmentName,
+                        totalScore: 0,
+                        evaluationCount: 0,
+                        evaluationIds: []
+                    };
+                }
+                employeeData[eval.employeeName].totalScore += eval.totalScore;
+                employeeData[eval.employeeName].evaluationCount += 1;
+                employeeData[eval.employeeName].evaluationIds.push(eval.id);
+            });
+
+            if (Object.keys(employeeData).length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>هنوز ارزیابی ثبت نشده است</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            const employees = Object.values(employeeData).sort((a, b) => b.totalScore - a.totalScore);
+            
+            container.innerHTML = employees.map(emp => `
+                <div class="employee-card">
+                    <div class="employee-header">
+                        <div class="employee-info">
+                            <h3>${emp.name}</h3>
+                            <p>بخش ${emp.department} • ${emp.evaluationCount} ارزیابی</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div class="employee-score">
+                                <div class="employee-score-value">${emp.totalScore}</div>
+                                <div class="employee-score-label">مجموع امتیازات</div>
+                            </div>
+                            <button class="btn btn-danger btn-sm" onclick='deleteEmployeeEvaluations("${emp.name}")' style="padding: 8px 16px;">
+                                🗑️ حذف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delete all evaluations for an employee
+        function deleteEmployeeEvaluations(employeeName) {
+            const employeeEvals = evaluations.filter(e => e.employeeName === employeeName);
+            
+            if (confirm(`آیا از حذف تمام ${employeeEvals.length} ارزیابی برای "${employeeName}" مطمئن هستید؟`)) {
+                evaluations = evaluations.filter(e => e.employeeName !== employeeName);
+                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                alert('✅ تمام ارزیابی‌های کارمند با موفقیت حذف شدند!');
+                updateAllViews();
+            }
+        }
+
+        // Update reports
+        function updateReports() {
+            // Employee comparison chart
+            const employeeScores = {};
+            evaluations.forEach(eval => {
+                if (!employeeScores[eval.employeeName]) {
+                    employeeScores[eval.employeeName] = 0;
+                }
+                employeeScores[eval.employeeName] += eval.totalScore;
+            });
+
+            const ctx1 = document.getElementById('employeesChart');
+            if (window.employeeChart) window.employeeChart.destroy();
+            window.employeeChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(employeeScores),
+                    datasets: [{
+                        label: 'مجموع امتیازات',
+                        data: Object.values(employeeScores),
+                        backgroundColor: 'rgba(30, 64, 175, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Department distribution chart
+            const deptCounts = {};
+            evaluations.forEach(eval => {
+                deptCounts[eval.departmentName] = (deptCounts[eval.departmentName] || 0) + 1;
+            });
+
+            const ctx2 = document.getElementById('departmentsChart');
+            if (window.departmentsChart) window.departmentsChart.destroy();
+            window.departmentsChart = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(deptCounts),
+                    datasets: [{
+                        data: Object.values(deptCounts),
+                        backgroundColor: [
+                            'rgba(5, 150, 105, 0.8)',
+                            'rgba(8, 145, 178, 0.8)',
+                            'rgba(124, 58, 237, 0.8)',
+                            'rgba(217, 119, 6, 0.8)',
+                            'rgba(220, 38, 38, 0.8)',
+                            'rgba(30, 64, 175, 0.8)'
+                        ]
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        // Update history
+        function updateHistory() {
+            const tbody = document.getElementById('history-tbody');
+            
+            if (evaluations.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <div class="empty-state-icon">📭</div>
+                            <p>هنوز ارزیابی ثبت نشده است</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const sorted = [...evaluations].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            tbody.innerHTML = sorted.map(eval => {
+                const percentage = (eval.totalScore / eval.maxScore * 100).toFixed(0);
+                const badge = percentage >= 70 ? 'badge-high' : percentage >= 50 ? 'badge-medium' : 'badge-low';
+                const rank = percentage >= 70 ? 'عالی' : percentage >= 50 ? 'خوب' : 'نیاز به بهبود';
+                
+                return `
+                    <tr>
+                        <td>${new Date(eval.date).toLocaleDateString('fa-IR')}</td>
+                        <td><strong>${eval.employeeName}</strong></td>
+                        <td>${eval.departmentName}</td>
+                        <td>${eval.managerName}</td>
+                        <td><strong>${eval.totalScore}</strong> / ${eval.maxScore}</td>
+                        <td><span class="badge ${badge}">${rank} (${percentage}%)</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteEvaluation(${eval.id})" style="padding: 6px 12px;">
+                                🗑️ حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Delete evaluation
+        function deleteEvaluation(evalId) {
+            if (confirm('آیا از حذف این ارزیابی مطمئن هستید؟')) {
+                evaluations = evaluations.filter(e => e.id !== evalId);
+                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                alert('✅ ارزیابی با موفقیت حذف شد!');
+                updateAllViews();
+            }
+        }
+
+        // Clear all evaluations
+        function clearAllEvaluations() {
+            if (evaluations.length === 0) {
+                alert('⚠️ هیچ ارزیابی برای حذف وجود ندارد!');
+                return;
+            }
+            
+            const confirmMsg = `⚠️ آیا از حذف تمام ${evaluations.length} ارزیابی مطمئن هستید؟\n\nاین عملیات قابل بازگشت نیست!\n\n💡 توصیه: قبل از حذف، یک پشتیبان بگیرید.`;
+            
+            if (confirm(confirmMsg)) {
+                if (confirm('آیا واقعاً مطمئن هستید؟ این عملیات غیرقابل بازگشت است!')) {
+                    evaluations = [];
+                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                    alert('✅ تمام ارزیابی‌ها با موفقیت حذف شدند!');
+                    updateAllViews();
+                }
+            }
+        }
+
+        // Export evaluations as JSON
+        function exportEvaluations() {
+            if (evaluations.length === 0) {
+                alert('⚠️ هیچ ارزیابی برای پشتیبان‌گیری وجود ندارد!');
+                return;
+            }
+            
+            const dataStr = JSON.stringify({
+                evaluations: evaluations,
+                departments: departments,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            }, null, 2);
+            
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup-evaluations-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ فایل پشتیبان با موفقیت دانلود شد!');
+        }
+
+        // Update departments view
+        function updateDepartmentsView() {
+            const container = document.getElementById('departments-grid');
+            container.innerHTML = '';
+
+            Object.keys(departments).forEach(deptKey => {
+                const dept = departments[deptKey];
+                const card = document.createElement('div');
+                card.className = 'department-card';
+                card.onclick = () => openCriteriaModal(deptKey);
+                
+                card.innerHTML = `
+                    <div class="department-header">
+                        <div class="department-badge ${dept.class}">
+                            ${dept.icon} ${dept.name}
+                        </div>
+                        <div class="criteria-count">${dept.criteria.length} معیار</div>
+                    </div>
+                    <p style="color: var(--text-light); margin-top: 10px;">
+                        کلیک کنید برای ویرایش معیارها
+                    </p>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Open criteria modal
+        function openCriteriaModal(deptKey) {
+            currentEditingDepartment = deptKey;
+            const dept = departments[deptKey];
+            
+            // Load department name and icon for editing
+            document.getElementById('modal-department-name-input').value = dept.name;
+            document.getElementById('modal-department-icon-input').value = dept.icon;
+            
+            // Show current department badge
+            document.getElementById('modal-department-badge').innerHTML = `
+                <div class="department-badge ${dept.class}" style="margin-bottom: 20px;">
+                    ${dept.icon} ${dept.name}
+                </div>
+            `;
+            
+            const container = document.getElementById('modal-criteria-list');
+            container.innerHTML = '';
+            
+            dept.criteria.forEach(criteria => {
+                const item = document.createElement('div');
+                item.className = 'criteria-item';
+                item.innerHTML = `
+                    <input type="text" class="criteria-name-input" 
+                           value="${criteria.name}" 
+                           id="modal-criteria-name-${criteria.id}">
+                    <input type="number" class="criteria-weight-input" 
+                           value="${criteria.weight}" 
+                           id="modal-criteria-weight-${criteria.id}"
+                           min="1" max="30">
+                    <button class="btn btn-danger btn-sm" onclick="deleteModalCriteria(${criteria.id})">
+                        🗑️ حذف
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+            
+            document.getElementById('criteria-modal').classList.add('active');
+        }
+
+        // Close criteria modal
+        function closeCriteriaModal() {
+            document.getElementById('criteria-modal').classList.remove('active');
+            currentEditingDepartment = null;
+        }
+
+        // Save department criteria
+        function saveDepartmentCriteria() {
+            const oldKey = currentEditingDepartment;
+            const dept = departments[oldKey];
+            
+            // Get new name and icon
+            const newName = document.getElementById('modal-department-name-input').value.trim();
+            const newIcon = document.getElementById('modal-department-icon-input').value.trim();
+            
+            if (!newName || !newIcon) {
+                alert('⚠️ نام و آیکون بخش نمی‌تواند خالی باشد!');
+                return;
+            }
+            
+            // Update criteria
+            const updatedCriteria = [];
+            dept.criteria.forEach(criteria => {
+                const nameInput = document.getElementById(`modal-criteria-name-${criteria.id}`);
+                const weightInput = document.getElementById(`modal-criteria-weight-${criteria.id}`);
+                
+                if (nameInput && weightInput) {
+                    updatedCriteria.push({
+                        id: criteria.id,
+                        name: nameInput.value,
+                        weight: parseInt(weightInput.value)
+                    });
+                }
+            });
+            
+            // If name changed, create new key
+            const newKey = newName;
+            
+            if (newKey !== oldKey) {
+                // Create new department with new name
+                departments[newKey] = {
+                    name: newName,
+                    icon: newIcon,
+                    class: dept.class,
+                    criteria: updatedCriteria
+                };
+                
+                // Delete old department
+                delete departments[oldKey];
+                
+                // Update evaluations with old department key to new key
+                evaluations = evaluations.map(eval => {
+                    if (eval.department === oldKey) {
+                        eval.department = newKey;
+                        eval.departmentName = newName;
+                    }
+                    return eval;
+                });
+                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+            } else {
+                // Just update existing department
+                departments[oldKey].name = newName;
+                departments[oldKey].icon = newIcon;
+                departments[oldKey].criteria = updatedCriteria;
+                
+                // Update department name in all evaluations
+                evaluations = evaluations.map(eval => {
+                    if (eval.department === oldKey) {
+                        eval.departmentName = newName;
+                    }
+                    return eval;
+                });
+                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+            }
+            
+            localStorage.setItem('departments', JSON.stringify(departments));
+            
+            alert('✅ تغییرات با موفقیت ذخیره شد!');
+            closeCriteriaModal();
+            populateDepartmentDropdown();
+            updateDepartmentsView();
+            updateAllViews();
+        }
+
+        // Add new criteria to modal
+        function addNewCriteriaToModal() {
+            const dept = departments[currentEditingDepartment];
+            const newId = Math.max(...dept.criteria.map(c => c.id), 0) + 1;
+            
+            dept.criteria.push({
+                id: newId,
+                name: 'معیار جدید',
+                weight: 10
+            });
+            
+            openCriteriaModal(currentEditingDepartment);
+        }
+
+        // Delete modal criteria
+        function deleteModalCriteria(id) {
+            if (confirm('آیا از حذف این معیار مطمئن هستید؟')) {
+                const dept = departments[currentEditingDepartment];
+                dept.criteria = dept.criteria.filter(c => c.id !== id);
+                openCriteriaModal(currentEditingDepartment);
+            }
+        }
+
+        // Delete department
+        function deleteDepartment() {
+            const deptName = departments[currentEditingDepartment].name;
+            
+            // Check if there are evaluations for this department
+            const hasEvaluations = evaluations.some(e => e.department === currentEditingDepartment);
+            
+            let confirmMsg = `آیا از حذف بخش "${deptName}" مطمئن هستید؟`;
+            if (hasEvaluations) {
+                confirmMsg += '\n\n⚠️ توجه: ارزیابی‌هایی برای این بخش ثبت شده است. با حذف بخش، ارزیابی‌ها حفظ می‌شوند اما بخش از لیست حذف می‌شود.';
+            }
+            
+            if (confirm(confirmMsg)) {
+                delete departments[currentEditingDepartment];
+                localStorage.setItem('departments', JSON.stringify(departments));
+                
+                alert('✅ بخش با موفقیت حذف شد!');
+                closeCriteriaModal();
+                populateDepartmentDropdown();
+                updateDepartmentsView();
+            }
+        }
+
+        // Show add department modal
+        function showAddDepartmentModal() {
+            document.getElementById('add-department-modal').classList.add('active');
+        }
+
+        // Close add department modal
+        function closeAddDepartmentModal() {
+            document.getElementById('add-department-modal').classList.remove('active');
+            document.getElementById('new-department-name').value = '';
+            document.getElementById('new-department-icon').value = '';
+        }
+
+        // Create new department
+        function createNewDepartment() {
+            const name = document.getElementById('new-department-name').value;
+            const icon = document.getElementById('new-department-icon').value;
+            
+            if (!name || !icon) {
+                alert('⚠️ لطفاً نام و آیکون بخش را وارد کنید!');
+                return;
+            }
+            
+            const key = name;
+            departments[key] = {
+                name: name,
+                icon: icon,
+                class: 'dept-sales',
+                criteria: [
+                    { id: 1, name: 'کیفیت کار', weight: 15 },
+                    { id: 2, name: 'حضور و غیاب', weight: 10 },
+                    { id: 3, name: 'کار تیمی', weight: 10 }
+                ]
+            };
+            
+            localStorage.setItem('departments', JSON.stringify(departments));
+            alert('✅ بخش جدید با موفقیت ایجاد شد!');
+            
+            closeAddDepartmentModal();
+            populateDepartmentDropdown();
+            updateDepartmentsView();
+        }
+
+        // Reset to default departments
+        function resetToDefaultDepartments() {
+            if (confirm('آیا می‌خواهید تمام بخش‌ها به حالت پیش‌فرض بازگردند؟ (اطلاعات قبلی حذف می‌شود)')) {
+                departments = JSON.parse(JSON.stringify(defaultDepartments));
+                localStorage.setItem('departments', JSON.stringify(departments));
+                alert('✅ بخش‌ها به حالت پیش‌فرض بازگشتند!');
+                populateDepartmentDropdown();
+                updateDepartmentsView();
+            }
+        }
+
+        // Update all views
+        function updateAllViews() {
+            updateEmployeesList();
+            updateReports();
+            updateHistory();
+            updateDepartmentsView();
+        }
+
+        // Close modals on outside click
+        document.getElementById('criteria-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeCriteriaModal();
+        });
+        
+        document.getElementById('add-department-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeAddDepartmentModal();
+        });
+    </script>
+</body>
+</html>
