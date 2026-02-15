@@ -845,7 +845,14 @@
                     </div>
                     <div class="form-group">
                         <label>نام کارمند *</label>
-                        <input type="text" id="employee-name" placeholder="نام و نام خانوادگی" required>
+                        <select id="employee-name" required onchange="handleEmployeeSelection()">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="__ADD_NEW__">➕ افزودن کارمند جدید...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="new-employee-input-group" style="display: none;">
+                        <label>نام کارمند جدید *</label>
+                        <input type="text" id="new-employee-name" placeholder="نام و نام خانوادگی">
                     </div>
                     <div class="form-group">
                         <label>بخش (دپارتمان) *</label>
@@ -1108,6 +1115,7 @@
                     } else {
                         evaluations = [];
                     }
+                    populateEmployeeDropdown();
                     updateAllViews();
                 });
 
@@ -1118,11 +1126,13 @@
                     } else {
                         evaluations = [];
                     }
+                    populateEmployeeDropdown();
                     updateAllViews();
                 });
             } else {
                 // Fallback to localStorage
                 evaluations = JSON.parse(localStorage.getItem('sharedEvaluations')) || [];
+                populateEmployeeDropdown();
                 updateAllViews();
             }
         }
@@ -1404,8 +1414,58 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadDepartments(); // Load from Firebase or localStorage
             loadEvaluations(); // Load from Firebase or localStorage
+            populateEmployeeDropdown(); // Populate employee list
             document.getElementById('evaluation-date').valueAsDate = new Date();
         });
+
+        // Populate employee dropdown from existing evaluations
+        function populateEmployeeDropdown() {
+            const select = document.getElementById('employee-name');
+            
+            // Keep the default options
+            const defaultOptions = `
+                <option value="">انتخاب کنید...</option>
+                <option value="__ADD_NEW__">➕ افزودن کارمند جدید...</option>
+            `;
+            
+            // Get unique employee names from evaluations
+            const employeeNames = new Set();
+            evaluations.forEach(eval => {
+                if (eval.employeeName) {
+                    employeeNames.add(eval.employeeName);
+                }
+            });
+            
+            // Sort alphabetically
+            const sortedNames = Array.from(employeeNames).sort();
+            
+            // Build options HTML
+            let optionsHTML = defaultOptions;
+            sortedNames.forEach(name => {
+                optionsHTML += `<option value="${name}">${name}</option>`;
+            });
+            
+            select.innerHTML = optionsHTML;
+        }
+
+        // Handle employee selection
+        function handleEmployeeSelection() {
+            const select = document.getElementById('employee-name');
+            const newEmployeeGroup = document.getElementById('new-employee-input-group');
+            const newEmployeeInput = document.getElementById('new-employee-name');
+            
+            if (select.value === '__ADD_NEW__') {
+                // Show new employee input
+                newEmployeeGroup.style.display = 'block';
+                newEmployeeInput.required = true;
+                newEmployeeInput.focus();
+            } else {
+                // Hide new employee input
+                newEmployeeGroup.style.display = 'none';
+                newEmployeeInput.required = false;
+                newEmployeeInput.value = '';
+            }
+        }
 
         // Populate department dropdown
         function populateDepartmentDropdown() {
@@ -1506,9 +1566,20 @@
         // Save evaluation
         function saveEvaluation() {
             const managerName = document.getElementById('manager-name').value;
-            const employeeName = document.getElementById('employee-name').value;
+            let employeeName = document.getElementById('employee-name').value;
             const deptKey = document.getElementById('employee-department').value;
             const date = document.getElementById('evaluation-date').value;
+
+            // Check if adding new employee
+            if (employeeName === '__ADD_NEW__') {
+                const newEmployeeName = document.getElementById('new-employee-name').value.trim();
+                if (!newEmployeeName) {
+                    alert('⚠️ لطفاً نام کارمند جدید را وارد کنید!');
+                    document.getElementById('new-employee-name').focus();
+                    return;
+                }
+                employeeName = newEmployeeName;
+            }
 
             if (!managerName || !employeeName || !deptKey || !date) {
                 alert('⚠️ لطفاً تمام فیلدهای ضروری را پر کنید!');
@@ -1542,6 +1613,7 @@
             
             alert('✅ ارزیابی با موفقیت ذخیره شد!');
             resetForm();
+            populateEmployeeDropdown(); // Refresh employee list
             updateAllViews();
         }
 
@@ -1554,6 +1626,8 @@
             document.getElementById('evaluation-criteria').innerHTML = '';
             document.getElementById('department-badge-container').innerHTML = '';
             document.getElementById('total-score-container').style.display = 'none';
+            document.getElementById('new-employee-input-group').style.display = 'none';
+            document.getElementById('new-employee-name').value = '';
             currentDepartment = null;
         }
 
