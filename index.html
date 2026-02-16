@@ -711,6 +711,128 @@
             color: var(--danger);
         }
 
+        /* Star Employees Grid */
+        .star-employees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .star-employee-card {
+            background: white;
+            border: 3px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .star-employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .star-employee-card.rank-1 {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .star-employee-card.rank-2 {
+            border-color: #d1d5db;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        .star-employee-card.rank-3 {
+            border-color: #f97316;
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        }
+
+        .star-rank-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .star-rank-badge.rank-1 {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .star-rank-badge.rank-2 {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+        }
+
+        .star-rank-badge.rank-3 {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .star-employee-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            object-fit: cover;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--text-light);
+        }
+
+        .star-employee-photo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .star-employee-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .star-employee-dept {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .star-employee-score {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .star-score-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            display: block;
+        }
+
+        .star-score-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
         /* Animations */
         @keyframes slideDown {
             from {
@@ -817,6 +939,7 @@
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('evaluation')">📝 ارزیابی جدید</button>
             <button class="nav-tab" onclick="switchTab('employees')">👥 لیست کارمندان</button>
+            <button class="nav-tab" onclick="switchTab('star-employees')">⭐ تابلو کارمندان نمونه</button>
             <button class="nav-tab" onclick="switchTab('manage-employees')">👤 مدیریت کارمندان</button>
             <button class="nav-tab" onclick="switchTab('reports')">📊 گزارش‌ها</button>
             <button class="nav-tab" onclick="switchTab('history')">📅 تاریخچه</button>
@@ -852,7 +975,7 @@
                     </div>
                     <div class="form-group">
                         <label>بخش (دپارتمان) *</label>
-                        <select id="employee-department" onchange="loadDepartmentCriteria()" required>
+                        <select id="employee-department" onchange="handleDepartmentChange()" required>
                             <option value="">انتخاب کنید...</option>
                         </select>
                     </div>
@@ -887,6 +1010,34 @@
             </div>
         </div>
 
+        <!-- Star Employees Section -->
+        <div id="star-employees-section" class="section">
+            <div class="card">
+                <h2 class="card-title">⭐ تابلو کارمندان نمونه ماه</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ کارمندان برتر بر اساس میانگین امتیازات ماه جاری نمایش داده می‌شوند.
+                </div>
+
+                <div class="form-grid" style="margin-bottom: 25px;">
+                    <div class="form-group">
+                        <label>انتخاب ماه</label>
+                        <input type="month" id="star-month-selector" onchange="updateStarEmployees()">
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد نمایش</label>
+                        <select id="star-count-selector" onchange="updateStarEmployees()">
+                            <option value="3">3 نفر برتر</option>
+                            <option value="5">5 نفر برتر</option>
+                            <option value="10">10 نفر برتر</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="star-employees-grid" id="star-employees-grid"></div>
+            </div>
+        </div>
+
         <!-- Manage Employees Section -->
         <div id="manage-employees-section" class="section">
             <div class="card">
@@ -918,6 +1069,11 @@
                         <div class="form-group">
                             <label>کد پرسنلی</label>
                             <input type="text" id="new-emp-code" placeholder="مثال: 1001">
+                        </div>
+                        <div class="form-group">
+                            <label>عکس پروفایل (URL)</label>
+                            <input type="text" id="new-emp-photo" placeholder="https://example.com/photo.jpg">
+                            <small style="color: var(--text-light); font-size: 12px;">لینک عکس یا خالی بگذارید</small>
                         </div>
                     </div>
                     
@@ -1474,14 +1630,20 @@
         });
 
         // Populate employee dropdown from employees list
-        function populateEmployeeDropdown() {
+        function populateEmployeeDropdown(filterDepartment = null) {
             const select = document.getElementById('employee-name');
             
             // Keep the default option
             let optionsHTML = '<option value="">انتخاب کنید...</option>';
             
+            // Filter employees by department if specified
+            let filteredEmployees = employees;
+            if (filterDepartment) {
+                filteredEmployees = employees.filter(emp => emp.department === filterDepartment);
+            }
+            
             // Sort employees alphabetically
-            const sortedEmployees = [...employees].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
+            const sortedEmployees = [...filteredEmployees].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
             
             // Build options HTML
             sortedEmployees.forEach(emp => {
@@ -1489,6 +1651,21 @@
             });
             
             select.innerHTML = optionsHTML;
+        }
+
+        // Handle department change in evaluation form
+        function handleDepartmentChange() {
+            const deptKey = document.getElementById('employee-department').value;
+            
+            // Filter employees by selected department
+            if (deptKey) {
+                populateEmployeeDropdown(deptKey);
+            } else {
+                populateEmployeeDropdown();
+            }
+            
+            // Also load department criteria
+            loadDepartmentCriteria();
         }
 
         // Populate department dropdown in add employee form
@@ -1542,6 +1719,7 @@
             const department = document.getElementById('new-emp-department').value;
             const position = document.getElementById('new-emp-position').value.trim();
             const code = document.getElementById('new-emp-code').value.trim();
+            const photo = document.getElementById('new-emp-photo').value.trim();
 
             if (!name || !department) {
                 alert('⚠️ لطفاً نام و بخش کارمند را وارد کنید!');
@@ -1562,6 +1740,7 @@
                 departmentName: departments[department].name,
                 position: position,
                 code: code,
+                photo: photo,
                 createdAt: new Date().toISOString()
             };
 
@@ -1590,6 +1769,7 @@
             document.getElementById('new-emp-department').value = '';
             document.getElementById('new-emp-position').value = '';
             document.getElementById('new-emp-code').value = '';
+            document.getElementById('new-emp-photo').value = '';
         }
 
         // Update employees management list
@@ -1828,6 +2008,7 @@
             event.target.classList.add('active');
             
             if (tab === 'employees') updateEmployeesList();
+            if (tab === 'star-employees') updateStarEmployees();
             if (tab === 'manage-employees') updateEmployeesManagementList();
             if (tab === 'reports') updateReports();
             if (tab === 'history') updateHistory();
@@ -2313,6 +2494,108 @@
             updateHistory();
             updateDepartmentsView();
         }
+
+        // Update Star Employees (Employee of the Month)
+        function updateStarEmployees() {
+            const container = document.getElementById('star-employees-grid');
+            const monthSelector = document.getElementById('star-month-selector');
+            const countSelector = document.getElementById('star-count-selector');
+            
+            const selectedMonth = monthSelector.value;
+            const topCount = parseInt(countSelector.value);
+            
+            if (!selectedMonth) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light);">لطفاً یک ماه انتخاب کنید.</p>';
+                return;
+            }
+            
+            // Filter evaluations by selected month
+            const [year, month] = selectedMonth.split('-');
+            const monthEvaluations = evaluations.filter(eval => {
+                const evalDate = new Date(eval.date);
+                return evalDate.getFullYear() == year && (evalDate.getMonth() + 1) == parseInt(month);
+            });
+            
+            if (monthEvaluations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>هیچ ارزیابی در این ماه ثبت نشده است</h3>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Calculate average scores per employee
+            const employeeScores = {};
+            monthEvaluations.forEach(eval => {
+                if (!employeeScores[eval.employeeName]) {
+                    employeeScores[eval.employeeName] = {
+                        name: eval.employeeName,
+                        department: eval.departmentName,
+                        totalScore: 0,
+                        count: 0,
+                        avgPercentage: 0
+                    };
+                }
+                const percentage = (eval.totalScore / eval.maxScore) * 100;
+                employeeScores[eval.employeeName].totalScore += percentage;
+                employeeScores[eval.employeeName].count += 1;
+            });
+            
+            // Calculate averages and sort
+            const rankedEmployees = Object.values(employeeScores)
+                .map(emp => {
+                    emp.avgPercentage = emp.totalScore / emp.count;
+                    return emp;
+                })
+                .sort((a, b) => b.avgPercentage - a.avgPercentage)
+                .slice(0, topCount);
+            
+            if (rankedEmployees.length === 0) {
+                container.innerHTML = '<p style="text-align: center;">داده‌ای یافت نشد.</p>';
+                return;
+            }
+            
+            // Render star employees
+            container.innerHTML = rankedEmployees.map((emp, index) => {
+                const rank = index + 1;
+                const employee = employees.find(e => e.name === emp.name);
+                const photoUrl = employee && employee.photo ? employee.photo : null;
+                
+                return `
+                    <div class="star-employee-card rank-${rank <= 3 ? rank : ''}">
+                        <div class="star-rank-badge rank-${rank <= 3 ? rank : ''}">${rank}</div>
+                        
+                        <div class="star-employee-photo">
+                            ${photoUrl ? 
+                                `<img src="${photoUrl}" alt="${emp.name}" onerror="this.parentElement.innerHTML='👤'">` : 
+                                '👤'
+                            }
+                        </div>
+                        
+                        <div class="star-employee-name">${emp.name}</div>
+                        <div class="star-employee-dept">${emp.department}</div>
+                        
+                        <div class="star-employee-score">
+                            <span class="star-score-value">${emp.avgPercentage.toFixed(1)}%</span>
+                            <span class="star-score-label">میانگین امتیاز</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize star employees month selector
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthSelector = document.getElementById('star-month-selector');
+            if (monthSelector) {
+                // Set to current month
+                const now = new Date();
+                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+                monthSelector.value = currentMonth;
+            }
+        });
 
         // Close modals on outside click
         document.getElementById('criteria-modal').addEventListener('click', function(e) {
