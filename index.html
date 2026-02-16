@@ -1216,6 +1216,47 @@
         </div>
     </div>
 
+    <!-- Modal for Edit Employee -->
+    <div id="edit-employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">✏️ ویرایش اطلاعات کارمند</h2>
+                <button class="modal-close" onclick="closeEditEmployeeModal()">×</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>نام و نام خانوادگی *</label>
+                    <input type="text" id="edit-emp-name" required>
+                </div>
+                <div class="form-group">
+                    <label>بخش (دپارتمان) *</label>
+                    <select id="edit-emp-department" required>
+                        <option value="">انتخاب کنید...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>سمت</label>
+                    <input type="text" id="edit-emp-position">
+                </div>
+                <div class="form-group">
+                    <label>کد پرسنلی</label>
+                    <input type="text" id="edit-emp-code">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>عکس پروفایل (URL)</label>
+                    <input type="text" id="edit-emp-photo" placeholder="https://example.com/photo.jpg">
+                    <small style="color: var(--text-light); font-size: 12px;">لینک عکس یا خالی بگذارید</small>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="saveEditedEmployee()">✅ ذخیره تغییرات</button>
+                <button class="btn btn-secondary" onclick="closeEditEmployeeModal()">❌ انصراف</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
         // 🔥 FIREBASE CONFIGURATION
@@ -1802,12 +1843,132 @@
                                 ${emp.code ? `<span>• کد: ${emp.code}</span>` : ''}
                             </div>
                         </div>
-                        <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${emp.id})">
-                            🗑️ حذف
-                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary btn-sm" onclick="editEmployee(${emp.id})">
+                                ✏️ ویرایش
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteEmployee(${emp.id})">
+                                🗑️ حذف
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // Edit employee
+        let currentEditingEmployee = null;
+
+        function editEmployee(empId) {
+            const employee = employees.find(e => e.id === empId);
+            if (!employee) return;
+
+            currentEditingEmployee = empId;
+
+            // Populate form
+            document.getElementById('edit-emp-name').value = employee.name;
+            document.getElementById('edit-emp-department').value = employee.department;
+            document.getElementById('edit-emp-position').value = employee.position || '';
+            document.getElementById('edit-emp-code').value = employee.code || '';
+            document.getElementById('edit-emp-photo').value = employee.photo || '';
+
+            // Populate department dropdown
+            const deptSelect = document.getElementById('edit-emp-department');
+            deptSelect.innerHTML = '<option value="">انتخاب کنید...</option>';
+            Object.keys(departments).forEach(deptKey => {
+                const dept = departments[deptKey];
+                const option = document.createElement('option');
+                option.value = deptKey;
+                option.textContent = `${dept.icon} ${dept.name}`;
+                if (deptKey === employee.department) {
+                    option.selected = true;
+                }
+                deptSelect.appendChild(option);
+            });
+
+            // Show modal
+            document.getElementById('edit-employee-modal').classList.add('active');
+        }
+
+        function closeEditEmployeeModal() {
+            document.getElementById('edit-employee-modal').classList.remove('active');
+            currentEditingEmployee = null;
+        }
+
+        function saveEditedEmployee() {
+            if (!currentEditingEmployee) return;
+
+            const employee = employees.find(e => e.id === currentEditingEmployee);
+            if (!employee) return;
+
+            const oldName = employee.name;
+            const newName = document.getElementById('edit-emp-name').value.trim();
+            const newDepartment = document.getElementById('edit-emp-department').value;
+            const newPosition = document.getElementById('edit-emp-position').value.trim();
+            const newCode = document.getElementById('edit-emp-code').value.trim();
+            const newPhoto = document.getElementById('edit-emp-photo').value.trim();
+
+            if (!newName || !newDepartment) {
+                alert('⚠️ لطفاً نام و بخش کارمند را وارد کنید!');
+                return;
+            }
+
+            // Check if name changed and new name already exists
+            if (newName !== oldName) {
+                const exists = employees.some(emp => emp.id !== currentEditingEmployee && emp.name.toLowerCase() === newName.toLowerCase());
+                if (exists) {
+                    alert('⚠️ کارمندی با این نام قبلاً وجود دارد!');
+                    return;
+                }
+            }
+
+            // Update employee
+            employee.name = newName;
+            employee.department = newDepartment;
+            employee.departmentName = departments[newDepartment].name;
+            employee.position = newPosition;
+            employee.code = newCode;
+            employee.photo = newPhoto;
+
+            // Update evaluations if name changed
+            if (newName !== oldName) {
+                evaluations.forEach(eval => {
+                    if (eval.employeeName === oldName) {
+                        eval.employeeName = newName;
+                    }
+                });
+
+                if (isFirebaseConfigured) {
+                    // Update all evaluations in Firebase
+                    const updates = {};
+                    evaluations.forEach(eval => {
+                        updates[`evaluations/${eval.id}`] = eval;
+                    });
+                    database.ref().update(updates);
+                } else {
+                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                }
+            }
+
+            // Save employee
+            if (isFirebaseConfigured) {
+                database.ref('employees/' + currentEditingEmployee).set(employee)
+                    .then(() => {
+                        alert('✅ اطلاعات کارمند با موفقیت به‌روزرسانی شد!');
+                        closeEditEmployeeModal();
+                        populateEmployeeDropdown();
+                        updateEmployeesManagementList();
+                    })
+                    .catch((error) => {
+                        alert('❌ خطا: ' + error.message);
+                    });
+            } else {
+                localStorage.setItem('employees', JSON.stringify(employees));
+                alert('✅ اطلاعات کارمند با موفقیت به‌روزرسانی شد!');
+                closeEditEmployeeModal();
+                populateEmployeeDropdown();
+                updateEmployeesManagementList();
+            }
         }
 
         // Delete employee
@@ -2604,6 +2765,10 @@
         
         document.getElementById('add-department-modal').addEventListener('click', function(e) {
             if (e.target === this) closeAddDepartmentModal();
+        });
+        
+        document.getElementById('edit-employee-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditEmployeeModal();
         });
     </script>
 </body>
