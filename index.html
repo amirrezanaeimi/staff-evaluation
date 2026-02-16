@@ -2230,14 +2230,34 @@
         }
 
         // Delete all evaluations for an employee
+// Delete all evaluations for an employee
         function deleteEmployeeEvaluations(employeeName) {
             const employeeEvals = evaluations.filter(e => e.employeeName === employeeName);
             
+            if (employeeEvals.length === 0) {
+                alert('⚠️ ارزیابی برای این کارمند یافت نشد!');
+                return;
+            }
+            
             if (confirm(`آیا از حذف تمام ${employeeEvals.length} ارزیابی برای "${employeeName}" مطمئن هستید؟`)) {
-                evaluations = evaluations.filter(e => e.employeeName !== employeeName);
-                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
-                alert('✅ تمام ارزیابی‌های کارمند با موفقیت حذف شدند!');
-                updateAllViews();
+                if (isFirebaseConfigured) {
+                    const promises = employeeEvals.map(e => 
+                        database.ref('evaluations/' + e.id).remove()
+                    );
+                    
+                    Promise.all(promises)
+                        .then(() => {
+                            alert('✅ تمام ارزیابی‌های کارمند حذف شدند!');
+                        })
+                        .catch((error) => {
+                            alert('❌ خطا: ' + error.message);
+                        });
+                } else {
+                    evaluations = evaluations.filter(e => e.employeeName !== employeeName);
+                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                    alert('✅ تمام ارزیابی‌های کارمند با موفقیت حذف شدند!');
+                    updateAllViews();
+                }
             }
         }
 
@@ -2340,16 +2360,28 @@
         }
 
         // Delete evaluation
+// Delete evaluation
         function deleteEvaluation(evalId) {
             if (confirm('آیا از حذف این ارزیابی مطمئن هستید؟')) {
-                evaluations = evaluations.filter(e => e.id !== evalId);
-                localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
-                alert('✅ ارزیابی با موفقیت حذف شد!');
-                updateAllViews();
+                if (isFirebaseConfigured) {
+                    database.ref('evaluations/' + evalId).remove()
+                        .then(() => {
+                            alert('✅ ارزیابی حذف شد!');
+                        })
+                        .catch((error) => {
+                            alert('❌ خطا: ' + error.message);
+                        });
+                } else {
+                    evaluations = evaluations.filter(e => e.id !== evalId);
+                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                    alert('✅ ارزیابی با موفقیت حذف شد!');
+                    updateAllViews();
+                }
             }
         }
 
         // Clear all evaluations
+// Clear all evaluations
         function clearAllEvaluations() {
             if (evaluations.length === 0) {
                 alert('⚠️ هیچ ارزیابی برای حذف وجود ندارد!');
@@ -2360,10 +2392,20 @@
             
             if (confirm(confirmMsg)) {
                 if (confirm('آیا واقعاً مطمئن هستید؟ این عملیات غیرقابل بازگشت است!')) {
-                    evaluations = [];
-                    localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
-                    alert('✅ تمام ارزیابی‌ها با موفقیت حذف شدند!');
-                    updateAllViews();
+                    if (isFirebaseConfigured) {
+                        database.ref('evaluations').remove()
+                            .then(() => {
+                                alert('✅ تمام ارزیابی‌ها حذف شدند!');
+                            })
+                            .catch((error) => {
+                                alert('❌ خطا: ' + error.message);
+                            });
+                    } else {
+                        evaluations = [];
+                        localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+                        alert('✅ تمام ارزیابی‌ها با موفقیت حذف شدند!');
+                        updateAllViews();
+                    }
                 }
             }
         }
