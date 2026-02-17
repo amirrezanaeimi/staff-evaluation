@@ -1071,16 +1071,16 @@ body { padding-top: 64px; }
 
   <!-- NAV -->
   <div id="supply-nav">
-    <button class="supply-nav-btn active" onclick="switchTab('prices',this)">
+    <button class="supply-nav-btn active" onclick="supplyTab('prices',this)">
       💰 قیمت‌ها <span class="nav-count" id="nc-prices">0</span>
     </button>
-    <button class="supply-nav-btn" onclick="switchTab('products',this)">
+    <button class="supply-nav-btn" onclick="supplyTab('products',this)">
       📦 محصولات <span class="nav-count" id="nc-products">0</span>
     </button>
-    <button class="supply-nav-btn" onclick="switchTab('factories',this)">
+    <button class="supply-nav-btn" onclick="supplyTab('factories',this)">
       🏭 کارخانجات <span class="nav-count" id="nc-factories">0</span>
     </button>
-    <button class="supply-nav-btn" onclick="switchTab('analytics',this)">
+    <button class="supply-nav-btn" onclick="supplyTab('analytics',this)">
       📊 تحلیل هفتگی
     </button>
   </div>
@@ -1495,16 +1495,17 @@ setInterval(syncMasterNav, 500);
 syncMasterNav();
 
 // Restore last active module
-window.addEventListener('DOMContentLoaded', () => {
+// Called by the last script block after everything is loaded
+function masterInit() {
     const saved = sessionStorage.getItem('activeModule');
     const mgr = sessionStorage.getItem('currentManager');
     if (mgr && saved) {
-        setTimeout(() => switchModule(saved), 100);
+        switchModule(saved);
     } else {
-        // Show eval module by default (login screen will show)
         switchModule('eval');
     }
-});
+    syncMasterNav();
+}
 </script>
 
 <!-- ════════════════════════════════════════════
@@ -2504,7 +2505,7 @@ function resetToDefaultDepartments() {
 // ══════════════════════════════════
 // FIREBASE
 // ══════════════════════════════════
-const firebaseConfig = {
+const sFirebaseConfig = {
   apiKey: "AIzaSyDeKK6THwUcR2hoh-VUiwAX7p79NL6UPQQ",
   authDomain: "employee-evaluation-adva-9231e.firebaseapp.com",
   projectId: "employee-evaluation-adva-9231e",
@@ -2513,13 +2514,13 @@ const firebaseConfig = {
   appId: "1:151913486905:web:b6c183ae02c67fd4368be8"
 };
 
-let db = null;
-let fbOk = false;
+let sDb = null;
+let sFbOk = false;
 try {
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) firebase.initializeApp(sFirebaseConfig);
   db = firebase.database();
-  fbOk = true;
-} catch(e) { console.warn('Firebase offline'); }
+  sFbOk = true;
+} catch(e) { console.warn('Supply Firebase offline'); }
 
 // ══════════════════════════════════
 // STATE
@@ -2559,15 +2560,15 @@ function sShowToast(msg, icon='✅') {
 // STORAGE (Firebase + LocalStorage)
 // ══════════════════════════════════
 function persist(key, data) {
-  if (fbOk) db.ref('supply/'+key).set(data).catch(console.error);
+  if (sFbOk) sDb.ref('supply/'+key).set(data).catch(console.error);
   localStorage.setItem('supply_'+key, JSON.stringify(data));
 }
 function loadLS(key) {
   try { return JSON.parse(localStorage.getItem('supply_'+key)) || []; } catch{ return []; }
 }
 function listenFB(key, cb) {
-  if (fbOk) {
-    db.ref('supply/'+key).on('value', snap => {
+  if (sFbOk) {
+    sDb.ref('supply/'+key).on('value', snap => {
       cb(snap.exists() ? (Array.isArray(snap.val()) ? snap.val() : Object.values(snap.val())) : []);
     });
   }
@@ -3214,7 +3215,7 @@ function renderAnalytics() {
 // ══════════════════════════════════
 // TAB SWITCHING
 // ══════════════════════════════════
-function switchTab(tab, el) {
+function supplyTab(tab, el) {
   document.querySelectorAll('.supply-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.supply-nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('supply-'+tab+'-section').classList.add('active');
@@ -3237,5 +3238,9 @@ document.querySelectorAll('#supply-app .modal, #s-product-modal, #s-factory-moda
 
 </script>
 
+<script>
+// ── Init after all scripts loaded ──
+masterInit();
+</script>
 </body>
 </html>
