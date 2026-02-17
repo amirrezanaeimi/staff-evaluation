@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستم ارزیابی پرسنل - Firebase (Real-time)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پلتفرم مدیریت — شرکت بازرگانی فولاد</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+<style>
+
         :root {
             --primary: #1e40af;
             --primary-dark: #1e3a8a;
@@ -430,9 +432,265 @@
             .criteria-item { grid-template-columns: 1fr; }
             .header { flex-direction: column; align-items: flex-start; }
         }
-    </style>
+    
+
+    /* ══ SUPPLY MODULE SPECIFIC ══ */
+    /* live badge in header */
+    .live-badge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.15);padding:8px 15px;border-radius:20px;font-size:13px;font-weight:600;color:white;}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+    .clock-badge{background:rgba(255,255,255,0.15);padding:8px 15px;border-radius:20px;font-size:13px;color:white;opacity:.9;}
+    /* stat strip */
+    .stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:18px;margin-bottom:25px;}
+    .stat-card{background:white;border-radius:16px;padding:22px 24px;box-shadow:0 4px 20px rgba(0,0,0,0.06);transition:all .3s;position:relative;overflow:hidden;border-right:4px solid transparent;}
+    .stat-card.blue{border-right-color:var(--primary);}
+    .stat-card.teal{border-right-color:var(--secondary);}
+    .stat-card.green{border-right-color:var(--success);}
+    .stat-card.orange{border-right-color:var(--warning);}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.1);}
+    .stat-val{font-size:34px;font-weight:900;margin-bottom:4px;}
+    .stat-card.blue .stat-val{color:var(--primary);}
+    .stat-card.teal .stat-val{color:var(--secondary);}
+    .stat-card.green .stat-val{color:var(--success);}
+    .stat-card.orange .stat-val{color:var(--warning);}
+    .stat-label{font-size:13px;color:var(--text-light);font-weight:500;}
+    .stat-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:34px;opacity:.1;}
+    /* supply nav (separate from eval nav-tabs) */
+    #supply-nav{display:flex;gap:12px;flex-wrap:wrap;background:white;padding:12px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.05);margin-bottom:25px;}
+    .supply-nav-btn{flex:1;min-width:160px;padding:13px 20px;border:none;border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;color:var(--text);background:var(--light);display:flex;align-items:center;justify-content:center;gap:8px;}
+    .supply-nav-btn:hover{background:var(--primary);color:white;transform:translateY(-2px);}
+    .supply-nav-btn.active{background:var(--primary);color:white;box-shadow:0 5px 15px rgba(30,64,175,0.3);}
+    .nav-count{background:rgba(0,0,0,0.15);padding:2px 8px;border-radius:10px;font-size:11px;}
+    /* supply sections */
+    .supply-section{display:none;animation:fadeIn .4s ease-out;}
+    .supply-section.active{display:block;}
+    /* toolbar */
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+    .search-wrap{flex:1;min-width:220px;position:relative;}
+    .search-wrap .icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:15px;}
+    .search-input{width:100%;padding:11px 42px 11px 15px;background:white;border:2px solid var(--border);border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:14px;color:var(--text);transition:all .3s;}
+    .search-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,64,175,0.1);}
+    .search-input::placeholder{color:var(--text-light);}
+    .filter-select{padding:11px 15px;background:white;border:2px solid var(--border);border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:14px;color:var(--text);cursor:pointer;min-width:150px;transition:all .3s;}
+    .filter-select:focus{outline:none;border-color:var(--primary);}
+    /* supply form */
+    .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:18px;}
+    .form-label{font-size:13px;font-weight:600;color:var(--dark);}
+    .form-input,.form-select{padding:11px 14px;background:white;border:2px solid var(--border);border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:14px;color:var(--text);transition:all .3s;}
+    .form-input:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,64,175,0.1);}
+    .form-input::placeholder{color:var(--text-light);}
+    .form-add-section{background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);border:2px solid #bfdbfe;border-radius:14px;padding:24px;margin-bottom:20px;}
+    /* table */
+    .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+    .data-table{width:100%;border-collapse:collapse;}
+    .data-table thead tr{background:var(--primary);}
+    .data-table th{padding:13px 16px;text-align:right;font-size:13px;font-weight:700;color:white;white-space:nowrap;}
+    .data-table td{padding:13px 16px;text-align:right;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle;color:var(--text);}
+    .data-table tbody tr{transition:background .2s;}
+    .data-table tbody tr:hover{background:#f0f9ff;}
+    .data-table tbody tr:last-child td{border-bottom:none;}
+    .data-table .actions{display:flex;gap:6px;justify-content:flex-end;}
+    /* chips */
+    .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+    .chip-blue{background:#dbeafe;color:var(--primary);}
+    .chip-teal,.chip-cyan{background:#cffafe;color:var(--secondary);}
+    .chip-green{background:#d1fae5;color:var(--success);}
+    .chip-orange,.chip-amber{background:#fef3c7;color:var(--warning);}
+    .chip-red{background:#fee2e2;color:var(--danger);}
+    .chip-gray{background:var(--light);color:var(--text-light);border:1px solid var(--border);}
+    /* price */
+    .price-cell{font-weight:700;font-size:15px;color:var(--primary);direction:ltr;text-align:left;}
+    .price-unit{font-size:11px;color:var(--text-light);font-weight:400;}
+    .update-badge{display:flex;flex-direction:column;font-size:11px;color:var(--text-light);white-space:nowrap;}
+    .update-badge .date{color:var(--dark);font-size:12px;font-weight:600;}
+    .change-up{color:var(--success);font-size:12px;font-weight:700;}
+    .change-down{color:var(--danger);font-size:12px;font-weight:700;}
+    .change-flat{color:var(--text-light);font-size:12px;}
+    /* grid cards */
+    .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;margin-top:16px;}
+    .item-card{background:white;border:2px solid var(--border);border-radius:16px;padding:22px;transition:all .3s;}
+    .item-card:hover{border-color:var(--primary);box-shadow:0 8px 30px rgba(30,64,175,0.1);transform:translateY(-3px);}
+    .item-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .item-card-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:flex;align-items:center;justify-content:center;font-size:22px;}
+    .item-card-name{font-size:17px;font-weight:700;color:var(--dark);margin-bottom:5px;}
+    .item-card-meta{font-size:13px;color:var(--text-light);}
+    .item-card-actions{display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+    /* charts */
+    .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;}
+    .chart-card{background:white;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+    .chart-title{font-size:16px;font-weight:700;color:var(--dark);}
+    .chart-subtitle{font-size:12px;color:var(--text-light);margin-top:3px;}
+    .period-tabs{display:flex;gap:6px;}
+    .period-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:2px solid var(--border);color:var(--text-light);background:white;font-family:'Vazirmatn',sans-serif;}
+    .period-tab.active{background:var(--primary);color:white;border-color:var(--primary);}
+    .period-tab:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+    /* toast */
+    .s-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);border-radius:30px;padding:12px 26px;font-size:14px;font-weight:600;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);z-index:9999;transition:transform .4s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:center;gap:10px;}
+    .s-toast.show{transform:translateX(-50%) translateY(0);}
+
+
+/* ══ MASTER DASHBOARD ══ */
+.master-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    box-shadow: 0 4px 24px rgba(30,64,175,0.35);
+    padding: 0 32px;
+    display: flex;
+    align-items: stretch;
+    height: 64px;
+    gap: 0;
+}
+.master-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 28px;
+    border-left: 1px solid rgba(255,255,255,0.15);
+    margin-left: 8px;
+}
+.master-logo-icon { font-size: 26px; }
+.master-logo-text { font-size: 16px; font-weight: 900; color: white; }
+.master-logo-sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+.master-module-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    position: relative;
+}
+.master-module-btn:hover {
+    color: white;
+    background: rgba(255,255,255,0.08);
+}
+.master-module-btn.active {
+    color: white;
+    border-bottom-color: white;
+    background: rgba(255,255,255,0.12);
+}
+.master-module-btn .m-icon { font-size: 20px; }
+.master-module-btn .m-badge {
+    background: rgba(255,255,255,0.2);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+.master-module-btn.active .m-badge {
+    background: rgba(255,255,255,0.35);
+}
+.master-spacer { flex: 1; }
+.master-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 12px;
+}
+.master-user-badge {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; color: white;
+}
+.master-clock {
+    background: rgba(255,255,255,0.1);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; color: rgba(255,255,255,0.8);
+}
+.master-logout {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white; padding: 6px 14px; border-radius: 8px;
+    font-family: 'Vazirmatn', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.25s;
+}
+.master-logout:hover { background: rgba(255,255,255,0.28); }
+
+/* push content below fixed master nav */
+body { padding-top: 64px; }
+/* hide login-overlay's own header space adjustments */
+#login-overlay { padding-top: 0 !important; }
+
+/* module panels */
+.module-panel { display: none; }
+.module-panel.active { display: block; }
+
+/* Supply header — slimmer since we have master nav */
+#supply-app .header { margin-top: 0; border-radius: 16px; }
+
+/* Override eval header's own position when inside module */
+#eval-module .header { 
+    animation: none;
+}
+
+/* When in login state, hide master nav modules */
+.master-nav.login-mode .master-module-btn { opacity: 0.4; pointer-events: none; }
+
+@media(max-width: 768px) {
+    .master-nav { padding: 0 12px; height: 56px; }
+    body { padding-top: 56px; }
+    .master-logo-sub, .master-meta { display: none; }
+    .master-module-btn { padding: 0 14px; font-size: 13px; }
+    .master-logo-text { font-size: 14px; }
+}
+
+</style>
 </head>
 <body>
+
+<!-- ════════════════════════════════════════════
+     MASTER NAVIGATION BAR
+════════════════════════════════════════════ -->
+<nav class="master-nav" id="master-nav">
+    <div class="master-logo">
+        <div class="master-logo-icon">🏗️</div>
+        <div>
+            <div class="master-logo-text">فولاد پلتفرم</div>
+            <div class="master-logo-sub">شرکت بازرگانی فولاد</div>
+        </div>
+    </div>
+
+    <button class="master-module-btn" id="btn-eval" onclick="switchModule('eval')">
+        <span class="m-icon">⭐</span>
+        ارزیابی پرسنل
+        <span class="m-badge">HR</span>
+    </button>
+
+    <button class="master-module-btn" id="btn-supply" onclick="switchModule('supply')">
+        <span class="m-icon">⚙️</span>
+        مدیریت تامین
+        <span class="m-badge">SCM</span>
+    </button>
+
+    <div class="master-spacer"></div>
+
+    <div class="master-meta" id="master-meta-bar">
+        <div class="master-user-badge" id="master-user-badge" style="display:none;">
+            👤 <span id="master-user-name">—</span>
+        </div>
+        <div class="master-clock" id="master-clock">—</div>
+        <button class="master-logout" id="master-logout-btn" onclick="masterLogout()" style="display:none;">
+            🚪 خروج
+        </button>
+    </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     MODULE: ارزیابی
+════════════════════════════════════════════ -->
+<div class="module-panel" id="eval-module">
+
 
 <!-- ======================== LOGIN SCREEN ======================== -->
 <div class="login-overlay" id="login-overlay">
@@ -762,7 +1020,498 @@
     </div>
 </div>
 
+
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     MODULE: تامین
+════════════════════════════════════════════ -->
+<div class="module-panel" id="supply-module">
+<div id="supply-app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-icon">⚙️</div>
+      <div>
+        <div class="header-title">بخش تامین — شرکت بازرگانی فولاد</div>
+        <div class="header-sub">مدیریت محصولات، کارخانجات و قیمت‌گذاری لحظه‌ای</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="live-badge"><div class="live-dot"></div>Real-time</div>
+      <div class="clock-badge" id="clock">—</div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-card blue">
+      <div class="stat-icon">📦</div>
+      <div class="stat-val" id="stat-products">0</div>
+      <div class="stat-label">محصولات ثبت‌شده</div>
+    </div>
+    <div class="stat-card teal">
+      <div class="stat-icon">🏭</div>
+      <div class="stat-val" id="stat-factories">0</div>
+      <div class="stat-label">کارخانجات فعال</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">💰</div>
+      <div class="stat-val" id="stat-prices">0</div>
+      <div class="stat-label">رکورد قیمت</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">🕐</div>
+      <div class="stat-val" id="stat-today">0</div>
+      <div class="stat-label">آپدیت امروز</div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div id="supply-nav">
+    <button class="supply-nav-btn active" onclick="switchTab('prices',this)">
+      💰 قیمت‌ها <span class="nav-count" id="nc-prices">0</span>
+    </button>
+    <button class="supply-nav-btn" onclick="switchTab('products',this)">
+      📦 محصولات <span class="nav-count" id="nc-products">0</span>
+    </button>
+    <button class="supply-nav-btn" onclick="switchTab('factories',this)">
+      🏭 کارخانجات <span class="nav-count" id="nc-factories">0</span>
+    </button>
+    <button class="supply-nav-btn" onclick="switchTab('analytics',this)">
+      📊 تحلیل هفتگی
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PRICES SECTION
+  ═══════════════════════════════════════ -->
+  <div id="supply-prices-section" class="supply-section active">
+
+    <!-- ADD PRICE FORM -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">➕ ثبت / آپدیت قیمت جدید</div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()">
+          <span id="toggle-icon">▲</span> مخفی کردن فرم
+        </button>
+      </div>
+      <div id="add-form-wrap">
+        <div class="form-add-section">
+          <div class="form-row">
+            <div class="form-group">
+              <div class="form-label">نوع بار *</div>
+              <select class="form-select" id="p-product">
+                <option value="">انتخاب محصول...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <div class="form-label">سایز *</div>
+              <input class="form-input" id="p-size" placeholder="مثال: ۱۴ یا ۱۰×۱۰">
+            </div>
+            <div class="form-group">
+              <div class="form-label">کارخانه *</div>
+              <select class="form-select" id="p-factory">
+                <option value="">انتخاب کارخانه...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <div class="form-label">قیمت (تومان / کیلوگرم) *</div>
+              <input class="form-input" id="p-price" type="number" placeholder="مثال: 45000">
+            </div>
+            <div class="form-group">
+              <div class="form-label">توضیحات</div>
+              <input class="form-input" id="p-note" placeholder="اختیاری...">
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-accent" onclick="addPrice()">✅ ثبت قیمت</button>
+            <button class="btn btn-ghost" onclick="clearPriceForm()">🔄 پاک کردن</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICE TABLE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 جدول قیمت‌ها</div>
+        <div style="font-size:12px;color:var(--text-light);">آپدیت خودکار با تاریخ و ساعت</div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="icon">🔍</span>
+          <input class="search-input" id="price-search" placeholder="جستجو در محصول، سایز، کارخانه..."
+            oninput="renderPriceTable()">
+        </div>
+        <select class="filter-select" id="filter-product" onchange="renderPriceTable()">
+          <option value="">همه محصولات</option>
+        </select>
+        <select class="filter-select" id="filter-factory" onchange="renderPriceTable()">
+          <option value="">همه کارخانجات</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 خروجی CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>نوع بار</th>
+              <th>سایز</th>
+              <th>کارخانه</th>
+              <th>قیمت (تومان/کیلو)</th>
+              <th>تغییر</th>
+              <th>آخرین آپدیت</th>
+              <th>توضیحات</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="price-tbody"></tbody>
+        </table>
+      </div>
+      <div id="price-empty" class="empty" style="display:none;">
+        <div class="empty-icon">💰</div>
+        <div class="empty-text">هنوز قیمتی ثبت نشده است</div>
+        <div class="empty-sub">از فرم بالا قیمت‌های جدید را وارد کنید</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PRODUCTS SECTION
+  ═══════════════════════════════════════ -->
+  <div id="supply-products-section" class="supply-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📦 لیست محصولات</div>
+        <button class="btn btn-accent" onclick="openProductModal()">➕ افزودن محصول</button>
+      </div>
+      <div class="grid-cards" id="products-grid">
+        <div class="empty">
+          <div class="empty-icon">📦</div>
+          <div class="empty-text">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       FACTORIES SECTION
+  ═══════════════════════════════════════ -->
+  <div id="supply-factories-section" class="supply-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🏭 لیست کارخانجات</div>
+        <button class="btn btn-accent" onclick="openFactoryModal()">➕ افزودن کارخانه</button>
+      </div>
+      <div class="grid-cards" id="factories-grid">
+        <div class="empty">
+          <div class="empty-icon">🏭</div>
+          <div class="empty-text">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ANALYTICS SECTION
+  ═══════════════════════════════════════ -->
+  <div id="supply-analytics-section" class="supply-section">
+
+    <!-- Filter bar -->
+    <div class="card" style="padding:16px 22px;">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div class="card-title" style="margin-bottom:0;font-size:15px;">🔎 فیلتر نمودار</div>
+        <select class="filter-select" id="chart-product-filter" onchange="renderAnalytics()">
+          <option value="">همه محصولات</option>
+        </select>
+        <select class="filter-select" id="chart-factory-filter" onchange="renderAnalytics()">
+          <option value="">همه کارخانجات</option>
+        </select>
+        <div class="period-tabs">
+          <button class="period-tab active" onclick="setPeriod(7,this)">۷ روز</button>
+          <button class="period-tab" onclick="setPeriod(14,this)">۱۴ روز</button>
+          <button class="period-tab" onclick="setPeriod(30,this)">۳۰ روز</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <!-- Price trend -->
+      <div class="chart-card" style="grid-column:1/-1;">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📈 روند قیمت هفتگی</div>
+            <div class="chart-subtitle" id="chart-range-label">۷ روز گذشته</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trendChart" height="90"></canvas>
+        </div>
+      </div>
+
+      <!-- Product distribution -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">🥧 توزیع ثبت قیمت به تفکیک محصول</div>
+            <div class="chart-subtitle">درصد رکوردها</div>
+          </div>
+        </div>
+        <canvas id="productPieChart" height="200"></canvas>
+      </div>
+
+      <!-- Factory comparison -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">🏭 مقایسه میانگین قیمت کارخانجات</div>
+            <div class="chart-subtitle">تومان / کیلوگرم</div>
+          </div>
+        </div>
+        <canvas id="factoryBarChart" height="200"></canvas>
+      </div>
+
+      <!-- Update frequency -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📅 فراوانی آپدیت روزانه</div>
+            <div class="chart-subtitle">تعداد آپدیت در هر روز</div>
+          </div>
+        </div>
+        <canvas id="updateFreqChart" height="200"></canvas>
+      </div>
+
+      <!-- Min/Max table -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📊 حداقل / حداکثر قیمت</div>
+            <div class="chart-subtitle">به تفکیک محصول</div>
+          </div>
+        </div>
+        <div id="minmax-table-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /supply-app -->
+
+<!-- PRODUCT MODAL -->
+<div class="modal" id="s-product-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="product-modal-title">📦 افزودن محصول</div>
+      <button class="modal-close" onclick="closeModal('s-product-modal')">×</button>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <div class="form-label">نام محصول *</div>
+      <input class="form-input" id="prod-name" placeholder="مثال: نبشی، میلگرد، ناودانی...">
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <div class="form-label">آیکون</div>
+      <input class="form-input" id="prod-icon" placeholder="🔩" maxlength="2">
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <div class="form-label">واحد اندازه‌گیری</div>
+      <select class="form-select" id="prod-unit">
+        <option value="کیلوگرم">کیلوگرم</option>
+        <option value="تن">تن</option>
+        <option value="شاخه">شاخه</option>
+        <option value="متر">متر</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:22px;">
+      <div class="form-label">توضیحات</div>
+      <input class="form-input" id="prod-desc" placeholder="اختیاری...">
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-accent" onclick="saveProduct()">✅ ذخیره</button>
+      <button class="btn btn-ghost" onclick="closeModal('s-product-modal')">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<!-- FACTORY MODAL -->
+<div class="modal" id="s-factory-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="factory-modal-title">🏭 افزودن کارخانه</div>
+      <button class="modal-close" onclick="closeModal('s-factory-modal')">×</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">نام کارخانه *</div>
+        <input class="form-input" id="fac-name" placeholder="مثال: ذوب‌آهن اصفهان">
+      </div>
+      <div class="form-group">
+        <div class="form-label">شهر</div>
+        <input class="form-input" id="fac-city" placeholder="مثال: اصفهان">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <div class="form-label">محصولات تولیدی</div>
+      <input class="form-input" id="fac-products" placeholder="مثال: میلگرد، تیرآهن">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">شماره تماس</div>
+        <input class="form-input" id="fac-tel" placeholder="0311-...">
+      </div>
+      <div class="form-group">
+        <div class="form-label">وضعیت</div>
+        <select class="form-select" id="fac-status">
+          <option value="فعال">فعال</option>
+          <option value="غیرفعال">غیرفعال</option>
+          <option value="در حال مذاکره">در حال مذاکره</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin:14px 0 22px;">
+      <div class="form-label">توضیحات</div>
+      <input class="form-input" id="fac-note" placeholder="اختیاری...">
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-accent" onclick="saveFactory()">✅ ذخیره</button>
+      <button class="btn btn-ghost" onclick="closeModal('s-factory-modal')">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PRICE MODAL -->
+<div class="modal" id="s-edit-price-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">✏️ ویرایش قیمت</div>
+      <button class="modal-close" onclick="closeModal('s-edit-price-modal')">×</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">نوع بار *</div>
+        <select class="form-select" id="ep-product"></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">سایز *</div>
+        <input class="form-input" id="ep-size">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">کارخانه *</div>
+        <select class="form-select" id="ep-factory"></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">قیمت (تومان / کیلو) *</div>
+        <input class="form-input" id="ep-price" type="number">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:22px;">
+      <div class="form-label">توضیحات</div>
+      <input class="form-input" id="ep-note">
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-accent" onclick="saveEditedPrice()">✅ ذخیره تغییرات</button>
+      <button class="btn btn-ghost" onclick="closeModal('s-edit-price-modal')">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="s-toast" id="s-toast"></div>
+
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     MASTER SCRIPT
+════════════════════════════════════════════ -->
 <script>
+// ── Master module switcher ──────────────────
+let activeModule = null;
+
+function switchModule(mod) {
+    document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.master-module-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(mod + '-module').classList.add('active');
+    document.getElementById('btn-' + mod).classList.add('active');
+    activeModule = mod;
+    sessionStorage.setItem('activeModule', mod);
+
+    // Supply module init on first visit
+    if (mod === 'supply' && !window._supplyInited) {
+        window._supplyInited = true;
+        supplyDOMReady();
+    }
+}
+
+// Master clock
+function masterClock() {
+    const now = new Date();
+    document.getElementById('master-clock').textContent =
+        now.toLocaleDateString('fa-IR') + '  ' + now.toLocaleTimeString('fa-IR');
+    // Also update supply clock if visible
+    const sc = document.getElementById('clock');
+    if (sc) sc.textContent = now.toLocaleDateString('fa-IR') + '  ' + now.toLocaleTimeString('fa-IR');
+}
+setInterval(masterClock, 1000);
+masterClock();
+
+// Master logout (delegates to eval's doLogout)
+function masterLogout() {
+    if (typeof doLogout === 'function') doLogout();
+}
+
+// After eval login, show master module buttons + user badge
+const _origDoLogin = window.doLogin;
+
+// Hook into eval's login/logout to update master nav
+function syncMasterNav() {
+    const mgr = sessionStorage.getItem('currentManager');
+    const masterUser = document.getElementById('master-user-badge');
+    const masterLogoutBtn = document.getElementById('master-logout-btn');
+    const masterNav = document.getElementById('master-nav');
+    if (mgr) {
+        document.getElementById('master-user-name').textContent = mgr;
+        masterUser.style.display = 'flex';
+        masterLogoutBtn.style.display = 'block';
+        masterNav.classList.remove('login-mode');
+        // Auto-open eval module after login
+        if (!activeModule) switchModule('eval');
+    } else {
+        masterUser.style.display = 'none';
+        masterLogoutBtn.style.display = 'none';
+        masterNav.classList.add('login-mode');
+    }
+}
+
+// Poll for login state changes
+setInterval(syncMasterNav, 500);
+syncMasterNav();
+
+// Restore last active module
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem('activeModule');
+    const mgr = sessionStorage.getItem('currentManager');
+    if (mgr && saved) {
+        setTimeout(() => switchModule(saved), 100);
+    } else {
+        // Show eval module by default (login screen will show)
+        switchModule('eval');
+    }
+});
+</script>
+
+<!-- ════════════════════════════════════════════
+     EVALUATION SCRIPT
+════════════════════════════════════════════ -->
+<script>
+
 // ==========================================
 // 🔥 FIREBASE CONFIGURATION
 // ==========================================
@@ -812,7 +1561,7 @@ function doLogin() {
     document.getElementById('current-manager-display').textContent = currentManager;
     document.getElementById('eval-manager-label').textContent = currentManager;
 
-    initApp();
+    sInitApp();
 }
 
 function doLogout() {
@@ -938,7 +1687,7 @@ let currentEditingEmployee = null;
 // ==========================================
 // INIT
 // ==========================================
-function initApp() {
+function sInitApp() {
     // Firebase status
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
@@ -1744,6 +2493,749 @@ function resetToDefaultDepartments() {
         if (e.target === this) this.classList.remove('active');
     });
 });
+
 </script>
+
+<!-- ════════════════════════════════════════════
+     SUPPLY SCRIPT
+════════════════════════════════════════════ -->
+<script>
+
+// ══════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyDeKK6THwUcR2hoh-VUiwAX7p79NL6UPQQ",
+  authDomain: "employee-evaluation-adva-9231e.firebaseapp.com",
+  projectId: "employee-evaluation-adva-9231e",
+  storageBucket: "employee-evaluation-adva-9231e.firebasestorage.app",
+  messagingSenderId: "151913486905",
+  appId: "1:151913486905:web:b6c183ae02c67fd4368be8"
+};
+
+let db = null;
+let fbOk = false;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+  fbOk = true;
+} catch(e) { console.warn('Firebase offline'); }
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let products  = [];
+let factories = [];
+let prices    = [];
+let chartPeriod = 7;
+let editingProductId = null;
+let editingFactoryId = null;
+let editingPriceId   = null;
+let addFormVisible   = true;
+
+// ══════════════════════════════════
+// CLOCK
+// ══════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('fa-IR');
+  const d = now.toLocaleDateString('fa-IR');
+  document.getElementById('clock').textContent = `${d}  ${t}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════════
+// TOAST
+// ══════════════════════════════════
+function sShowToast(msg, icon='✅') {
+  const t = document.getElementById('s-toast');
+  t.innerHTML = `<span>${icon}</span> ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ══════════════════════════════════
+// STORAGE (Firebase + LocalStorage)
+// ══════════════════════════════════
+function persist(key, data) {
+  if (fbOk) db.ref('supply/'+key).set(data).catch(console.error);
+  localStorage.setItem('supply_'+key, JSON.stringify(data));
+}
+function loadLS(key) {
+  try { return JSON.parse(localStorage.getItem('supply_'+key)) || []; } catch{ return []; }
+}
+function listenFB(key, cb) {
+  if (fbOk) {
+    db.ref('supply/'+key).on('value', snap => {
+      cb(snap.exists() ? (Array.isArray(snap.val()) ? snap.val() : Object.values(snap.val())) : []);
+    });
+  }
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+function supplyDOMReady() { // was DOMContentLoaded
+  (()=> {
+  // Load from localStorage first (instant)
+  products  = loadLS('products');
+  factories = loadLS('factories');
+  prices    = loadLS('prices');
+  refreshAll();
+
+  // Seed defaults if empty
+  if (products.length === 0) seedProducts();
+  if (factories.length === 0) seedFactories();
+
+  // Listen Firebase
+  listenFB('products',  d => { products  = d; persist('products',  products);  refreshAll(); });
+  listenFB('factories', d => { factories = d; persist('factories', factories); refreshAll(); });
+  listenFB('prices',    d => { prices    = d; persist('prices',    prices);    refreshAll(); });
+});
+  })();
+}
+
+function seedProducts() {
+  products = [
+    {id:1,name:'نبشی',icon:'📐',unit:'کیلوگرم',desc:'نبشی ساختمانی و صنعتی'},
+    {id:2,name:'میلگرد',icon:'🔩',unit:'کیلوگرم',desc:'میلگرد آجدار و ساده'},
+    {id:3,name:'ناودانی',icon:'📏',unit:'کیلوگرم',desc:'ناودانی سبک و سنگین'},
+    {id:4,name:'تیرآهن',icon:'🏗️',unit:'کیلوگرم',desc:'تیرآهن IPE و INP'},
+    {id:5,name:'ورق',icon:'🔲',unit:'کیلوگرم',desc:'ورق سیاه و گالوانیزه'},
+    {id:6,name:'لوله',icon:'⭕',unit:'متر',desc:'لوله گاز و آب'},
+  ];
+  persist('products', products);
+}
+
+function seedFactories() {
+  factories = [
+    {id:1,name:'ذوب‌آهن اصفهان',city:'اصفهان',products:'میلگرد، تیرآهن',tel:'0311-XXXXXXX',status:'فعال',note:'بزرگ‌ترین تولیدکننده'},
+    {id:2,name:'فولاد مبارکه',city:'مبارکه',products:'ورق، میلگرد',tel:'0312-XXXXXXX',status:'فعال',note:''},
+    {id:3,name:'نورد لرستان',city:'خرم‌آباد',products:'نبشی، ناودانی',tel:'0661-XXXXXXX',status:'فعال',note:''},
+    {id:4,name:'شاهین بناب',city:'بناب',products:'میلگرد',tel:'0412-XXXXXXX',status:'فعال',note:''},
+    {id:5,name:'آریا ذوب',city:'تهران',products:'لوله، نبشی',tel:'021-XXXXXXX',status:'در حال مذاکره',note:''},
+  ];
+  persist('factories', factories);
+}
+
+// ══════════════════════════════════
+// REFRESH ALL
+// ══════════════════════════════════
+function refreshAll() {
+  updateStats();
+  updateDropdowns();
+  renderProductsGrid();
+  renderFactoriesGrid();
+  renderPriceTable();
+  refreshAnalyticsDropdowns();
+}
+
+function updateStats() {
+  document.getElementById('stat-products').textContent  = products.length;
+  document.getElementById('stat-factories').textContent = factories.length;
+  document.getElementById('stat-prices').textContent    = prices.length;
+  document.getElementById('nc-products').textContent    = products.length;
+  document.getElementById('nc-factories').textContent   = factories.length;
+  document.getElementById('nc-prices').textContent      = prices.length;
+
+  const today = new Date().toDateString();
+  const todayCount = prices.filter(p => new Date(p.updatedAt).toDateString() === today).length;
+  document.getElementById('stat-today').textContent = todayCount;
+}
+
+// ══════════════════════════════════
+// DROPDOWNS
+// ══════════════════════════════════
+function updateDropdowns() {
+  ['p-product','filter-product','ep-product','chart-product-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const cur = el.value;
+    const isFilter = id.includes('filter') || id.includes('chart');
+    el.innerHTML = isFilter ? '<option value="">همه محصولات</option>' : '<option value="">انتخاب محصول...</option>';
+    products.forEach(p => {
+      el.insertAdjacentHTML('beforeend',`<option value="${p.name}"${p.name===cur?' selected':''}>${p.icon||'📦'} ${p.name}</option>`);
+    });
+  });
+
+  ['p-factory','filter-factory','ep-factory','chart-factory-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const cur = el.value;
+    const isFilter = id.includes('filter') || id.includes('chart');
+    el.innerHTML = isFilter ? '<option value="">همه کارخانجات</option>' : '<option value="">انتخاب کارخانه...</option>';
+    factories.forEach(f => {
+      el.insertAdjacentHTML('beforeend',`<option value="${f.name}"${f.name===cur?' selected':''}>${f.name}</option>`);
+    });
+  });
+}
+
+// ══════════════════════════════════
+// PRODUCTS
+// ══════════════════════════════════
+function openProductModal(id=null) {
+  editingProductId = id;
+  const m = document.getElementById('s-product-modal');
+  if (id) {
+    const p = products.find(x=>x.id===id);
+    document.getElementById('product-modal-title').textContent = '✏️ ویرایش محصول';
+    document.getElementById('prod-name').value = p.name;
+    document.getElementById('prod-icon').value = p.icon||'';
+    document.getElementById('prod-unit').value = p.unit||'کیلوگرم';
+    document.getElementById('prod-desc').value = p.desc||'';
+  } else {
+    document.getElementById('product-modal-title').textContent = '📦 افزودن محصول جدید';
+    ['prod-name','prod-icon','prod-desc'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('prod-unit').value='کیلوگرم';
+  }
+  m.classList.add('open');
+}
+
+function saveProduct() {
+  const name = document.getElementById('prod-name').value.trim();
+  if (!name) { sShowToast('نام محصول الزامی است!','⚠️'); return; }
+  if (editingProductId) {
+    const p = products.find(x=>x.id===editingProductId);
+    p.name = name; p.icon = document.getElementById('prod-icon').value;
+    p.unit = document.getElementById('prod-unit').value;
+    p.desc = document.getElementById('prod-desc').value;
+  } else {
+    products.push({
+      id: Date.now(), name,
+      icon: document.getElementById('prod-icon').value || '📦',
+      unit: document.getElementById('prod-unit').value,
+      desc: document.getElementById('prod-desc').value
+    });
+  }
+  persist('products', products);
+  closeModal('s-product-modal');
+  renderProductsGrid(); updateDropdowns(); updateStats();
+  sShowToast(editingProductId ? 'محصول ویرایش شد' : 'محصول اضافه شد');
+  editingProductId = null;
+}
+
+function deleteProduct(id) {
+  if (!confirm('حذف این محصول؟')) return;
+  products = products.filter(p=>p.id!==id);
+  persist('products', products);
+  renderProductsGrid(); updateDropdowns(); updateStats();
+  sShowToast('محصول حذف شد','🗑️');
+}
+
+function renderProductsGrid() {
+  const g = document.getElementById('products-grid');
+  if (products.length === 0) {
+    g.innerHTML = `<div class="empty"><div class="empty-icon">📦</div>
+      <div class="empty-text">هنوز محصولی اضافه نشده</div></div>`;
+    return;
+  }
+  g.innerHTML = products.map(p => {
+    const cnt = prices.filter(x=>x.product===p.name).length;
+    return `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-icon">${p.icon||'📦'}</div>
+        <div class="chip chip-amber">${cnt} قیمت</div>
+      </div>
+      <div class="item-card-name">${p.name}</div>
+      <div class="item-card-meta">${p.unit}  ${p.desc?'· '+p.desc:''}</div>
+      <div class="item-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openProductModal(${p.id})">✏️ ویرایش</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════
+// FACTORIES
+// ══════════════════════════════════
+function openFactoryModal(id=null) {
+  editingFactoryId = id;
+  const m = document.getElementById('s-factory-modal');
+  if (id) {
+    const f = factories.find(x=>x.id===id);
+    document.getElementById('factory-modal-title').textContent = '✏️ ویرایش کارخانه';
+    document.getElementById('fac-name').value     = f.name;
+    document.getElementById('fac-city').value     = f.city||'';
+    document.getElementById('fac-products').value = f.products||'';
+    document.getElementById('fac-tel').value      = f.tel||'';
+    document.getElementById('fac-status').value   = f.status||'فعال';
+    document.getElementById('fac-note').value     = f.note||'';
+  } else {
+    document.getElementById('factory-modal-title').textContent = '🏭 افزودن کارخانه';
+    ['fac-name','fac-city','fac-products','fac-tel','fac-note'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('fac-status').value='فعال';
+  }
+  m.classList.add('open');
+}
+
+function saveFactory() {
+  const name = document.getElementById('fac-name').value.trim();
+  if (!name) { sShowToast('نام کارخانه الزامی است!','⚠️'); return; }
+  const obj = {
+    name, city:document.getElementById('fac-city').value,
+    products:document.getElementById('fac-products').value,
+    tel:document.getElementById('fac-tel').value,
+    status:document.getElementById('fac-status').value,
+    note:document.getElementById('fac-note').value
+  };
+  if (editingFactoryId) {
+    const i = factories.findIndex(x=>x.id===editingFactoryId);
+    factories[i] = { ...factories[i], ...obj };
+  } else {
+    factories.push({ id:Date.now(), ...obj });
+  }
+  persist('factories', factories);
+  closeModal('s-factory-modal');
+  renderFactoriesGrid(); updateDropdowns(); updateStats();
+  sShowToast(editingFactoryId ? 'کارخانه ویرایش شد' : 'کارخانه اضافه شد');
+  editingFactoryId = null;
+}
+
+function deleteFactory(id) {
+  if (!confirm('حذف این کارخانه؟')) return;
+  factories = factories.filter(f=>f.id!==id);
+  persist('factories', factories);
+  renderFactoriesGrid(); updateDropdowns(); updateStats();
+  sShowToast('کارخانه حذف شد','🗑️');
+}
+
+const statusChip = s => s==='فعال' ? 'chip-green' : s==='غیرفعال' ? 'chip-red' : 'chip-amber';
+
+function renderFactoriesGrid() {
+  const g = document.getElementById('factories-grid');
+  if (factories.length === 0) {
+    g.innerHTML = `<div class="empty"><div class="empty-icon">🏭</div>
+      <div class="empty-text">هنوز کارخانه‌ای اضافه نشده</div></div>`;
+    return;
+  }
+  g.innerHTML = factories.map(f => {
+    const cnt = prices.filter(p=>p.factory===f.name).length;
+    return `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div class="item-card-icon">🏭</div>
+        <div class="chip ${statusChip(f.status)}">${f.status}</div>
+      </div>
+      <div class="item-card-name">${f.name}</div>
+      <div class="item-card-meta" style="margin-bottom:8px;">
+        ${f.city?'📍 '+f.city+' &nbsp;':''} ${cnt} رکورد قیمت
+      </div>
+      ${f.products?`<div style="font-size:12px;color:var(--text-light);margin-bottom:4px;">🔩 ${f.products}</div>`:''}
+      ${f.tel?`<div style="font-size:12px;color:var(--text-light);">📞 ${f.tel}</div>`:''}
+      <div class="item-card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openFactoryModal(${f.id})">✏️ ویرایش</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFactory(${f.id})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════
+// PRICES
+// ══════════════════════════════════
+function nowStr() {
+  return new Date().toISOString();
+}
+function formatDateTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return {
+    date: d.toLocaleDateString('fa-IR'),
+    time: d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})
+  };
+}
+
+function addPrice() {
+  const product = document.getElementById('p-product').value;
+  const size    = document.getElementById('p-size').value.trim();
+  const factory = document.getElementById('p-factory').value;
+  const price   = parseFloat(document.getElementById('p-price').value);
+  const note    = document.getElementById('p-note').value.trim();
+
+  if (!product || !size || !factory || isNaN(price)) {
+    sShowToast('لطفاً فیلدهای ستاره‌دار را پر کنید','⚠️'); return;
+  }
+
+  // Check if same product+size+factory exists → update it
+  const existing = prices.find(p => p.product===product && p.size===size && p.factory===factory);
+
+  if (existing) {
+    const oldPrice = existing.price;
+    existing.prevPrice = oldPrice;
+    existing.price     = price;
+    existing.note      = note;
+    existing.updatedAt = nowStr();
+    existing.updatedBy = 'تیم تامین';
+    sShowToast(`قیمت ${product} ${size} آپدیت شد`,'🔄');
+  } else {
+    prices.push({
+      id: Date.now(), product, size, factory, price,
+      prevPrice: null, note,
+      createdAt: nowStr(), updatedAt: nowStr(), updatedBy:'تیم تامین'
+    });
+    sShowToast(`قیمت ${product} ${size} ثبت شد`);
+  }
+
+  persist('prices', prices);
+  clearPriceForm();
+  renderPriceTable(); updateStats();
+  refreshAnalyticsDropdowns();
+}
+
+function clearPriceForm() {
+  ['p-product','p-factory'].forEach(id => document.getElementById(id).value='');
+  ['p-size','p-price','p-note'].forEach(id => document.getElementById(id).value='');
+}
+
+function renderPriceTable() {
+  const search  = document.getElementById('price-search')?.value.toLowerCase()||'';
+  const fprod   = document.getElementById('filter-product')?.value||'';
+  const ffact   = document.getElementById('filter-factory')?.value||'';
+  const tbody   = document.getElementById('price-tbody');
+  const empty   = document.getElementById('price-empty');
+
+  let rows = [...prices].sort((a,b) => new Date(b.updatedAt)-new Date(a.updatedAt));
+
+  if (fprod)  rows = rows.filter(r => r.product===fprod);
+  if (ffact)  rows = rows.filter(r => r.factory===ffact);
+  if (search) rows = rows.filter(r =>
+    r.product.toLowerCase().includes(search) ||
+    r.size.toLowerCase().includes(search) ||
+    r.factory.toLowerCase().includes(search) ||
+    (r.note||'').toLowerCase().includes(search)
+  );
+
+  if (rows.length === 0) {
+    tbody.innerHTML='';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  tbody.innerHTML = rows.map(r => {
+    const dt = formatDateTime(r.updatedAt);
+    let changeTxt = '<span class="change-flat">—</span>';
+    if (r.prevPrice !== null && r.prevPrice !== undefined) {
+      const diff = r.price - r.prevPrice;
+      const pct  = ((diff/r.prevPrice)*100).toFixed(1);
+      if (diff > 0) changeTxt = `<span class="change-up">▲ ${pct}%</span>`;
+      else if (diff < 0) changeTxt = `<span class="change-down">▼ ${Math.abs(pct)}%</span>`;
+      else changeTxt = '<span class="change-flat">بدون تغییر</span>';
+    }
+    const prod = products.find(p=>p.name===r.product);
+    return `<tr id="row-${r.id}">
+      <td><span class="chip chip-cyan">${prod?.icon||'📦'} ${r.product}</span></td>
+      <td><strong>${r.size}</strong></td>
+      <td>${r.factory}</td>
+      <td>
+        <div class="price-cell">${Number(r.price).toLocaleString('fa-IR')}</div>
+        <div class="price-unit">تومان / کیلو</div>
+      </td>
+      <td>${changeTxt}</td>
+      <td>
+        <div class="update-badge">
+          <span class="date">${dt.date}</span>
+          <span>${dt.time}</span>
+        </div>
+      </td>
+      <td style="max-width:140px;font-size:12px;color:var(--text-light);">${r.note||'—'}</td>
+      <td>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" onclick="openEditPrice(${r.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePrice(${r.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openEditPrice(id) {
+  editingPriceId = id;
+  const p = prices.find(x=>x.id===id);
+  document.getElementById('ep-size').value  = p.size;
+  document.getElementById('ep-price').value = p.price;
+  document.getElementById('ep-note').value  = p.note||'';
+  updateDropdowns();
+  setTimeout(()=>{
+    document.getElementById('ep-product').value = p.product;
+    document.getElementById('ep-factory').value = p.factory;
+  },50);
+  document.getElementById('s-edit-price-modal').classList.add('open');
+}
+
+function saveEditedPrice() {
+  const p = prices.find(x=>x.id===editingPriceId);
+  const newPrice = parseFloat(document.getElementById('ep-price').value);
+  p.prevPrice  = p.price;
+  p.product    = document.getElementById('ep-product').value;
+  p.size       = document.getElementById('ep-size').value;
+  p.factory    = document.getElementById('ep-factory').value;
+  p.price      = newPrice;
+  p.note       = document.getElementById('ep-note').value;
+  p.updatedAt  = nowStr();
+  persist('prices', prices);
+  closeModal('s-edit-price-modal');
+  renderPriceTable(); updateStats();
+  sShowToast('قیمت ویرایش شد','🔄');
+}
+
+function deletePrice(id) {
+  if (!confirm('حذف این رکورد قیمت؟')) return;
+  prices = prices.filter(p=>p.id!==id);
+  persist('prices', prices);
+  renderPriceTable(); updateStats();
+  sShowToast('رکورد حذف شد','🗑️');
+}
+
+// ══════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════
+function exportCSV() {
+  if (prices.length===0) { sShowToast('داده‌ای برای خروجی نیست','⚠️'); return; }
+  const header = ['نوع بار','سایز','کارخانه','قیمت (تومان/کیلو)','تاریخ آپدیت','توضیحات'];
+  const rows = prices.map(r => [
+    r.product, r.size, r.factory, r.price,
+    new Date(r.updatedAt).toLocaleString('fa-IR'),
+    r.note||''
+  ]);
+  const csv = [header,...rows].map(r=>r.join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `supply-prices-${Date.now()}.csv`;
+  a.click();
+  sShowToast('فایل CSV دانلود شد','📥');
+}
+
+// ══════════════════════════════════
+// TOGGLE FORM
+// ══════════════════════════════════
+function toggleAddForm() {
+  addFormVisible = !addFormVisible;
+  document.getElementById('add-form-wrap').style.display = addFormVisible ? '' : 'none';
+  const btn = document.querySelector('[onclick="toggleAddForm()"]');
+  btn.innerHTML = addFormVisible ? '▲ مخفی کردن فرم' : '▼ نمایش فرم ثبت';
+}
+
+// ══════════════════════════════════
+// ANALYTICS
+// ══════════════════════════════════
+function setPeriod(days, el) {
+  chartPeriod = days;
+  document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const labels = {7:'۷ روز گذشته',14:'۱۴ روز گذشته',30:'۳۰ روز گذشته'};
+  document.getElementById('chart-range-label').textContent = labels[days]||'';
+  renderAnalytics();
+}
+
+function refreshAnalyticsDropdowns() { updateDropdowns(); }
+
+const chartDefaults = {
+  font:'Vazirmatn',
+  color:'#6b7280',
+  grid:'#e5e7eb',
+};
+
+let _trendChart, _pieChart, _barChart, _freqChart;
+
+function renderAnalytics() {
+  const filterProd = document.getElementById('chart-product-filter')?.value||'';
+  const filterFact = document.getElementById('chart-factory-filter')?.value||'';
+
+  let data = [...prices];
+  if (filterProd) data = data.filter(p=>p.product===filterProd);
+  if (filterFact) data = data.filter(p=>p.factory===filterFact);
+
+  // ── TREND CHART ──────────────────────
+  const days = chartPeriod;
+  const trendDates = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=days-1;i>=0;i--) {
+    const d = new Date(today); d.setDate(today.getDate()-i);
+    trendDates.push(d);
+  }
+
+  // Build dataset per product (top 5)
+  const prods = [...new Set(data.map(p=>p.product))].slice(0,5);
+  const palette = ['#1e40af','#0891b2','#059669','#7c3aed','#d97706'];
+
+  const trendDatasets = prods.map((prod,i) => {
+    const points = trendDates.map(d => {
+      const dayStr = d.toDateString();
+      const recs = data.filter(p => p.product===prod && new Date(p.updatedAt).toDateString()===dayStr);
+      if (recs.length===0) return null;
+      return Math.round(recs.reduce((s,r)=>s+r.price,0)/recs.length);
+    });
+    return {
+      label:prod, data:points,
+      borderColor:palette[i%palette.length],
+      backgroundColor:'transparent',
+      tension:0.4, pointRadius:4,
+      pointBackgroundColor:palette[i%palette.length],
+      spanGaps:true, borderWidth:2
+    };
+  });
+
+  const trendLabels = trendDates.map(d=>d.toLocaleDateString('fa-IR',{month:'short',day:'numeric'}));
+
+  const trendCtx = document.getElementById('trendChart');
+  if (_trendChart) _trendChart.destroy();
+  _trendChart = new Chart(trendCtx, {
+    type:'line',
+    data:{ labels:trendLabels, datasets: trendDatasets.length?trendDatasets:[{label:'بدون داده',data:[],borderColor:'#475569'}]},
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{color:chartDefaults.color,font:{family:'Vazirmatn',size:12}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${Number(ctx.raw||0).toLocaleString('fa-IR')} تومان`}}
+      },
+      scales:{
+        x:{ticks:{color:chartDefaults.color},grid:{color:chartDefaults.grid}},
+        y:{ticks:{color:chartDefaults.color,callback:v=>Number(v).toLocaleString('fa-IR')},grid:{color:chartDefaults.grid}}
+      }
+    }
+  });
+
+  // ── PIE: product distribution ─────────
+  const prodCounts = {};
+  data.forEach(p=>{ prodCounts[p.product]=(prodCounts[p.product]||0)+1; });
+  const pieCtx = document.getElementById('productPieChart');
+  if (_pieChart) _pieChart.destroy();
+  _pieChart = new Chart(pieCtx, {
+    type:'doughnut',
+    data:{
+      labels:Object.keys(prodCounts),
+      datasets:[{data:Object.values(prodCounts),
+        backgroundColor:['#1e40af','#0891b2','#059669','#7c3aed','#d97706','#dc2626','#0e7490'],
+        borderColor:'#ffffff',borderWidth:3
+      }]
+    },
+    options:{
+      responsive:true,cutout:'65%',
+      plugins:{
+        legend:{position:'bottom',labels:{color:chartDefaults.color,font:{family:'Vazirmatn',size:12},padding:14}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} رکورد`}}
+      }
+    }
+  });
+
+  // ── BAR: factory avg price ────────────
+  const factAvg = {};
+  data.forEach(p=>{
+    if (!factAvg[p.factory]) factAvg[p.factory]={sum:0,cnt:0};
+    factAvg[p.factory].sum+=p.price; factAvg[p.factory].cnt+=1;
+  });
+  const facLabels = Object.keys(factAvg);
+  const facVals   = facLabels.map(k=>Math.round(factAvg[k].sum/factAvg[k].cnt));
+  const barCtx = document.getElementById('factoryBarChart');
+  if (_barChart) _barChart.destroy();
+  _barChart = new Chart(barCtx,{
+    type:'bar',
+    data:{
+      labels:facLabels,
+      datasets:[{
+        label:'میانگین قیمت (تومان)',
+        data:facVals,
+        backgroundColor:'rgba(30,64,175,0.75)',
+        borderColor:'#1e40af',borderWidth:1,borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,indexAxis:'y',
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${Number(ctx.raw).toLocaleString('fa-IR')} تومان`}}
+      },
+      scales:{
+        x:{ticks:{color:chartDefaults.color,callback:v=>Number(v).toLocaleString('fa-IR')},grid:{color:chartDefaults.grid}},
+        y:{ticks:{color:chartDefaults.color},grid:{color:chartDefaults.grid}}
+      }
+    }
+  });
+
+  // ── FREQ: daily updates ───────────────
+  const freqMap = {};
+  trendDates.forEach(d=>{ freqMap[d.toDateString()]=0; });
+  data.forEach(p=>{
+    const ds = new Date(p.updatedAt).toDateString();
+    if (freqMap[ds]!==undefined) freqMap[ds]++;
+  });
+  const freqCtx = document.getElementById('updateFreqChart');
+  if (_freqChart) _freqChart.destroy();
+  _freqChart = new Chart(freqCtx,{
+    type:'bar',
+    data:{
+      labels:trendLabels,
+      datasets:[{
+        label:'آپدیت',data:Object.values(freqMap),
+        backgroundColor:'rgba(8,145,178,0.7)',
+        borderColor:'#0891b2',borderWidth:1,borderRadius:4
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:chartDefaults.color},grid:{color:chartDefaults.grid}},
+        y:{ticks:{color:chartDefaults.color,stepSize:1},grid:{color:chartDefaults.grid}}
+      }
+    }
+  });
+
+  // ── MIN/MAX TABLE ─────────────────────
+  const mmWrap = document.getElementById('minmax-table-wrap');
+  if (data.length===0) {
+    mmWrap.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">داده‌ای موجود نیست</div></div>';
+    return;
+  }
+  const mmMap = {};
+  data.forEach(p=>{
+    if (!mmMap[p.product]) mmMap[p.product]={min:Infinity,max:-Infinity,cnt:0};
+    mmMap[p.product].min = Math.min(mmMap[p.product].min, p.price);
+    mmMap[p.product].max = Math.max(mmMap[p.product].max, p.price);
+    mmMap[p.product].cnt++;
+  });
+  mmWrap.innerHTML = `<table class="data-table">
+    <thead><tr><th>محصول</th><th>حداقل</th><th>حداکثر</th><th>رکورد</th></tr></thead>
+    <tbody>${Object.entries(mmMap).map(([prod,v])=>`
+      <tr>
+        <td>${prod}</td>
+        <td style="color:var(--success);font-weight:700;">${Number(v.min).toLocaleString('fa-IR')}</td>
+        <td style="color:var(--danger);font-weight:700;">${Number(v.max).toLocaleString('fa-IR')}</td>
+        <td><span class="chip chip-gray">${v.cnt}</span></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ══════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════
+function switchTab(tab, el) {
+  document.querySelectorAll('.supply-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.supply-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('supply-'+tab+'-section').classList.add('active');
+  el.classList.add('active');
+  if (tab==='analytics') {
+    refreshAnalyticsDropdowns();
+    setTimeout(renderAnalytics, 100);
+  }
+}
+
+// ══════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('#supply-app .modal, #s-product-modal, #s-factory-modal, #s-edit-price-modal').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+});
+
+</script>
+
 </body>
 </html>
