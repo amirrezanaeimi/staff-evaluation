@@ -6,6 +6,7 @@
 <title>پلتفرم مدیریت — شرکت بازرگانی فولاد</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <style>
@@ -487,7 +488,8 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
         <h2 class="card-title">📋 ارزیابی‌های ثبت‌شده توسط من</h2>
         <div class="alert alert-info" id="my-history-info">📌 فقط ارزیابی‌های شما نمایش داده می‌شود.</div>
         <div class="btn-group" style="margin-bottom:18px;margin-top:0;">
-          <button class="btn btn-warning" onclick="exportMyEvaluations()">📥 پشتیبان‌گیری</button>
+          <button class="btn btn-warning" onclick="exportMyEvaluations()">📥 پشتیبان‌گیری JSON</button>
+          <button class="btn btn-success" onclick="exportMyEvaluationsExcel()">📊 خروجی اکسل (ارزیابی‌های من)</button>
         </div>
         <table class="history-table">
           <thead><tr><th>تاریخ</th><th>نام کارمند</th><th>بخش</th><th>امتیاز</th><th>رتبه</th><th>عملیات</th></tr></thead>
@@ -507,7 +509,13 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
       <div class="summary-stats-grid" id="summary-stats"></div>
       <div class="card">
-        <h2 class="card-title">🏆 رتبه‌بندی کلی کارمندان</h2>
+        <div class="card-header">
+          <h2 class="card-title" style="margin-bottom:0;">🏆 رتبه‌بندی کلی کارمندان</h2>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-success btn-sm" onclick="exportAllEvaluationsExcel()">📊 خروجی اکسل (همه ارزیابی‌ها)</button>
+            <button class="btn btn-primary btn-sm" onclick="exportRankingExcel()">🏆 خروجی اکسل (رتبه‌بندی)</button>
+          </div>
+        </div>
         <div class="alert alert-warning">⚠️ این جدول مجموع تمام ارزیابی‌های همه مدیران را نشان می‌دهد.</div>
         <div style="overflow-x:auto;">
           <table class="ranking-table" id="global-ranking-table">
@@ -1506,6 +1514,256 @@ function resetToDefaultDepartments(){
   const el=document.getElementById(id);
   if (el) el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
 });
+
+// ═══════════════════════════════════════════
+// EXCEL EXPORT FUNCTIONS  (uses SheetJS)
+// ═══════════════════════════════════════════
+
+// ── Helper: Persian date string ──
+function persianDate(isoStr) {
+  try { return new Date(isoStr).toLocaleDateString('fa-IR'); } catch { return isoStr||''; }
+}
+
+// ── Helper: score badge label ──
+function scoreBadge(pct) {
+  if (pct >= 70) return 'عالی';
+  if (pct >= 50) return 'خوب';
+  return 'نیاز به بهبود';
+}
+
+// ── Helper: apply header style ──
+function styleHeader(ws, range, bgColor) {
+  if (!ws['!ref']) return;
+  const R = XLSX.utils.decode_range(range);
+  for (let C = R.s.c; C <= R.e.c; C++) {
+    const cellAddr = XLSX.utils.encode_cell({r: R.s.r, c: C});
+    if (!ws[cellAddr]) continue;
+    ws[cellAddr].s = {
+      font: { bold: true, color: { rgb: 'FFFFFF' }, name: 'Arial', sz: 11 },
+      fill: { fgColor: { rgb: bgColor }, patternType: 'solid' },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+      border: {
+        top: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        left: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        right: { style: 'thin', color: { rgb: 'CCCCCC' } }
+      }
+    };
+  }
+}
+
+// ── Helper: apply row style ──
+function styleDataRows(ws, startRow, endRow, colCount, altColor) {
+  for (let R = startRow; R <= endRow; R++) {
+    const isAlt = (R - startRow) % 2 === 1;
+    for (let C = 0; C < colCount; C++) {
+      const cellAddr = XLSX.utils.encode_cell({r: R, c: C});
+      if (!ws[cellAddr]) {
+        ws[cellAddr] = { t: 's', v: '' };
+      }
+      ws[cellAddr].s = {
+        font: { name: 'Arial', sz: 10 },
+        fill: isAlt ? { fgColor: { rgb: altColor }, patternType: 'solid' } : { patternType: 'none' },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: {
+          bottom: { style: 'thin', color: { rgb: 'E0E0E0' } },
+          left: { style: 'thin', color: { rgb: 'E0E0E0' } },
+          right: { style: 'thin', color: { rgb: 'E0E0E0' } }
+        }
+      };
+    }
+  }
+}
+
+// ═══════════════════════════════════════
+// 1) خروجی اکسل: ارزیابی‌های من
+// ═══════════════════════════════════════
+function exportMyEvaluationsExcel() {
+  const myEvals = evaluations.filter(e => e.managerName === currentManager);
+  if (myEvals.length === 0) { alert('⚠️ ارزیابی‌ای برای خروجی وجود ندارد!'); return; }
+
+  const wb = XLSX.utils.book_new();
+
+  // ── Sheet 1: لیست ارزیابی‌ها ──
+  const sorted = [...myEvals].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp));
+  const headers1 = ['ردیف','تاریخ ارزیابی','نام کارمند','بخش','امتیاز کسب شده','حداکثر امتیاز','درصد','رتبه','تاریخ ثبت'];
+  const rows1 = sorted.map((ev, i) => {
+    const pct = Math.round(ev.totalScore / ev.maxScore * 100);
+    return [
+      i + 1,
+      persianDate(ev.date),
+      ev.employeeName,
+      ev.departmentName,
+      ev.totalScore,
+      ev.maxScore,
+      pct + '%',
+      scoreBadge(pct),
+      persianDate(ev.timestamp)
+    ];
+  });
+  // Summary row
+  const avgPct = Math.round(myEvals.reduce((s,e) => s + (e.totalScore/e.maxScore*100), 0) / myEvals.length);
+  rows1.push([]);
+  rows1.push(['', 'میانگین کل', '', '', '', '', avgPct + '%', scoreBadge(avgPct), '']);
+
+  const ws1 = XLSX.utils.aoa_to_sheet([headers1, ...rows1]);
+  ws1['!cols'] = [
+    {wch:6},{wch:14},{wch:22},{wch:18},{wch:16},{wch:16},{wch:10},{wch:16},{wch:14}
+  ];
+  styleHeader(ws1, 'A1:I1', '1E40AF');
+  styleDataRows(ws1, 1, rows1.length, 9, 'EFF6FF');
+  XLSX.utils.book_append_sheet(wb, ws1, 'لیست ارزیابی‌ها');
+
+  // ── Sheet 2: جزئیات امتیاز هر معیار ──
+  const headers2 = ['نام کارمند','بخش','تاریخ','معیار','ضریب','امتیاز (۱-۱۰)','امتیاز وزنی'];
+  const rows2 = [];
+  sorted.forEach(ev => {
+    if (ev.criteriaSnapshot && ev.scores) {
+      ev.criteriaSnapshot.forEach(c => {
+        const sc = ev.scores[c.id] || 0;
+        rows2.push([
+          ev.employeeName,
+          ev.departmentName,
+          persianDate(ev.date),
+          c.name,
+          c.weight,
+          sc,
+          sc * c.weight
+        ]);
+      });
+    }
+  });
+  if (rows2.length > 0) {
+    const ws2 = XLSX.utils.aoa_to_sheet([headers2, ...rows2]);
+    ws2['!cols'] = [{wch:22},{wch:18},{wch:14},{wch:30},{wch:10},{wch:14},{wch:14}];
+    styleHeader(ws2, 'A1:G1', '059669');
+    styleDataRows(ws2, 1, rows2.length, 7, 'F0FDF4');
+    XLSX.utils.book_append_sheet(wb, ws2, 'جزئیات معیارها');
+  }
+
+  // ── Save ──
+  const fileName = `ارزیابی-${currentManager}-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+  alert('✅ فایل اکسل دانلود شد!');
+}
+
+// ═══════════════════════════════════════
+// 2) خروجی اکسل: همه ارزیابی‌ها (داشبورد)
+// ═══════════════════════════════════════
+function exportAllEvaluationsExcel() {
+  if (evaluations.length === 0) { alert('⚠️ ارزیابی‌ای وجود ندارد!'); return; }
+
+  const wb = XLSX.utils.book_new();
+
+  // ── Sheet 1: همه ارزیابی‌ها ──
+  const sorted = [...evaluations].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp));
+  const headers1 = ['ردیف','تاریخ ارزیابی','نام کارمند','بخش','مدیر ارزیاب','امتیاز','حداکثر','درصد','رتبه'];
+  const rows1 = sorted.map((ev, i) => {
+    const pct = Math.round(ev.totalScore / ev.maxScore * 100);
+    return [i+1, persianDate(ev.date), ev.employeeName, ev.departmentName, ev.managerName||'—', ev.totalScore, ev.maxScore, pct+'%', scoreBadge(pct)];
+  });
+  const ws1 = XLSX.utils.aoa_to_sheet([headers1, ...rows1]);
+  ws1['!cols'] = [{wch:6},{wch:14},{wch:22},{wch:18},{wch:18},{wch:12},{wch:12},{wch:10},{wch:16}];
+  styleHeader(ws1, 'A1:I1', '1E40AF');
+  styleDataRows(ws1, 1, rows1.length, 9, 'EFF6FF');
+  XLSX.utils.book_append_sheet(wb, ws1, 'همه ارزیابی‌ها');
+
+  // ── Sheet 2: خلاصه به تفکیک مدیر ──
+  const mgrMap = {};
+  evaluations.forEach(ev => {
+    const m = ev.managerName || '—';
+    if (!mgrMap[m]) mgrMap[m] = { count: 0, sumPct: 0, employees: new Set() };
+    mgrMap[m].count++;
+    mgrMap[m].sumPct += (ev.totalScore / ev.maxScore * 100);
+    mgrMap[m].employees.add(ev.employeeName);
+  });
+  const headers2 = ['نام مدیر','تعداد ارزیابی','تعداد کارمندان','میانگین امتیاز'];
+  const rows2 = Object.entries(mgrMap).map(([name, d]) => [
+    name, d.count, d.employees.size, Math.round(d.sumPct / d.count) + '%'
+  ]);
+  const ws2 = XLSX.utils.aoa_to_sheet([headers2, ...rows2]);
+  ws2['!cols'] = [{wch:22},{wch:16},{wch:18},{wch:16}];
+  styleHeader(ws2, 'A1:D1', '7C3AED');
+  styleDataRows(ws2, 1, rows2.length, 4, 'F5F3FF');
+  XLSX.utils.book_append_sheet(wb, ws2, 'خلاصه به تفکیک مدیر');
+
+  // ── Sheet 3: خلاصه به تفکیک بخش ──
+  const deptMap = {};
+  evaluations.forEach(ev => {
+    const d = ev.departmentName;
+    if (!deptMap[d]) deptMap[d] = { count: 0, sumPct: 0, employees: new Set() };
+    deptMap[d].count++;
+    deptMap[d].sumPct += (ev.totalScore / ev.maxScore * 100);
+    deptMap[d].employees.add(ev.employeeName);
+  });
+  const headers3 = ['بخش','تعداد ارزیابی','تعداد کارمندان','میانگین امتیاز'];
+  const rows3 = Object.entries(deptMap).map(([name, d]) => [
+    name, d.count, d.employees.size, Math.round(d.sumPct / d.count) + '%'
+  ]);
+  const ws3 = XLSX.utils.aoa_to_sheet([headers3, ...rows3]);
+  ws3['!cols'] = [{wch:20},{wch:16},{wch:18},{wch:16}];
+  styleHeader(ws3, 'A1:D1', '0891B2');
+  styleDataRows(ws3, 1, rows3.length, 4, 'ECFEFF');
+  XLSX.utils.book_append_sheet(wb, ws3, 'خلاصه به تفکیک بخش');
+
+  const fileName = `همه-ارزیابی‌ها-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+  alert('✅ فایل اکسل دانلود شد!');
+}
+
+// ═══════════════════════════════════════
+// 3) خروجی اکسل: جدول رتبه‌بندی
+// ═══════════════════════════════════════
+function exportRankingExcel() {
+  if (evaluations.length === 0) { alert('⚠️ ارزیابی‌ای وجود ندارد!'); return; }
+
+  const empMap = {};
+  evaluations.forEach(ev => {
+    if (!empMap[ev.employeeName]) empMap[ev.employeeName] = { name: ev.employeeName, dept: ev.departmentName, totalScore: 0, totalMax: 0, count: 0 };
+    empMap[ev.employeeName].totalScore += ev.totalScore;
+    empMap[ev.employeeName].totalMax  += ev.maxScore;
+    empMap[ev.employeeName].count++;
+  });
+  const ranked = Object.values(empMap)
+    .map(e => ({ ...e, avgPct: e.totalMax > 0 ? Math.round(e.totalScore / e.totalMax * 100) : 0 }))
+    .sort((a,b) => b.avgPct - a.avgPct);
+
+  const wb = XLSX.utils.book_new();
+  const headers = ['رتبه','مدال','نام کارمند','بخش','تعداد ارزیابی','مجموع امتیاز','میانگین درصد','وضعیت'];
+  const rows = ranked.map((emp, i) => {
+    const rank = i + 1;
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+    return [rank, medal, emp.name, emp.dept, emp.count, emp.totalScore, emp.avgPct + '%', scoreBadge(emp.avgPct)];
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = [{wch:8},{wch:8},{wch:22},{wch:18},{wch:14},{wch:14},{wch:14},{wch:16}];
+  styleHeader(ws, 'A1:H1', 'D97706');
+
+  // Special colors for top 3
+  for (let R = 1; R <= Math.min(3, rows.length); R++) {
+    const colors = ['FEF9C3','F3F4F6','FED7AA'];
+    for (let C = 0; C < 8; C++) {
+      const addr = XLSX.utils.encode_cell({r: R, c: C});
+      if (!ws[addr]) ws[addr] = { t: 's', v: '' };
+      ws[addr].s = {
+        font: { bold: true, name: 'Arial', sz: 11 },
+        fill: { fgColor: { rgb: colors[R-1] }, patternType: 'solid' },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: { bottom: { style: 'thin', color: { rgb: 'E0E0E0' } } }
+      };
+    }
+  }
+  // Rest of rows
+  if (rows.length > 3) styleDataRows(ws, 4, rows.length, 8, 'FFFBEB');
+
+  XLSX.utils.book_append_sheet(wb, ws, 'رتبه‌بندی کارمندان');
+
+  const fileName = `رتبه‌بندی-کارمندان-${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+  alert('✅ فایل اکسل رتبه‌بندی دانلود شد!');
+}
+
 </script>
 
 <!-- ═══════════ SUPPLY SCRIPT ═══════════ -->
