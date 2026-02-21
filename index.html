@@ -226,9 +226,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 .badge-medium { background:#fef3c7; color:var(--warning); }
 .badge-low { background:#fee2e2; color:var(--danger); }
 
-/* ═══════════════════════════════════════════
-   EVAL MODALS  — use .active
-═══════════════════════════════════════════ */
+/* EVAL MODALS */
 .eval-modal { display:none; position:fixed; z-index:1000; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(5px); }
 .eval-modal.active { display:flex; align-items:center; justify-content:center; }
 .eval-modal-content { background:white; padding:38px; border-radius:20px; max-width:800px; width:92%; max-height:82vh; overflow-y:auto; animation:slideUp .4s ease-out; }
@@ -237,9 +235,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 .modal-close { background:var(--danger); color:white; border:none; width:33px; height:33px; border-radius:50%; cursor:pointer; font-size:19px; display:flex; align-items:center; justify-content:center; transition:all .3s; }
 .modal-close:hover { transform:rotate(90deg); background:#b91c1c; }
 
-/* ═══════════════════════════════════════════
-   SUPPLY MODALS — use .active (FIXED)
-═══════════════════════════════════════════ */
+/* SUPPLY MODALS */
 .supply-modal { display:none; position:fixed; z-index:2000; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(5px); align-items:center; justify-content:center; }
 .supply-modal.active { display:flex; }
 .supply-modal-box { background:white; padding:36px; border-radius:20px; max-width:640px; width:92%; max-height:85vh; overflow-y:auto; animation:slideUp .4s ease-out; }
@@ -251,9 +247,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 .empty-state-icon { font-size:60px; margin-bottom:18px; opacity:.5; }
 .empty-state h3 { font-size:19px; margin-bottom:8px; color:var(--dark); }
 
-/* ═══════════════════════════════
-   SUPPLY MODULE
-═══════════════════════════════ */
+/* SUPPLY MODULE */
 .live-badge { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,.15); padding:8px 15px; border-radius:20px; font-size:13px; font-weight:600; color:white; }
 .live-dot { width:8px; height:8px; border-radius:50%; background:#4ade80; animation:pulse 2s infinite; }
 .clock-badge { background:rgba(255,255,255,.15); padding:8px 15px; border-radius:20px; font-size:13px; color:white; opacity:.9; }
@@ -368,6 +362,36 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
   .header { flex-direction:column; align-items:flex-start; }
   .chart-grid { grid-template-columns:1fr; }
 }
+
+/* SALES DASHBOARD */
+.product-checkbox-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+.product-checkbox-item { display:flex; align-items:center; gap:10px; padding:12px 16px; background:white; border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all .3s; user-select:none; }
+.product-checkbox-item:hover { border-color:var(--primary); background:#f0f9ff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(30,64,175,.1); }
+.product-checkbox-item.selected { border-color:var(--primary); background:linear-gradient(135deg,#dbeafe,#eff6ff); }
+.product-checkbox-item input[type="checkbox"] { width:20px; height:20px; cursor:pointer; accent-color:var(--primary); }
+.product-checkbox-label { flex:1; display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; color:var(--dark); cursor:pointer; }
+.product-checkbox-item.selected .product-checkbox-label { color:var(--primary); }
+.product-icon { font-size:22px; }
+.product-price-count { background:var(--light); padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-light); }
+.product-checkbox-item.selected .product-price-count { background:var(--primary); color:white; }
+
+.sales-price-table-wrapper { margin-bottom:22px; animation:slideDown .4s ease-out; }
+.sales-table-header { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:white; padding:16px 20px; border-radius:12px 12px 0 0; display:flex; align-items:center; justify-content:space-between; }
+.sales-table-title { display:flex; align-items:center; gap:10px; font-size:17px; font-weight:700; }
+.sales-table-meta { display:flex; align-items:center; gap:10px; font-size:13px; opacity:.9; }
+.sales-table-content { border:2px solid var(--primary); border-top:none; border-radius:0 0 12px 12px; overflow:hidden; }
+
+.product-category-section { margin-bottom:20px; border:2px solid var(--border); border-radius:12px; overflow:hidden; background:white; }
+.category-header { background:linear-gradient(135deg,#f3f4f6,#e5e7eb); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid var(--border); cursor:pointer; transition:all .3s; }
+.category-header:hover { background:linear-gradient(135deg,#e5e7eb,#d1d5db); }
+.category-header-left { display:flex; align-items:center; gap:10px; }
+.category-icon { font-size:24px; }
+.category-name { font-size:15px; font-weight:700; color:var(--dark); }
+.category-count { background:white; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-light); }
+.category-toggle { font-size:20px; color:var(--text-light); transition:transform .3s; }
+.category-header.collapsed .category-toggle { transform:rotate(-90deg); }
+.category-products { padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
+.category-products.collapsed { display:none; }
 </style>
 </head>
 <body>
@@ -400,7 +424,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 <!-- ═══════════════ MODULE: EVAL ═══════════════ -->
 <div class="module-panel" id="eval-module">
 
-  <!-- LOGIN -->
   <div class="login-overlay" id="login-overlay">
     <div class="login-box">
       <div class="login-logo">⭐</div>
@@ -424,7 +447,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     </div>
   </div>
 
-  <!-- MAIN APP -->
   <div class="app-container" id="main-app" style="display:none;">
     <div class="header">
       <div class="header-left">
@@ -447,7 +469,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       <button class="nav-tab" onclick="switchTab('departments',this)">🏢 بخش‌ها</button>
     </div>
 
-    <!-- EVALUATION -->
     <div id="evaluation-section" class="section active">
       <div class="card">
         <h2 class="card-title">🎯 ثبت ارزیابی جدید</h2>
@@ -482,7 +503,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
     </div>
 
-    <!-- MY HISTORY -->
     <div id="my-history-section" class="section">
       <div class="card">
         <h2 class="card-title">📋 ارزیابی‌های ثبت‌شده توسط من</h2>
@@ -498,7 +518,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
     </div>
 
-    <!-- SHARED DASHBOARD -->
     <div id="shared-dashboard-section" class="section">
       <div class="shared-dashboard-header">
         <div class="icon">🌐</div>
@@ -530,7 +549,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
     </div>
 
-    <!-- STAR EMPLOYEES -->
     <div id="star-employees-section" class="section">
       <div class="card">
         <h2 class="card-title">⭐ تابلو کارمندان نمونه ماه</h2>
@@ -553,7 +571,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
     </div>
 
-    <!-- MANAGE EMPLOYEES -->
     <div id="manage-employees-section" class="section">
       <div class="card">
         <h2 class="card-title">👤 مدیریت کارمندان</h2>
@@ -578,7 +595,6 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       </div>
     </div>
 
-    <!-- DEPARTMENTS -->
     <div id="departments-section" class="section">
       <div class="card">
         <h2 class="card-title">🏢 مدیریت بخش‌ها و معیارها</h2>
@@ -670,10 +686,53 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
   </div>
 
   <div id="supply-nav">
+    <button class="supply-nav-btn" onclick="supplyTab('sales-dashboard',this)">🎯 داشبورد فروش</button>
     <button class="supply-nav-btn active" onclick="supplyTab('prices',this)">💰 قیمت‌ها <span class="nav-count" id="nc-prices">0</span></button>
     <button class="supply-nav-btn" onclick="supplyTab('products',this)">📦 محصولات <span class="nav-count" id="nc-products">0</span></button>
     <button class="supply-nav-btn" onclick="supplyTab('factories',this)">🏭 کارخانجات <span class="nav-count" id="nc-factories">0</span></button>
     <button class="supply-nav-btn" onclick="supplyTab('analytics',this)">📊 تحلیل هفتگی</button>
+  </div>
+
+  <!-- ═══ SALES DASHBOARD — FIX: این بخش در نسخه اصلی وجود نداشت ═══ -->
+  <div id="supply-sales-dashboard-section" class="supply-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🎯 داشبورد فروش — انتخاب محصولات</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <span id="sales-total-products" style="font-size:13px;color:var(--text-light);">0 محصول</span>
+          <button class="btn btn-ghost btn-sm" onclick="selectAllProducts()">✅ انتخاب همه</button>
+          <button class="btn btn-ghost btn-sm" onclick="deselectAllProducts()">❌ لغو همه</button>
+          <button class="btn btn-primary btn-sm" onclick="refreshSalesDashboard()">🔄 بروزرسانی</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+        <div class="search-wrap" style="flex:1;min-width:200px;">
+          <span class="icon">🔍</span>
+          <input class="search-input" id="sales-product-search" placeholder="جستجو محصول..." oninput="filterSalesProducts()">
+        </div>
+        <select class="filter-select" id="sales-category-filter" onchange="filterSalesProducts()">
+          <option value="">همه دسته‌ها</option>
+        </select>
+      </div>
+      <div id="sales-product-categories"></div>
+      <div id="sales-product-empty" class="empty" style="display:none;">
+        <div class="empty-icon">📦</div>
+        <div class="empty-text">محصولی یافت نشد</div>
+      </div>
+    </div>
+
+    <div id="sales-selected-info" style="display:none;background:linear-gradient(135deg,#dbeafe,#eff6ff);border:2px solid #93c5fd;border-radius:12px;padding:14px 20px;margin-bottom:20px;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-weight:700;color:var(--primary);">📊 <span id="sales-selected-count">0</span> محصول انتخاب شده</span>
+      <span style="color:var(--text-light);font-size:13px;">جداول قیمت در زیر نمایش داده می‌شود</span>
+    </div>
+
+    <div id="sales-price-tables"></div>
+
+    <div id="sales-empty-state" class="empty" style="padding:60px 20px;">
+      <div class="empty-icon">🎯</div>
+      <div class="empty-text">محصولی انتخاب نشده است</div>
+      <div class="empty-sub">از لیست بالا محصولات مورد نظر را انتخاب کنید تا جداول قیمت نمایش داده شوند</div>
+    </div>
   </div>
 
   <!-- PRICES -->
@@ -792,7 +851,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 
 </div><!-- /supply-app -->
 
-<!-- SUPPLY MODALS — FIX: use supply-modal + supply-modal-box + active class -->
+<!-- SUPPLY MODALS -->
 <div class="supply-modal" id="s-product-modal">
   <div class="supply-modal-box">
     <div class="modal-header">
@@ -800,6 +859,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       <button class="modal-close" onclick="closeSupplyModal('s-product-modal')">×</button>
     </div>
     <div class="form-group" style="margin-bottom:16px;"><div class="form-label">نام محصول *</div><input class="form-input" id="prod-name" placeholder="مثال: نبشی، میلگرد..."></div>
+    <div class="form-group" style="margin-bottom:16px;"><div class="form-label">دسته‌بندی *</div><select class="form-select" id="prod-category"><option value="میلگرد">میلگرد</option><option value="تیرآهن">تیرآهن</option><option value="ورق">ورق</option><option value="نبشی">نبشی</option><option value="لوله">لوله</option><option value="ناودانی">ناودانی</option><option value="پروفیل">پروفیل</option><option value="مفتول">مفتول</option><option value="سایر">سایر</option></select></div>
     <div class="form-group" style="margin-bottom:16px;"><div class="form-label">آیکون</div><input class="form-input" id="prod-icon" placeholder="🔩" maxlength="2"></div>
     <div class="form-group" style="margin-bottom:16px;"><div class="form-label">واحد اندازه‌گیری</div><select class="form-select" id="prod-unit"><option value="کیلوگرم">کیلوگرم</option><option value="تن">تن</option><option value="شاخه">شاخه</option><option value="متر">متر</option></select></div>
     <div class="form-group" style="margin-bottom:22px;"><div class="form-label">توضیحات</div><input class="form-input" id="prod-desc" placeholder="اختیاری..."></div>
@@ -860,7 +920,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 <!-- TOAST -->
 <div class="s-toast" id="s-toast"></div>
 
-<!-- ═══════════ MASTER SCRIPT ═══════════ -->
+<!-- MASTER SCRIPT -->
 <script>
 let activeModule = null;
 
@@ -916,7 +976,7 @@ function masterInit() {
 }
 </script>
 
-<!-- ═══════════ EVAL SCRIPT ═══════════ -->
+<!-- EVAL SCRIPT -->
 <script>
 const firebaseConfig = {
   apiKey:"AIzaSyDeKK6THwUcR2hoh-VUiwAX7p79NL6UPQQ",
@@ -1515,23 +1575,15 @@ function resetToDefaultDepartments(){
   if (el) el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
 });
 
-// ═══════════════════════════════════════════
-// EXCEL EXPORT FUNCTIONS  (uses SheetJS)
-// ═══════════════════════════════════════════
-
-// ── Helper: Persian date string ──
+// EXCEL EXPORT FUNCTIONS
 function persianDate(isoStr) {
   try { return new Date(isoStr).toLocaleDateString('fa-IR'); } catch { return isoStr||''; }
 }
-
-// ── Helper: score badge label ──
 function scoreBadge(pct) {
   if (pct >= 70) return 'عالی';
   if (pct >= 50) return 'خوب';
   return 'نیاز به بهبود';
 }
-
-// ── Helper: apply header style ──
 function styleHeader(ws, range, bgColor) {
   if (!ws['!ref']) return;
   const R = XLSX.utils.decode_range(range);
@@ -1542,94 +1594,51 @@ function styleHeader(ws, range, bgColor) {
       font: { bold: true, color: { rgb: 'FFFFFF' }, name: 'Arial', sz: 11 },
       fill: { fgColor: { rgb: bgColor }, patternType: 'solid' },
       alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-      border: {
-        top: { style: 'thin', color: { rgb: 'CCCCCC' } },
-        bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
-        left: { style: 'thin', color: { rgb: 'CCCCCC' } },
-        right: { style: 'thin', color: { rgb: 'CCCCCC' } }
-      }
+      border: { top:{style:'thin',color:{rgb:'CCCCCC'}}, bottom:{style:'thin',color:{rgb:'CCCCCC'}}, left:{style:'thin',color:{rgb:'CCCCCC'}}, right:{style:'thin',color:{rgb:'CCCCCC'}} }
     };
   }
 }
-
-// ── Helper: apply row style ──
 function styleDataRows(ws, startRow, endRow, colCount, altColor) {
   for (let R = startRow; R <= endRow; R++) {
     const isAlt = (R - startRow) % 2 === 1;
     for (let C = 0; C < colCount; C++) {
       const cellAddr = XLSX.utils.encode_cell({r: R, c: C});
-      if (!ws[cellAddr]) {
-        ws[cellAddr] = { t: 's', v: '' };
-      }
+      if (!ws[cellAddr]) ws[cellAddr] = { t: 's', v: '' };
       ws[cellAddr].s = {
         font: { name: 'Arial', sz: 10 },
         fill: isAlt ? { fgColor: { rgb: altColor }, patternType: 'solid' } : { patternType: 'none' },
         alignment: { horizontal: 'center', vertical: 'center' },
-        border: {
-          bottom: { style: 'thin', color: { rgb: 'E0E0E0' } },
-          left: { style: 'thin', color: { rgb: 'E0E0E0' } },
-          right: { style: 'thin', color: { rgb: 'E0E0E0' } }
-        }
+        border: { bottom:{style:'thin',color:{rgb:'E0E0E0'}}, left:{style:'thin',color:{rgb:'E0E0E0'}}, right:{style:'thin',color:{rgb:'E0E0E0'}} }
       };
     }
   }
 }
 
-// ═══════════════════════════════════════
-// 1) خروجی اکسل: ارزیابی‌های من
-// ═══════════════════════════════════════
 function exportMyEvaluationsExcel() {
   const myEvals = evaluations.filter(e => e.managerName === currentManager);
   if (myEvals.length === 0) { alert('⚠️ ارزیابی‌ای برای خروجی وجود ندارد!'); return; }
-
   const wb = XLSX.utils.book_new();
-
-  // ── Sheet 1: لیست ارزیابی‌ها ──
   const sorted = [...myEvals].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp));
   const headers1 = ['ردیف','تاریخ ارزیابی','نام کارمند','بخش','امتیاز کسب شده','حداکثر امتیاز','درصد','رتبه','تاریخ ثبت'];
   const rows1 = sorted.map((ev, i) => {
     const pct = Math.round(ev.totalScore / ev.maxScore * 100);
-    return [
-      i + 1,
-      persianDate(ev.date),
-      ev.employeeName,
-      ev.departmentName,
-      ev.totalScore,
-      ev.maxScore,
-      pct + '%',
-      scoreBadge(pct),
-      persianDate(ev.timestamp)
-    ];
+    return [i+1, persianDate(ev.date), ev.employeeName, ev.departmentName, ev.totalScore, ev.maxScore, pct+'%', scoreBadge(pct), persianDate(ev.timestamp)];
   });
-  // Summary row
   const avgPct = Math.round(myEvals.reduce((s,e) => s + (e.totalScore/e.maxScore*100), 0) / myEvals.length);
   rows1.push([]);
-  rows1.push(['', 'میانگین کل', '', '', '', '', avgPct + '%', scoreBadge(avgPct), '']);
-
+  rows1.push(['', 'میانگین کل', '', '', '', '', avgPct+'%', scoreBadge(avgPct), '']);
   const ws1 = XLSX.utils.aoa_to_sheet([headers1, ...rows1]);
-  ws1['!cols'] = [
-    {wch:6},{wch:14},{wch:22},{wch:18},{wch:16},{wch:16},{wch:10},{wch:16},{wch:14}
-  ];
+  ws1['!cols'] = [{wch:6},{wch:14},{wch:22},{wch:18},{wch:16},{wch:16},{wch:10},{wch:16},{wch:14}];
   styleHeader(ws1, 'A1:I1', '1E40AF');
   styleDataRows(ws1, 1, rows1.length, 9, 'EFF6FF');
   XLSX.utils.book_append_sheet(wb, ws1, 'لیست ارزیابی‌ها');
-
-  // ── Sheet 2: جزئیات امتیاز هر معیار ──
   const headers2 = ['نام کارمند','بخش','تاریخ','معیار','ضریب','امتیاز (۱-۱۰)','امتیاز وزنی'];
   const rows2 = [];
   sorted.forEach(ev => {
     if (ev.criteriaSnapshot && ev.scores) {
       ev.criteriaSnapshot.forEach(c => {
         const sc = ev.scores[c.id] || 0;
-        rows2.push([
-          ev.employeeName,
-          ev.departmentName,
-          persianDate(ev.date),
-          c.name,
-          c.weight,
-          sc,
-          sc * c.weight
-        ]);
+        rows2.push([ev.employeeName, ev.departmentName, persianDate(ev.date), c.name, c.weight, sc, sc * c.weight]);
       });
     }
   });
@@ -1640,22 +1649,13 @@ function exportMyEvaluationsExcel() {
     styleDataRows(ws2, 1, rows2.length, 7, 'F0FDF4');
     XLSX.utils.book_append_sheet(wb, ws2, 'جزئیات معیارها');
   }
-
-  // ── Save ──
-  const fileName = `ارزیابی-${currentManager}-${new Date().toISOString().split('T')[0]}.xlsx`;
-  XLSX.writeFile(wb, fileName);
+  XLSX.writeFile(wb, `ارزیابی-${currentManager}-${new Date().toISOString().split('T')[0]}.xlsx`);
   alert('✅ فایل اکسل دانلود شد!');
 }
 
-// ═══════════════════════════════════════
-// 2) خروجی اکسل: همه ارزیابی‌ها (داشبورد)
-// ═══════════════════════════════════════
 function exportAllEvaluationsExcel() {
   if (evaluations.length === 0) { alert('⚠️ ارزیابی‌ای وجود ندارد!'); return; }
-
   const wb = XLSX.utils.book_new();
-
-  // ── Sheet 1: همه ارزیابی‌ها ──
   const sorted = [...evaluations].sort((a,b) => new Date(b.timestamp)-new Date(a.timestamp));
   const headers1 = ['ردیف','تاریخ ارزیابی','نام کارمند','بخش','مدیر ارزیاب','امتیاز','حداکثر','درصد','رتبه'];
   const rows1 = sorted.map((ev, i) => {
@@ -1667,56 +1667,22 @@ function exportAllEvaluationsExcel() {
   styleHeader(ws1, 'A1:I1', '1E40AF');
   styleDataRows(ws1, 1, rows1.length, 9, 'EFF6FF');
   XLSX.utils.book_append_sheet(wb, ws1, 'همه ارزیابی‌ها');
-
-  // ── Sheet 2: خلاصه به تفکیک مدیر ──
   const mgrMap = {};
   evaluations.forEach(ev => {
     const m = ev.managerName || '—';
     if (!mgrMap[m]) mgrMap[m] = { count: 0, sumPct: 0, employees: new Set() };
-    mgrMap[m].count++;
-    mgrMap[m].sumPct += (ev.totalScore / ev.maxScore * 100);
-    mgrMap[m].employees.add(ev.employeeName);
+    mgrMap[m].count++; mgrMap[m].sumPct += (ev.totalScore / ev.maxScore * 100); mgrMap[m].employees.add(ev.employeeName);
   });
-  const headers2 = ['نام مدیر','تعداد ارزیابی','تعداد کارمندان','میانگین امتیاز'];
-  const rows2 = Object.entries(mgrMap).map(([name, d]) => [
-    name, d.count, d.employees.size, Math.round(d.sumPct / d.count) + '%'
-  ]);
-  const ws2 = XLSX.utils.aoa_to_sheet([headers2, ...rows2]);
+  const ws2 = XLSX.utils.aoa_to_sheet([['نام مدیر','تعداد ارزیابی','تعداد کارمندان','میانگین امتیاز'], ...Object.entries(mgrMap).map(([n,d])=>[n,d.count,d.employees.size,Math.round(d.sumPct/d.count)+'%'])]);
   ws2['!cols'] = [{wch:22},{wch:16},{wch:18},{wch:16}];
   styleHeader(ws2, 'A1:D1', '7C3AED');
-  styleDataRows(ws2, 1, rows2.length, 4, 'F5F3FF');
   XLSX.utils.book_append_sheet(wb, ws2, 'خلاصه به تفکیک مدیر');
-
-  // ── Sheet 3: خلاصه به تفکیک بخش ──
-  const deptMap = {};
-  evaluations.forEach(ev => {
-    const d = ev.departmentName;
-    if (!deptMap[d]) deptMap[d] = { count: 0, sumPct: 0, employees: new Set() };
-    deptMap[d].count++;
-    deptMap[d].sumPct += (ev.totalScore / ev.maxScore * 100);
-    deptMap[d].employees.add(ev.employeeName);
-  });
-  const headers3 = ['بخش','تعداد ارزیابی','تعداد کارمندان','میانگین امتیاز'];
-  const rows3 = Object.entries(deptMap).map(([name, d]) => [
-    name, d.count, d.employees.size, Math.round(d.sumPct / d.count) + '%'
-  ]);
-  const ws3 = XLSX.utils.aoa_to_sheet([headers3, ...rows3]);
-  ws3['!cols'] = [{wch:20},{wch:16},{wch:18},{wch:16}];
-  styleHeader(ws3, 'A1:D1', '0891B2');
-  styleDataRows(ws3, 1, rows3.length, 4, 'ECFEFF');
-  XLSX.utils.book_append_sheet(wb, ws3, 'خلاصه به تفکیک بخش');
-
-  const fileName = `همه-ارزیابی‌ها-${new Date().toISOString().split('T')[0]}.xlsx`;
-  XLSX.writeFile(wb, fileName);
+  XLSX.writeFile(wb, `همه-ارزیابی‌ها-${new Date().toISOString().split('T')[0]}.xlsx`);
   alert('✅ فایل اکسل دانلود شد!');
 }
 
-// ═══════════════════════════════════════
-// 3) خروجی اکسل: جدول رتبه‌بندی
-// ═══════════════════════════════════════
 function exportRankingExcel() {
   if (evaluations.length === 0) { alert('⚠️ ارزیابی‌ای وجود ندارد!'); return; }
-
   const empMap = {};
   evaluations.forEach(ev => {
     if (!empMap[ev.employeeName]) empMap[ev.employeeName] = { name: ev.employeeName, dept: ev.departmentName, totalScore: 0, totalMax: 0, count: 0 };
@@ -1724,51 +1690,24 @@ function exportRankingExcel() {
     empMap[ev.employeeName].totalMax  += ev.maxScore;
     empMap[ev.employeeName].count++;
   });
-  const ranked = Object.values(empMap)
-    .map(e => ({ ...e, avgPct: e.totalMax > 0 ? Math.round(e.totalScore / e.totalMax * 100) : 0 }))
-    .sort((a,b) => b.avgPct - a.avgPct);
-
+  const ranked = Object.values(empMap).map(e => ({...e, avgPct: e.totalMax > 0 ? Math.round(e.totalScore / e.totalMax * 100) : 0})).sort((a,b) => b.avgPct - a.avgPct);
   const wb = XLSX.utils.book_new();
   const headers = ['رتبه','مدال','نام کارمند','بخش','تعداد ارزیابی','مجموع امتیاز','میانگین درصد','وضعیت'];
   const rows = ranked.map((emp, i) => {
     const rank = i + 1;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
-    return [rank, medal, emp.name, emp.dept, emp.count, emp.totalScore, emp.avgPct + '%', scoreBadge(emp.avgPct)];
+    return [rank, rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'', emp.name, emp.dept, emp.count, emp.totalScore, emp.avgPct+'%', scoreBadge(emp.avgPct)];
   });
-
   const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
   ws['!cols'] = [{wch:8},{wch:8},{wch:22},{wch:18},{wch:14},{wch:14},{wch:14},{wch:16}];
   styleHeader(ws, 'A1:H1', 'D97706');
-
-  // Special colors for top 3
-  for (let R = 1; R <= Math.min(3, rows.length); R++) {
-    const colors = ['FEF9C3','F3F4F6','FED7AA'];
-    for (let C = 0; C < 8; C++) {
-      const addr = XLSX.utils.encode_cell({r: R, c: C});
-      if (!ws[addr]) ws[addr] = { t: 's', v: '' };
-      ws[addr].s = {
-        font: { bold: true, name: 'Arial', sz: 11 },
-        fill: { fgColor: { rgb: colors[R-1] }, patternType: 'solid' },
-        alignment: { horizontal: 'center', vertical: 'center' },
-        border: { bottom: { style: 'thin', color: { rgb: 'E0E0E0' } } }
-      };
-    }
-  }
-  // Rest of rows
-  if (rows.length > 3) styleDataRows(ws, 4, rows.length, 8, 'FFFBEB');
-
   XLSX.utils.book_append_sheet(wb, ws, 'رتبه‌بندی کارمندان');
-
-  const fileName = `رتبه‌بندی-کارمندان-${new Date().toISOString().split('T')[0]}.xlsx`;
-  XLSX.writeFile(wb, fileName);
+  XLSX.writeFile(wb, `رتبه‌بندی-کارمندان-${new Date().toISOString().split('T')[0]}.xlsx`);
   alert('✅ فایل اکسل رتبه‌بندی دانلود شد!');
 }
-
 </script>
 
-<!-- ═══════════ SUPPLY SCRIPT ═══════════ -->
+<!-- SUPPLY SCRIPT -->
 <script>
-// FIX: use sDb consistently, never re-declare firebase
 let sDb = null;
 let sFbOk = false;
 try {
@@ -1780,8 +1719,8 @@ let sProducts=[], sFactories=[], sPrices=[];
 let sChartPeriod=7;
 let sEditProductId=null, sEditFactoryId=null, sEditPriceId=null;
 let sAddFormVisible=true;
+let selectedProducts = new Set();
 
-// FIX: renamed from supplyDOMReady to supplyInit (called by switchModule)
 function supplyInit() {
   sProducts  = sLoadLS('products');
   sFactories = sLoadLS('factories');
@@ -1807,12 +1746,18 @@ function sListenFB(key,cb){
 
 function sSeedProducts(){
   sProducts=[
-    {id:1,name:'نبشی',icon:'📐',unit:'کیلوگرم',desc:'نبشی ساختمانی و صنعتی'},
-    {id:2,name:'میلگرد',icon:'🔩',unit:'کیلوگرم',desc:'میلگرد آجدار و ساده'},
-    {id:3,name:'ناودانی',icon:'📏',unit:'کیلوگرم',desc:'ناودانی سبک و سنگین'},
-    {id:4,name:'تیرآهن',icon:'🏗️',unit:'کیلوگرم',desc:'تیرآهن IPE و INP'},
-    {id:5,name:'ورق',icon:'🔲',unit:'کیلوگرم',desc:'ورق سیاه و گالوانیزه'},
-    {id:6,name:'لوله',icon:'⭕',unit:'متر',desc:'لوله گاز و آب'}
+    {id:1,name:'نبشی',category:'نبشی',icon:'📐',unit:'کیلوگرم',desc:'نبشی ساختمانی و صنعتی'},
+    {id:2,name:'میلگرد A3',category:'میلگرد',icon:'🔩',unit:'کیلوگرم',desc:'میلگرد آجدار A3'},
+    {id:3,name:'میلگرد A2',category:'میلگرد',icon:'🔩',unit:'کیلوگرم',desc:'میلگرد ساده A2'},
+    {id:4,name:'ناودانی',category:'ناودانی',icon:'📏',unit:'کیلوگرم',desc:'ناودانی سبک و سنگین'},
+    {id:5,name:'تیرآهن IPE',category:'تیرآهن',icon:'🏗️',unit:'کیلوگرم',desc:'تیرآهن IPE'},
+    {id:6,name:'تیرآهن INP',category:'تیرآهن',icon:'🏗️',unit:'کیلوگرم',desc:'تیرآهن INP'},
+    {id:7,name:'ورق سیاه',category:'ورق',icon:'🔲',unit:'کیلوگرم',desc:'ورق سیاه ST37'},
+    {id:8,name:'ورق گالوانیزه',category:'ورق',icon:'🔲',unit:'کیلوگرم',desc:'ورق گالوانیزه'},
+    {id:9,name:'لوله گاز',category:'لوله',icon:'⭕',unit:'متر',desc:'لوله گاز برودار'},
+    {id:10,name:'لوله آب',category:'لوله',icon:'⭕',unit:'متر',desc:'لوله آب و فاضلاب'},
+    {id:11,name:'پروفیل مربع',category:'پروفیل',icon:'📦',unit:'متر',desc:'پروفیل مربع'},
+    {id:12,name:'مفتول',category:'مفتول',icon:'🧵',unit:'کیلوگرم',desc:'مفتول سیاه'}
   ];
   sPersist('products',sProducts);
 }
@@ -1831,6 +1776,11 @@ function sSeedFactories(){
 function sRefreshAll(){
   sUpdateStats(); sUpdateDropdowns();
   sRenderProductsGrid(); sRenderFactoriesGrid(); sRenderPriceTable();
+  const salesSection = document.getElementById('supply-sales-dashboard-section');
+  if (salesSection && salesSection.classList.contains('active')) {
+    renderProductCheckboxes();
+    renderSalesPriceTables();
+  }
 }
 
 function sUpdateStats(){
@@ -1859,13 +1809,13 @@ function sUpdateDropdowns(){
   });
 }
 
-// FIX: openProductModal, saveProduct, deleteProduct use sProducts
 function openProductModal(id=null){
   sEditProductId=id;
   if (id){
     const p=sProducts.find(x=>x.id===id);
     document.getElementById('product-modal-title').textContent='✏️ ویرایش محصول';
     document.getElementById('prod-name').value=p.name;
+    document.getElementById('prod-category').value=p.category||'سایر';
     document.getElementById('prod-icon').value=p.icon||'';
     document.getElementById('prod-unit').value=p.unit||'کیلوگرم';
     document.getElementById('prod-desc').value=p.desc||'';
@@ -1874,7 +1824,6 @@ function openProductModal(id=null){
     ['prod-name','prod-icon','prod-desc'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('prod-unit').value='کیلوگرم';
   }
-  // FIX: use active class
   document.getElementById('s-product-modal').classList.add('active');
 }
 
@@ -1886,8 +1835,9 @@ function saveProduct(){
     p.name=name; p.icon=document.getElementById('prod-icon').value;
     p.unit=document.getElementById('prod-unit').value;
     p.desc=document.getElementById('prod-desc').value;
+    p.category=document.getElementById('prod-category').value;
   } else {
-    sProducts.push({id:Date.now(),name,icon:document.getElementById('prod-icon').value||'📦',unit:document.getElementById('prod-unit').value,desc:document.getElementById('prod-desc').value});
+    sProducts.push({id:Date.now(),name,category:document.getElementById('prod-category').value,icon:document.getElementById('prod-icon').value||'📦',unit:document.getElementById('prod-unit').value,desc:document.getElementById('prod-desc').value});
   }
   sPersist('products',sProducts);
   closeSupplyModal('s-product-modal');
@@ -2047,7 +1997,6 @@ function sRenderPriceTable(){
   }).join('');
 }
 
-// alias for search/filter binding
 function renderPriceTable(){sRenderPriceTable();}
 
 function openEditPrice(id){
@@ -2104,19 +2053,200 @@ function supplyTab(tab,el){
   document.getElementById('supply-'+tab+'-section').classList.add('active');
   el.classList.add('active');
   if (tab==='analytics'){sUpdateDropdowns();setTimeout(renderAnalytics,100);}
+  if (tab==='sales-dashboard'){renderProductCheckboxes();renderSalesPriceTables();}
 }
 
-// FIX: unified closeSupplyModal
 function closeSupplyModal(id){
   document.getElementById(id).classList.remove('active');
 }
 
-// Close supply modals on outside click
 ['s-product-modal','s-factory-modal','s-edit-price-modal'].forEach(id=>{
   const el=document.getElementById(id);
   if (el) el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
 });
 
+// ═══ SALES DASHBOARD FUNCTIONS ═══
+function getCategoryIcon(category) {
+  const icons = {'میلگرد':'🔩','تیرآهن':'🏗️','ورق':'📄','نبشی':'📐','لوله':'🚰','ناودانی':'🌊','پروفیل':'📏','مفتول':'🧵','سایر':'📦'};
+  return icons[category] || '📦';
+}
+
+function updateCategoryFilter() {
+  const select = document.getElementById('sales-category-filter');
+  if (!select) return;
+  const categories = new Set();
+  sProducts.forEach(p => categories.add(p.category || 'سایر'));
+  const currentValue = select.value;
+  select.innerHTML = '<option value="">همه دسته‌ها</option>' +
+    [...categories].sort().map(cat => `<option value="${cat}" ${cat === currentValue ? 'selected' : ''}>${cat}</option>`).join('');
+}
+
+function renderProductCheckboxes() {
+  const container = document.getElementById('sales-product-categories');
+  const emptyDiv = document.getElementById('sales-product-empty');
+  const totalBadge = document.getElementById('sales-total-products');
+  const searchTerm = document.getElementById('sales-product-search')?.value.toLowerCase() || '';
+  const categoryFilter = document.getElementById('sales-category-filter')?.value || '';
+  if (!container) return;
+  let filtered = [...sProducts];
+  if (searchTerm) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.desc||'').toLowerCase().includes(searchTerm) || (p.category||'سایر').toLowerCase().includes(searchTerm));
+  if (categoryFilter) filtered = filtered.filter(p => (p.category||'سایر') === categoryFilter);
+  if (filtered.length === 0) {
+    container.style.display = 'none'; emptyDiv.style.display = 'block';
+    totalBadge.textContent = '0 محصول'; return;
+  }
+  container.style.display = 'block'; emptyDiv.style.display = 'none';
+  totalBadge.textContent = `${filtered.length} محصول`;
+  const categories = {};
+  filtered.forEach(product => {
+    const cat = product.category || 'سایر';
+    if (!categories[cat]) categories[cat] = [];
+    categories[cat].push(product);
+  });
+  container.innerHTML = Object.entries(categories).map(([catName, products]) => {
+    const catIcon = getCategoryIcon(catName);
+    const productsHtml = products.map(product => {
+      const priceCount = sPrices.filter(p => p.product === product.name).length;
+      const isChecked = selectedProducts.has(product.name);
+      const safe = product.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      return `<div class="product-checkbox-item ${isChecked ? 'selected' : ''}" onclick="toggleProduct('${safe}')">
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleProduct('${safe}')">
+        <label class="product-checkbox-label">
+          <span class="product-icon">${product.icon||'📦'}</span>
+          <span style="flex:1;">${product.name}</span>
+          <span class="product-price-count">${priceCount} قیمت</span>
+        </label>
+      </div>`;
+    }).join('');
+    return `<div class="product-category-section">
+      <div class="category-header" onclick="toggleCategory(this)">
+        <div class="category-header-left">
+          <span class="category-icon">${catIcon}</span>
+          <span class="category-name">${catName}</span>
+          <span class="category-count">${products.length} محصول</span>
+        </div>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-products">${productsHtml}</div>
+    </div>`;
+  }).join('');
+  updateCategoryFilter();
+}
+
+function toggleCategory(header) {
+  header.classList.toggle('collapsed');
+  header.nextElementSibling.classList.toggle('collapsed');
+}
+
+function toggleProduct(productName) {
+  if (selectedProducts.has(productName)) selectedProducts.delete(productName);
+  else selectedProducts.add(productName);
+  renderProductCheckboxes();
+  renderSalesPriceTables();
+}
+
+function selectAllProducts() {
+  const searchTerm = document.getElementById('sales-product-search')?.value.toLowerCase() || '';
+  const categoryFilter = document.getElementById('sales-category-filter')?.value || '';
+  let products = [...sProducts];
+  if (searchTerm) products = products.filter(p => p.name.toLowerCase().includes(searchTerm));
+  if (categoryFilter) products = products.filter(p => (p.category||'سایر') === categoryFilter);
+  products.forEach(p => selectedProducts.add(p.name));
+  renderProductCheckboxes(); renderSalesPriceTables();
+}
+
+function deselectAllProducts() {
+  selectedProducts.clear();
+  renderProductCheckboxes(); renderSalesPriceTables();
+}
+
+function filterSalesProducts() { renderProductCheckboxes(); }
+
+function refreshSalesDashboard() {
+  renderProductCheckboxes(); renderSalesPriceTables();
+  sShowToast('داشبورد فروش بروزرسانی شد','🔄');
+}
+
+function renderSalesPriceTables() {
+  const container = document.getElementById('sales-price-tables');
+  const emptyState = document.getElementById('sales-empty-state');
+  const selectedInfo = document.getElementById('sales-selected-info');
+  const selectedCount = document.getElementById('sales-selected-count');
+  if (!container) return;
+  if (selectedProducts.size === 0) {
+    container.innerHTML = ''; emptyState.style.display = 'block'; selectedInfo.style.display = 'none'; return;
+  }
+  emptyState.style.display = 'none'; selectedInfo.style.display = 'flex';
+  selectedCount.textContent = selectedProducts.size;
+  const tables = [];
+  selectedProducts.forEach(productName => {
+    const product = sProducts.find(p => p.name === productName);
+    if (!product) return;
+    const productPrices = sPrices.filter(p => p.product === productName);
+    if (productPrices.length === 0) {
+      tables.push(`<div class="card sales-price-table-wrapper">
+        <div class="sales-table-header">
+          <div class="sales-table-title"><span>${product.icon||'📦'}</span><span>${product.name}</span></div>
+          <div class="sales-table-meta"><span class="chip chip-gray">۰ قیمت</span></div>
+        </div>
+        <div class="sales-table-content"><div class="empty" style="padding:40px;"><div class="empty-text">هنوز قیمتی ثبت نشده</div></div></div>
+      </div>`);
+      return;
+    }
+    const priceMap = {};
+    productPrices.forEach(p => {
+      const key = `${p.size}-${p.factory}`;
+      if (!priceMap[key] || new Date(p.updatedAt) > new Date(priceMap[key].updatedAt)) priceMap[key] = p;
+    });
+    const latestPrices = Object.values(priceMap).sort((a,b) => new Date(b.updatedAt)-new Date(a.updatedAt));
+    const avgPrice = Math.round(latestPrices.reduce((s,p) => s+p.price, 0) / latestPrices.length);
+    const minPrice = Math.min(...latestPrices.map(p => p.price));
+    const maxPrice = Math.max(...latestPrices.map(p => p.price));
+    const rows = latestPrices.map(p => {
+      const d = new Date(p.updatedAt);
+      const dateStr = d.toLocaleDateString('fa-IR');
+      const timeStr = d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+      let changeTxt = '<span class="change-flat">—</span>';
+      if (p.prevPrice !== null && p.prevPrice !== undefined) {
+        const diff = p.price - p.prevPrice;
+        const pct = ((diff/p.prevPrice)*100).toFixed(1);
+        if (diff > 0) changeTxt = `<span class="change-up">▲ ${pct}%</span>`;
+        else if (diff < 0) changeTxt = `<span class="change-down">▼ ${Math.abs(pct)}%</span>`;
+        else changeTxt = '<span class="change-flat">بدون تغییر</span>';
+      }
+      let priceStyle = '';
+      if (latestPrices.length > 1) {
+        if (p.price === minPrice) priceStyle = 'color:#059669;font-weight:900;';
+        else if (p.price === maxPrice) priceStyle = 'color:#dc2626;font-weight:900;';
+      }
+      return `<tr>
+        <td><strong>${p.size}</strong></td>
+        <td>${p.factory}</td>
+        <td><div class="price-cell" style="${priceStyle}">${Number(p.price).toLocaleString('fa-IR')}${p.price===minPrice&&latestPrices.length>1?' 🟢':''}${p.price===maxPrice&&latestPrices.length>1?' 🔴':''}</div><div class="price-unit">تومان / کیلو</div></td>
+        <td>${changeTxt}</td>
+        <td><div class="update-badge"><span class="date">${dateStr}</span><span>${timeStr}</span></div></td>
+        <td style="max-width:140px;font-size:12px;color:var(--text-light);">${p.note||'—'}</td>
+      </tr>`;
+    }).join('');
+    tables.push(`<div class="card sales-price-table-wrapper">
+      <div class="sales-table-header">
+        <div class="sales-table-title"><span>${product.icon||'📦'}</span><span>${product.name}</span></div>
+        <div class="sales-table-meta"><span class="chip chip-green">${latestPrices.length} قیمت</span><span>میانگین: ${avgPrice.toLocaleString('fa-IR')} تومان</span></div>
+      </div>
+      <div class="sales-table-content">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>سایز</th><th>کارخانه</th><th>قیمت (تومان/کیلو)</th><th>تغییر</th><th>آخرین آپدیت</th><th>توضیحات</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`);
+  });
+  container.innerHTML = tables.join('');
+}
+
+// ═══ ANALYTICS ═══
 function setPeriod(days,el){
   sChartPeriod=days;
   document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
@@ -2134,7 +2264,6 @@ function renderAnalytics(){
   let data=[...sPrices];
   if (filterProd) data=data.filter(p=>p.product===filterProd);
   if (filterFact) data=data.filter(p=>p.factory===filterFact);
-
   const days=sChartPeriod;
   const trendDates=[];const today=new Date();today.setHours(0,0,0,0);
   for (let i=days-1;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);trendDates.push(d);}
@@ -2149,23 +2278,19 @@ function renderAnalytics(){
   const tCtx=document.getElementById('trendChart');
   if (_trendChart) _trendChart.destroy();
   _trendChart=new Chart(tCtx,{type:'line',data:{labels:trendLabels,datasets:trendDatasets.length?trendDatasets:[{label:'بدون داده',data:[],borderColor:'#475569'}]},options:{responsive:true,plugins:{legend:{labels:{color:'#6b7280',font:{family:'Vazirmatn',size:12}}},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${Number(ctx.raw||0).toLocaleString('fa-IR')} تومان`}}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'#e5e7eb'}},y:{ticks:{color:'#6b7280',callback:v=>Number(v).toLocaleString('fa-IR')},grid:{color:'#e5e7eb'}}}}});
-
   const prodCounts={};data.forEach(p=>{prodCounts[p.product]=(prodCounts[p.product]||0)+1;});
   const pCtx=document.getElementById('productPieChart');
   if (_pieChart) _pieChart.destroy();
   _pieChart=new Chart(pCtx,{type:'doughnut',data:{labels:Object.keys(prodCounts),datasets:[{data:Object.values(prodCounts),backgroundColor:['#1e40af','#0891b2','#059669','#7c3aed','#d97706','#dc2626','#0e7490'],borderColor:'#ffffff',borderWidth:3}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#6b7280',font:{family:'Vazirmatn',size:12},padding:14}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} رکورد`}}}}});
-
   const factAvg={};data.forEach(p=>{if (!factAvg[p.factory]) factAvg[p.factory]={sum:0,cnt:0};factAvg[p.factory].sum+=p.price;factAvg[p.factory].cnt+=1;});
   const facLabels=Object.keys(factAvg);const facVals=facLabels.map(k=>Math.round(factAvg[k].sum/factAvg[k].cnt));
   const bCtx=document.getElementById('factoryBarChart');
   if (_barChart) _barChart.destroy();
   _barChart=new Chart(bCtx,{type:'bar',data:{labels:facLabels,datasets:[{label:'میانگین قیمت (تومان)',data:facVals,backgroundColor:'rgba(30,64,175,.75)',borderColor:'#1e40af',borderWidth:1,borderRadius:6}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${Number(ctx.raw).toLocaleString('fa-IR')} تومان`}}},scales:{x:{ticks:{color:'#6b7280',callback:v=>Number(v).toLocaleString('fa-IR')},grid:{color:'#e5e7eb'}},y:{ticks:{color:'#6b7280'},grid:{color:'#e5e7eb'}}}}});
-
   const freqMap={};trendDates.forEach(d=>{freqMap[d.toDateString()]=0;});data.forEach(p=>{const ds=new Date(p.updatedAt).toDateString();if (freqMap[ds]!==undefined) freqMap[ds]++;});
   const fCtx=document.getElementById('updateFreqChart');
   if (_freqChart) _freqChart.destroy();
   _freqChart=new Chart(fCtx,{type:'bar',data:{labels:trendLabels,datasets:[{label:'آپدیت',data:Object.values(freqMap),backgroundColor:'rgba(8,145,178,.7)',borderColor:'#0891b2',borderWidth:1,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'#e5e7eb'}},y:{ticks:{color:'#6b7280',stepSize:1},grid:{color:'#e5e7eb'}}}}});
-
   const mmWrap=document.getElementById('minmax-table-wrap');
   if (data.length===0){mmWrap.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">داده‌ای موجود نیست</div></div>';return;}
   const mmMap={};data.forEach(p=>{if (!mmMap[p.product]) mmMap[p.product]={min:Infinity,max:-Infinity,cnt:0};mmMap[p.product].min=Math.min(mmMap[p.product].min,p.price);mmMap[p.product].max=Math.max(mmMap[p.product].max,p.price);mmMap[p.product].cnt++;});
@@ -2180,10 +2305,10 @@ function sShowToast(msg,icon='✅'){
 </script>
 
 <script>
-// This runs after all scripts are loaded
 document.addEventListener('DOMContentLoaded', function() {
   masterInit();
 });
 </script>
+
 </body>
 </html>
