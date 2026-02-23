@@ -392,6 +392,21 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 .category-header.collapsed .category-toggle { transform:rotate(-90deg); }
 .category-products { padding:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; }
 .category-products.collapsed { display:none; }
+
+/* ── BACKUP / IMPORT PANEL ── */
+.io-panel { background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:2px solid #86efac; border-radius:14px; padding:18px 22px; margin-bottom:20px; }
+.io-panel.blue { background:linear-gradient(135deg,#eff6ff,#dbeafe); border-color:#93c5fd; }
+.io-title { font-size:14px; font-weight:700; color:#166534; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+.io-panel.blue .io-title { color:#1e40af; }
+.io-btn-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.io-label { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:9px; font-family:'Vazirmatn',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all .25s; border:none; }
+.io-label.green { background:#059669; color:white; }
+.io-label.green:hover { background:#047857; transform:translateY(-1px); }
+.io-label.blue { background:#1e40af; color:white; }
+.io-label.blue:hover { background:#1e3a8a; transform:translateY(-1px); }
+.io-label.orange { background:#d97706; color:white; }
+.io-label.orange:hover { background:#b45309; transform:translateY(-1px); }
+input[type=file].hidden-file { display:none; }
 </style>
 </head>
 <body>
@@ -417,6 +432,11 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       👤 <span id="master-user-name">—</span>
     </div>
     <div class="master-clock" id="master-clock">—</div>
+    <button class="master-logout" style="background:rgba(255,165,0,.3);border-color:rgba(255,165,0,.5);" onclick="exportFullBackup()">💾 بکاپ کامل</button>
+    <label class="master-logout" style="background:rgba(0,200,100,.2);border-color:rgba(0,200,100,.4);cursor:pointer;">
+      📂 بازیابی
+      <input type="file" class="hidden-file" accept=".json" onchange="importFullBackup(event)">
+    </label>
     <button class="master-logout" id="master-logout-btn" onclick="masterLogout()" style="display:none;">🚪 خروج</button>
   </div>
 </nav>
@@ -507,9 +527,16 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       <div class="card">
         <h2 class="card-title">📋 ارزیابی‌های ثبت‌شده توسط من</h2>
         <div class="alert alert-info" id="my-history-info">📌 فقط ارزیابی‌های شما نمایش داده می‌شود.</div>
-        <div class="btn-group" style="margin-bottom:18px;margin-top:0;">
-          <button class="btn btn-warning" onclick="exportMyEvaluations()">📥 پشتیبان‌گیری JSON</button>
-          <button class="btn btn-success" onclick="exportMyEvaluationsExcel()">📊 خروجی اکسل (ارزیابی‌های من)</button>
+        <div class="io-panel">
+          <div class="io-title">💾 پشتیبان‌گیری و بازیابی — ارزیابی‌های من</div>
+          <div class="io-btn-row">
+            <button class="btn btn-warning" onclick="exportMyEvaluations()">📥 خروجی JSON</button>
+            <button class="btn btn-success" onclick="exportMyEvaluationsExcel()">📊 خروجی اکسل</button>
+            <label class="io-label green">
+              📂 بارگذاری از JSON
+              <input type="file" class="hidden-file" accept=".json" onchange="importMyEvaluations(event)">
+            </label>
+          </div>
         </div>
         <table class="history-table">
           <thead><tr><th>تاریخ</th><th>نام کارمند</th><th>بخش</th><th>امتیاز</th><th>رتبه</th><th>عملیات</th></tr></thead>
@@ -531,8 +558,13 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
         <div class="card-header">
           <h2 class="card-title" style="margin-bottom:0;">🏆 رتبه‌بندی کلی کارمندان</h2>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn btn-success btn-sm" onclick="exportAllEvaluationsExcel()">📊 خروجی اکسل (همه ارزیابی‌ها)</button>
-            <button class="btn btn-primary btn-sm" onclick="exportRankingExcel()">🏆 خروجی اکسل (رتبه‌بندی)</button>
+            <button class="btn btn-warning btn-sm" onclick="exportAllEvaluationsJSON()">📥 JSON کامل</button>
+            <button class="btn btn-success btn-sm" onclick="exportAllEvaluationsExcel()">📊 خروجی اکسل</button>
+            <button class="btn btn-primary btn-sm" onclick="exportRankingExcel()">🏆 رتبه‌بندی اکسل</button>
+            <label class="io-label orange" style="padding:6px 14px;font-size:13px;">
+              📂 بازیابی JSON
+              <input type="file" class="hidden-file" accept=".json" onchange="importAllEvaluations(event)">
+            </label>
           </div>
         </div>
         <div class="alert alert-warning">⚠️ این جدول مجموع تمام ارزیابی‌های همه مدیران را نشان می‌دهد.</div>
@@ -574,6 +606,16 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     <div id="manage-employees-section" class="section">
       <div class="card">
         <h2 class="card-title">👤 مدیریت کارمندان</h2>
+        <div class="io-panel blue">
+          <div class="io-title">💾 پشتیبان‌گیری و بازیابی — کارمندان</div>
+          <div class="io-btn-row">
+            <button class="btn btn-warning" onclick="exportEmployeesJSON()">📥 خروجی JSON</button>
+            <label class="io-label blue">
+              📂 بارگذاری از JSON
+              <input type="file" class="hidden-file" accept=".json" onchange="importEmployeesJSON(event)">
+            </label>
+          </div>
+        </div>
         <div class="card" style="background:linear-gradient(135deg,#f0f9ff,#dbeafe);margin-bottom:22px;">
           <h3 style="font-size:17px;margin-bottom:14px;">➕ افزودن کارمند جدید</h3>
           <div class="form-grid">
@@ -598,6 +640,16 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     <div id="departments-section" class="section">
       <div class="card">
         <h2 class="card-title">🏢 مدیریت بخش‌ها و معیارها</h2>
+        <div class="io-panel blue">
+          <div class="io-title">💾 پشتیبان‌گیری و بازیابی — بخش‌ها و معیارها</div>
+          <div class="io-btn-row">
+            <button class="btn btn-warning" onclick="exportDepartmentsJSON()">📥 خروجی JSON</button>
+            <label class="io-label blue">
+              📂 بارگذاری از JSON
+              <input type="file" class="hidden-file" accept=".json" onchange="importDepartmentsJSON(event)">
+            </label>
+          </div>
+        </div>
         <div class="alert alert-warning">⚠️ هر بخش معیارهای ارزیابی مخصوص خود را دارد.</div>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="showAddDepartmentModal()">➕ بخش جدید</button>
@@ -771,6 +823,11 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
         <select class="filter-select" id="filter-product" onchange="renderPriceTable()"><option value="">همه محصولات</option></select>
         <select class="filter-select" id="filter-factory" onchange="renderPriceTable()"><option value="">همه کارخانجات</option></select>
         <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 خروجی CSV</button>
+        <button class="btn btn-warning btn-sm" onclick="exportPricesJSON()">📥 JSON</button>
+        <label class="io-label orange" style="padding:8px 14px;font-size:13px;">
+          📂 بارگذاری JSON
+          <input type="file" class="hidden-file" accept=".json" onchange="importPricesJSON(event)">
+        </label>
       </div>
       <div class="table-wrap">
         <table class="data-table">
@@ -790,7 +847,14 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     <div class="card">
       <div class="card-header">
         <div class="card-title">📦 لیست محصولات</div>
-        <button class="btn btn-accent" onclick="openProductModal()">➕ افزودن محصول</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-warning btn-sm" onclick="exportProductsJSON()">📥 JSON</button>
+          <label class="io-label green" style="padding:8px 14px;font-size:13px;">
+            📂 بارگذاری
+            <input type="file" class="hidden-file" accept=".json" onchange="importProductsJSON(event)">
+          </label>
+          <button class="btn btn-accent" onclick="openProductModal()">➕ افزودن محصول</button>
+        </div>
       </div>
       <div class="grid-cards" id="products-grid">
         <div class="empty"><div class="empty-icon">📦</div><div class="empty-text">در حال بارگذاری...</div></div>
@@ -803,7 +867,14 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     <div class="card">
       <div class="card-header">
         <div class="card-title">🏭 لیست کارخانجات</div>
-        <button class="btn btn-accent" onclick="openFactoryModal()">➕ افزودن کارخانه</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-warning btn-sm" onclick="exportFactoriesJSON()">📥 JSON</button>
+          <label class="io-label green" style="padding:8px 14px;font-size:13px;">
+            📂 بارگذاری
+            <input type="file" class="hidden-file" accept=".json" onchange="importFactoriesJSON(event)">
+          </label>
+          <button class="btn btn-accent" onclick="openFactoryModal()">➕ افزودن کارخانه</button>
+        </div>
       </div>
       <div class="grid-cards" id="factories-grid">
         <div class="empty"><div class="empty-icon">🏭</div><div class="empty-text">در حال بارگذاری...</div></div>
@@ -1575,6 +1646,261 @@ function resetToDefaultDepartments(){
   if (el) el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
 });
 
+
+// ══════════════════════════════════════════════════════
+// JSON IMPORT / EXPORT FUNCTIONS
+// ══════════════════════════════════════════════════════
+
+// ── Helpers ──
+function jsonDownload(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function readJSONFile(event, callback) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      callback(data);
+    } catch(err) {
+      alert('❌ فایل JSON نامعتبر است! ' + err.message);
+    }
+    event.target.value = ''; // reset so same file can be re-imported
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function showImportToast(msg) {
+  const t = document.getElementById('s-toast');
+  if (t) { t.innerHTML = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3500); }
+  else alert(msg);
+}
+
+// ── EVALUATIONS: export all as JSON ──
+function exportAllEvaluationsJSON() {
+  if (evaluations.length === 0) { showImportToast('⚠️ ارزیابی‌ای وجود ندارد!'); return; }
+  jsonDownload({
+    type: 'all-evaluations',
+    exportDate: new Date().toISOString(),
+    count: evaluations.length,
+    evaluations: evaluations
+  }, `همه-ارزیابی‌ها-${new Date().toISOString().split('T')[0]}.json`);
+}
+
+// ── EVALUATIONS: import (my evaluations) ──
+function importMyEvaluations(event) {
+  readJSONFile(event, data => {
+    let imported = [];
+    // Support: {evaluations:[...]}, {manager:...,evaluations:[...]}, or plain array
+    if (Array.isArray(data)) imported = data;
+    else if (Array.isArray(data.evaluations)) imported = data.evaluations;
+    else { alert('❌ فرمت فایل پشتیبانی نمی‌شود'); return; }
+
+    if (!confirm(`آیا می‌خواهید ${imported.length} ارزیابی بارگذاری شود؟ موارد تکراری جایگزین می‌شوند.`)) return;
+
+    // Merge: override by id
+    const existingIds = new Set(evaluations.map(e => e.id));
+    let added = 0, updated = 0;
+    imported.forEach(ev => {
+      if (existingIds.has(ev.id)) {
+        const idx = evaluations.findIndex(e => e.id === ev.id);
+        evaluations[idx] = ev; updated++;
+      } else {
+        evaluations.push(ev); added++;
+      }
+    });
+
+    // Write to Firebase
+    if (isFirebaseConfigured) {
+      const obj = {};
+      evaluations.forEach(ev => { obj[ev.id] = ev; });
+      database.ref('evaluations').set(obj)
+        .then(() => showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی شد`))
+        .catch(e => alert('❌ خطا: ' + e.message));
+    } else {
+      localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+      showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی شد`);
+    }
+    onEvaluationsUpdated();
+  });
+}
+
+// ── EVALUATIONS: import all ──
+function importAllEvaluations(event) {
+  importMyEvaluations(event); // same logic
+}
+
+// ── EMPLOYEES: export ──
+function exportEmployeesJSON() {
+  jsonDownload({
+    type: 'employees',
+    exportDate: new Date().toISOString(),
+    count: employees.length,
+    employees: employees
+  }, `کارمندان-${new Date().toISOString().split('T')[0]}.json`);
+}
+
+// ── EMPLOYEES: import ──
+function importEmployeesJSON(event) {
+  readJSONFile(event, data => {
+    let imported = [];
+    if (Array.isArray(data)) imported = data;
+    else if (Array.isArray(data.employees)) imported = data.employees;
+    else { alert('❌ فرمت فایل پشتیبانی نمی‌شود'); return; }
+
+    if (!confirm(`آیا می‌خواهید ${imported.length} کارمند بارگذاری شود؟`)) return;
+
+    const existingIds = new Set(employees.map(e => e.id));
+    let added = 0, updated = 0;
+    imported.forEach(emp => {
+      if (existingIds.has(emp.id)) {
+        const idx = employees.findIndex(e => e.id === emp.id);
+        employees[idx] = emp; updated++;
+      } else {
+        employees.push(emp); added++;
+      }
+    });
+
+    if (isFirebaseConfigured) {
+      const obj = {};
+      employees.forEach(emp => { obj[emp.id] = emp; });
+      database.ref('employees').set(obj)
+        .then(() => showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی شد`))
+        .catch(e => alert('❌ خطا: ' + e.message));
+    } else {
+      localStorage.setItem('employees', JSON.stringify(employees));
+      showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی شد`);
+    }
+    updateEmployeesManagementList();
+  });
+}
+
+// ── DEPARTMENTS: export ──
+function exportDepartmentsJSON() {
+  jsonDownload({
+    type: 'departments',
+    exportDate: new Date().toISOString(),
+    departments: departments
+  }, `بخش‌ها-${new Date().toISOString().split('T')[0]}.json`);
+}
+
+// ── DEPARTMENTS: import ──
+function importDepartmentsJSON(event) {
+  readJSONFile(event, data => {
+    let imported = null;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      // could be {departments: {...}} or directly the departments object
+      if (data.departments && typeof data.departments === 'object') imported = data.departments;
+      else if (data.type === 'departments') imported = data.departments;
+      else imported = data;
+    }
+    if (!imported) { alert('❌ فرمت فایل پشتیبانی نمی‌شود'); return; }
+
+    const count = Object.keys(imported).length;
+    if (!confirm(`آیا می‌خواهید ${count} بخش بارگذاری شود؟ بخش‌های موجود با همین نام جایگزین می‌شوند.`)) return;
+
+    // Merge departments
+    Object.assign(departments, imported);
+
+    if (isFirebaseConfigured) {
+      database.ref('departments').set(departments)
+        .then(() => {
+          showImportToast(`✅ ${count} بخش بارگذاری شد`);
+          populateDepartmentDropdown(); populateNewEmployeeDepartment(); updateDepartmentsView();
+        })
+        .catch(e => alert('❌ خطا: ' + e.message));
+    } else {
+      localStorage.setItem('departments', JSON.stringify(departments));
+      showImportToast(`✅ ${count} بخش بارگذاری شد`);
+      populateDepartmentDropdown(); populateNewEmployeeDepartment(); updateDepartmentsView();
+    }
+  });
+}
+
+// ── FULL BACKUP: export everything ──
+function exportFullBackup() {
+  // Get supply data from localStorage (always synced there)
+  let _sp=[], _sf=[], _spr=[];
+  try { _sp=JSON.parse(localStorage.getItem('supply_products')||'[]'); } catch(e){}
+  try { _sf=JSON.parse(localStorage.getItem('supply_factories')||'[]'); } catch(e){}
+  try { _spr=JSON.parse(localStorage.getItem('supply_prices')||'[]'); } catch(e){}
+  const backup = {
+    type: 'full-backup',
+    version: '2.0',
+    exportDate: new Date().toISOString(),
+    eval: {
+      departments: departments,
+      employees: employees,
+      evaluations: evaluations
+    },
+    supply: {
+      products: _sp,
+      factories: _sf,
+      prices: _spr
+    }
+  };
+  jsonDownload(backup, `فولاد-پلتفرم-بکاپ-کامل-${new Date().toISOString().split('T')[0]}.json`);
+  showImportToast('✅ بکاپ کامل دانلود شد');
+}
+
+// ── FULL BACKUP: import everything ──
+function importFullBackup(event) {
+  readJSONFile(event, async data => {
+    if (data.type !== 'full-backup') {
+      alert('❌ این فایل یک بکاپ کامل نیست. برای بارگذاری بخش خاص از دکمه‌های داخل هر صفحه استفاده کنید.');
+      return;
+    }
+    if (!confirm('⚠️ بازیابی بکاپ کامل! تمام داده‌های فعلی جایگزین می‌شوند. ادامه می‌دهید؟')) return;
+
+    const writes = [];
+    try {
+      // Eval data
+      if (data.eval) {
+        if (data.eval.departments) {
+          departments = data.eval.departments;
+          writes.push(isFirebaseConfigured ? database.ref('departments').set(departments) : Promise.resolve());
+          if (!isFirebaseConfigured) localStorage.setItem('departments', JSON.stringify(departments));
+        }
+        if (data.eval.employees) {
+          employees = Array.isArray(data.eval.employees) ? data.eval.employees : Object.values(data.eval.employees);
+          const empObj = {};
+          employees.forEach(e => { empObj[e.id] = e; });
+          writes.push(isFirebaseConfigured ? database.ref('employees').set(empObj) : Promise.resolve());
+          if (!isFirebaseConfigured) localStorage.setItem('employees', JSON.stringify(employees));
+        }
+        if (data.eval.evaluations) {
+          evaluations = Array.isArray(data.eval.evaluations) ? data.eval.evaluations : Object.values(data.eval.evaluations);
+          const evalObj = {};
+          evaluations.forEach(ev => { evalObj[ev.id] = ev; });
+          writes.push(isFirebaseConfigured ? database.ref('evaluations').set(evalObj) : Promise.resolve());
+          if (!isFirebaseConfigured) localStorage.setItem('sharedEvaluations', JSON.stringify(evaluations));
+        }
+      }
+      // Supply data - stored in pendingSupplyRestore, applied when supply module inits
+      if (data.supply) {
+        window._pendingSupplyRestore = data.supply;
+      }
+
+      await Promise.all(writes);
+      // Refresh UI
+      populateDepartmentDropdown(); populateNewEmployeeDepartment(); updateDepartmentsView();
+      updateEmployeesManagementList(); onEvaluationsUpdated();
+      if (window.sRefreshAll) window.sRefreshAll();
+
+      showImportToast('✅ بکاپ کامل با موفقیت بازیابی شد');
+    } catch(e) {
+      alert('❌ خطا در بازیابی: ' + e.message);
+    }
+  });
+}
+
 // EXCEL EXPORT FUNCTIONS
 function persianDate(isoStr) {
   try { return new Date(isoStr).toLocaleDateString('fa-IR'); } catch { return isoStr||''; }
@@ -1741,6 +2067,17 @@ function supplyInit() {
   sListenFB('products',  d=>{sProducts=d;  localStorage.setItem('supply_products',JSON.stringify(d));   sRefreshAll();});
   sListenFB('factories', d=>{sFactories=d; localStorage.setItem('supply_factories',JSON.stringify(d)); sRefreshAll();});
   sListenFB('prices',    d=>{sPrices=d;    localStorage.setItem('supply_prices',JSON.stringify(d));       sRefreshAll();});
+  // Apply full backup restore if pending
+  if (window._pendingSupplyRestore) {
+    const r = window._pendingSupplyRestore;
+    delete window._pendingSupplyRestore;
+    if (r.products) { sProducts = r.products; sPersist('products', sProducts); }
+    if (r.factories) { sFactories = r.factories; sPersist('factories', sFactories); }
+    if (r.prices) { sProducts = r.prices; sPersist('prices', sPrices); }
+    sRefreshAll();
+    showImportToast && showImportToast('✅ بکاپ کامل با موفقیت بازیابی شد');
+    return;
+  }
   // Seed only if Firebase is empty (first run)
   sDb.ref('supply/products').once('value').then(snap => {
     if (!snap.exists() || Object.keys(snap.val()||{}).length === 0) sSeedProducts();
@@ -2337,13 +2674,84 @@ function sShowToast(msg,icon='✅'){
   t.innerHTML=`<span>${icon}</span> ${msg}`;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3200);
 }
+
+// ── SUPPLY: Products export/import ──
+function exportProductsJSON() {
+  jsonDownload({ type:'supply-products', exportDate:new Date().toISOString(), count:sProducts.length, products:sProducts },
+    `محصولات-تامین-${new Date().toISOString().split('T')[0]}.json`);
+}
+function importProductsJSON(event) {
+  readJSONFile(event, data => {
+    let imported = [];
+    if (Array.isArray(data)) imported = data;
+    else if (Array.isArray(data.products)) imported = data.products;
+    else { alert('❌ فرمت پشتیبانی نمی‌شود'); return; }
+    if (!confirm(`بارگذاری ${imported.length} محصول؟`)) return;
+    const existIds = new Set(sProducts.map(p=>p.id));
+    let added=0, updated=0;
+    imported.forEach(p => {
+      if (existIds.has(p.id)) { const i=sProducts.findIndex(x=>x.id===p.id); sProducts[i]=p; updated++; }
+      else { sProducts.push(p); added++; }
+    });
+    sPersist('products', sProducts);
+    sRenderProductsGrid(); sUpdateDropdowns(); sUpdateStats();
+    showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی — محصولات`);
+  });
+}
+
+// ── SUPPLY: Factories export/import ──
+function exportFactoriesJSON() {
+  jsonDownload({ type:'supply-factories', exportDate:new Date().toISOString(), count:sFactories.length, factories:sFactories },
+    `کارخانجات-${new Date().toISOString().split('T')[0]}.json`);
+}
+function importFactoriesJSON(event) {
+  readJSONFile(event, data => {
+    let imported = [];
+    if (Array.isArray(data)) imported = data;
+    else if (Array.isArray(data.factories)) imported = data.factories;
+    else { alert('❌ فرمت پشتیبانی نمی‌شود'); return; }
+    if (!confirm(`بارگذاری ${imported.length} کارخانه؟`)) return;
+    const existIds = new Set(sFactories.map(f=>f.id));
+    let added=0, updated=0;
+    imported.forEach(f => {
+      if (existIds.has(f.id)) { const i=sFactories.findIndex(x=>x.id===f.id); sFactories[i]=f; updated++; }
+      else { sFactories.push(f); added++; }
+    });
+    sPersist('factories', sFactories);
+    sRenderFactoriesGrid(); sUpdateDropdowns(); sUpdateStats();
+    showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی — کارخانجات`);
+  });
+}
+
+// ── SUPPLY: Prices export/import ──
+function exportPricesJSON() {
+  jsonDownload({ type:'supply-prices', exportDate:new Date().toISOString(), count:sPrices.length, prices:sPrices },
+    `قیمت‌ها-${new Date().toISOString().split('T')[0]}.json`);
+}
+function importPricesJSON(event) {
+  readJSONFile(event, data => {
+    let imported = [];
+    if (Array.isArray(data)) imported = data;
+    else if (Array.isArray(data.prices)) imported = data.prices;
+    // Support old data.json format: {supply:{prices:[...]}}
+    else if (data.supply && Array.isArray(data.supply.prices)) imported = data.supply.prices;
+    else { alert('❌ فرمت پشتیبانی نمی‌شود'); return; }
+    if (!confirm(`بارگذاری ${imported.length} رکورد قیمت؟ رکوردهای تکراری جایگزین می‌شوند.`)) return;
+    const existIds = new Set(sPrices.map(p=>p.id));
+    let added=0, updated=0;
+    imported.forEach(p => {
+      if (existIds.has(p.id)) { const i=sPrices.findIndex(x=>x.id===p.id); sPrices[i]=p; updated++; }
+      else { sPrices.push(p); added++; }
+    });
+    sPersist('prices', sPrices);
+    sRenderPriceTable(); sUpdateStats(); sUpdateDropdowns();
+    showImportToast(`✅ ${added} اضافه، ${updated} بروزرسانی — قیمت‌ها`);
+  });
+}
+
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  masterInit();
-});
-</script>
+
 
 </body>
 </html>
