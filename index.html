@@ -451,7 +451,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
     <div class="header">
       <div class="header-left">
         <h1>⭐ سیستم ارزیابی عملکرد پرسنل</h1>
-        <p>شرکت بازرگانی فولاد — همگام‌سازی Real-time با Firebase</p>
+        <p>شرکت بازرگانی فولاد — Real-time با Firebase Cloud</p>
       </div>
       <div class="header-right">
         <div class="manager-badge">👤 <span id="current-manager-display">—</span></div>
@@ -673,7 +673,7 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
       <p>مدیریت محصولات، کارخانجات و قیمت‌گذاری لحظه‌ای</p>
     </div>
     <div class="header-right">
-      <div class="live-badge"><div class="live-dot"></div>Real-time</div>
+      <div class="live-badge"><div class="live-dot" id="supply-status-dot"></div><span id="supply-status-text">Firebase</span></div>
       <div class="clock-badge" id="supply-clock">—</div>
     </div>
   </div>
@@ -1710,10 +1710,15 @@ function exportRankingExcel() {
 <script>
 let sDb = null;
 let sFbOk = false;
+// Use same Firebase app initialized in eval section
 try {
   sDb = firebase.database();
   sFbOk = true;
-} catch(e) { console.warn('Supply Firebase error:', e); }
+  console.log('✅ Supply module: Firebase connected');
+} catch(e) { 
+  console.warn('Supply Firebase error:', e);
+  sFbOk = false;
+}
 
 let sProducts=[], sFactories=[], sPrices=[];
 let sChartPeriod=7;
@@ -1722,26 +1727,49 @@ let sAddFormVisible=true;
 let selectedProducts = new Set();
 
 function supplyInit() {
-  sProducts  = sLoadLS('products');
-  sFactories = sLoadLS('factories');
-  sPrices    = sLoadLS('prices');
-  sRefreshAll();
-  if (sProducts.length===0) sSeedProducts();
-  if (sFactories.length===0) sSeedFactories();
-  if (sFbOk) {
-    sListenFB('products',  d=>{sProducts=d;  sPersist('products',sProducts);   sRefreshAll();});
-    sListenFB('factories', d=>{sFactories=d; sPersist('factories',sFactories); sRefreshAll();});
-    sListenFB('prices',    d=>{sPrices=d;    sPersist('prices',sPrices);       sRefreshAll();});
+  if (!sFbOk) {
+    // Offline fallback
+    sProducts  = sLoadLS('products');
+    sFactories = sLoadLS('factories');
+    sPrices    = sLoadLS('prices');
+    sRefreshAll();
+    if (sProducts.length===0) sSeedProducts();
+    if (sFactories.length===0) sSeedFactories();
+    return;
   }
+  // Firebase listeners - single source of truth
+  sListenFB('products',  d=>{sProducts=d;  localStorage.setItem('supply_products',JSON.stringify(d));   sRefreshAll();});
+  sListenFB('factories', d=>{sFactories=d; localStorage.setItem('supply_factories',JSON.stringify(d)); sRefreshAll();});
+  sListenFB('prices',    d=>{sPrices=d;    localStorage.setItem('supply_prices',JSON.stringify(d));       sRefreshAll();});
+  // Seed only if Firebase is empty (first run)
+  sDb.ref('supply/products').once('value').then(snap => {
+    if (!snap.exists() || Object.keys(snap.val()||{}).length === 0) sSeedProducts();
+  });
+  sDb.ref('supply/factories').once('value').then(snap => {
+    if (!snap.exists() || Object.keys(snap.val()||{}).length === 0) sSeedFactories();
+  });
 }
 
 function sPersist(key,data){
-  if (sFbOk) sDb.ref('supply/'+key).set(data).catch(console.error);
-  localStorage.setItem('supply_'+key,JSON.stringify(data));
+  if (sFbOk) {
+    sDb.ref('supply/'+key).set(data).catch(e => {
+      console.error('Firebase write error:', e);
+      localStorage.setItem('supply_'+key,JSON.stringify(data));
+    });
+  } else {
+    localStorage.setItem('supply_'+key,JSON.stringify(data));
+  }
 }
 function sLoadLS(key){try{return JSON.parse(localStorage.getItem('supply_'+key))||[];}catch{return[];}}
 function sListenFB(key,cb){
-  if (sFbOk) sDb.ref('supply/'+key).on('value',snap=>{cb(snap.exists()?(Array.isArray(snap.val())?snap.val():Object.values(snap.val())):[]); });
+  if (!sFbOk) return;
+  sDb.ref('supply/'+key).on('value', snap => {
+    if (!snap.exists()) { cb([]); return; }
+    const val = snap.val();
+    // Firebase stores arrays as objects with numeric keys
+    if (Array.isArray(val)) cb(val.filter(Boolean));
+    else cb(Object.values(val).filter(Boolean));
+  });
 }
 
 function sSeedProducts(){
@@ -1774,6 +1802,13 @@ function sSeedFactories(){
 }
 
 function sRefreshAll(){
+  // Update connection status indicator
+  const dot = document.getElementById('supply-status-dot');
+  const txt = document.getElementById('supply-status-text');
+  if (dot && txt) {
+    if (sFbOk) { dot.style.background='#4ade80'; txt.textContent='Firebase'; }
+    else { dot.style.background='#f87171'; txt.textContent='آفلاین'; }
+  }
   sUpdateStats(); sUpdateDropdowns();
   sRenderProductsGrid(); sRenderFactoriesGrid(); sRenderPriceTable();
   const salesSection = document.getElementById('supply-sales-dashboard-section');
