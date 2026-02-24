@@ -3064,7 +3064,7 @@ function lSave(key) {
 // ── Row factory ──
 function lNewRow(type) {
   return {
-    id: Date.now() + Math.random(),
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
     type, contractNo:'', seller:'', location:'',
     contractType:'جاری', description:'', delivery:'درب کارخانه',
     settlement:'تسویه', qty:'', unitPrice:'', contractDate:'',
@@ -3110,7 +3110,7 @@ function lMarkLoaded(type, id, checked) {
   if (!checked) return; // only move on check, not uncheck
 
   // Show driver modal instead of prompt
-  _driverPending = { type, id: row.id };
+  _driverPending = { type, id: String(row.id) };
   document.getElementById('dm-driver-name').value = row.driverName || '';
   document.getElementById('dm-driver-info').value = row.driverInfo || '';
   document.getElementById('dm-loaded-at').value = row.loadedAt || new Date().toLocaleDateString('fa-IR');
@@ -3188,7 +3188,7 @@ function cellInput(type, row, field, placeholder, extraStyle) {
     value="${esc(row[field])}" 
     placeholder="${esc(placeholder)}" 
     style="${extraStyle||''}" 
-    onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">`;
+    onchange="lUpdateField('${type}','${row.id}','${field}',this.value)">`;
 }
 
 function numInput(type, row, field, placeholder) {
@@ -3197,12 +3197,12 @@ function numInput(type, row, field, placeholder) {
     value="${esc(row[field])}"
     placeholder="${esc(placeholder)}"
     style="min-width:80px;text-align:left;direction:ltr;"
-    onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">`;
+    onchange="lUpdateField('${type}','${row.id}','${field}',this.value)">`;
 }
 
 function selectInput(type, row, field, options) {
   const opts = options.map(o => `<option value="${esc(o)}"${row[field]===o?' selected':''}>${esc(o)}</option>`).join('');
-  return `<select onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">${opts}</select>`;
+  return `<select onchange="lUpdateField('${type}','${row.id}','${field}',this.value)">${opts}</select>`;
 }
 
 function typeBadge(type) {
@@ -3236,9 +3236,9 @@ function lRender(key) {
       <td style="text-align:center;">
         <input type="checkbox" ${row.loaded?'checked':''} 
           style="width:18px;height:18px;cursor:pointer;"
-          onchange="lMarkLoaded('${key}',${row.id},this.checked)">
+          onchange="lMarkLoaded('${key}','${row.id}',this.checked)">
       </td>
-      <td><button class="del-btn" onclick="lDeleteRow('${key}',${row.id})">🗑️</button></td>
+      <td><button class="del-btn" onclick="lDeleteRow('${key}','${row.id}')">🗑️</button></td>
     </tr>`).join('');
   }
 
@@ -3262,7 +3262,7 @@ function lRender(key) {
       <td>${cellInput('loaded', row, 'driverName', 'نام راننده','min-width:100px;')}</td>
       <td>${cellInput('loaded', row, 'driverInfo', 'شماره / مشخصات','min-width:120px;')}</td>
       <td>${cellInput('loaded', row, 'loadedAt', 'تاریخ','min-width:90px;')}</td>
-      <td><button class="arch-btn" onclick="lArchiveRow(${row.id})">🗄️ آرشیو</button></td>
+      <td><button class="arch-btn" onclick="lArchiveRow('${row.id}')">🗄️ آرشیو</button></td>
     </tr>`).join('');
   }
 
