@@ -407,6 +407,67 @@ body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0
 .io-label.orange { background:#d97706; color:white; }
 .io-label.orange:hover { background:#b45309; transform:translateY(-1px); }
 input[type=file].hidden-file { display:none; }
+
+/* ═══ LOADING MODULE CSS ═══ */
+.loading-tabs{display:flex;gap:10px;background:white;padding:10px;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,.06);margin-bottom:20px;flex-wrap:wrap;}
+.loading-tab{flex:1;min-width:120px;padding:10px 16px;background:#f3f4f6;border:none;border-radius:9px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:700;color:#374151;cursor:pointer;transition:all .25s;}
+.loading-tab:hover{background:#e5e7eb;}
+.loading-tab.active{color:white;box-shadow:0 4px 14px rgba(30,64,175,.3);}
+.loading-tab.blue.active{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
+.loading-tab.orange.active{background:linear-gradient(135deg,#d97706,#b45309);}
+.loading-tab.green.active{background:linear-gradient(135deg,#059669,#047857);}
+.loading-tab.gray.active{background:linear-gradient(135deg,#475569,#334155);}
+.loading-section{display:none;}
+.loading-section.active{display:block;animation:fadeIn .3s ease-out;}
+.ltable-wrap{overflow-x:auto;border-radius:12px;border:1px solid #e5e7eb;margin-top:14px;}
+.ltable{width:100%;border-collapse:collapse;font-size:13px;}
+.ltable thead tr{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
+.ltable.orange thead tr{background:linear-gradient(135deg,#d97706,#b45309);}
+.ltable.green thead tr{background:linear-gradient(135deg,#059669,#047857);}
+.ltable.gray thead tr{background:linear-gradient(135deg,#475569,#334155);}
+.ltable th{color:white;padding:11px 10px;text-align:right;font-weight:700;white-space:nowrap;font-size:12px;}
+.ltable td{padding:7px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.ltable tbody tr:hover{background:#f8fafc;}
+.ltable tbody tr:last-child td{border-bottom:none;}
+.ltable td input[type=text],.ltable td input[type=number],.ltable td select{width:100%;padding:5px 7px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:12px;background:white;transition:border-color .2s;min-width:60px;}
+.ltable td input[type=text]:focus,.ltable td input[type=number]:focus,.ltable td select:focus{outline:none;border-color:#1e40af;background:#eff6ff;}
+.ltable td input[type=checkbox]{width:17px;height:17px;cursor:pointer;accent-color:#1e40af;}
+.ltable td .del-btn{background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s;}
+.ltable td .del-btn:hover{background:#dc2626;color:white;}
+.ltable td .arch-btn{background:#e0e7ff;color:#1e40af;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s;}
+.ltable td .arch-btn:hover{background:#1e40af;color:white;}
+.lcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.lcard-title{font-size:18px;font-weight:900;color:#1f2937;display:flex;align-items:center;gap:8px;}
+.lcard-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.loaded-badge{display:inline-flex;align-items:center;gap:5px;background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.table-count{font-size:12px;color:#6b7280;font-weight:600;}
+
+/* ── DRIVER MODAL ── */
+.driver-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s;}
+.driver-modal{background:white;border-radius:20px;padding:32px;width:460px;max-width:95vw;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:slideDown .3s ease-out;}
+.driver-modal h3{font-size:20px;font-weight:900;color:#1f2937;margin-bottom:6px;}
+.driver-modal p{font-size:13px;color:#6b7280;margin-bottom:24px;}
+.driver-modal .dm-field{margin-bottom:16px;}
+.driver-modal .dm-label{font-size:13px;font-weight:700;color:#374151;margin-bottom:6px;display:block;}
+.driver-modal .dm-input{width:100%;padding:11px 14px;border:2px solid #e5e7eb;border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:14px;transition:.2s;}
+.driver-modal .dm-input:focus{outline:none;border-color:#1e40af;box-shadow:0 0 0 3px rgba(30,64,175,.1);}
+.driver-modal .dm-row{display:flex;gap:10px;margin-top:22px;}
+.driver-modal .dm-confirm{flex:1;background:linear-gradient(135deg,#059669,#047857);color:white;border:none;border-radius:10px;padding:12px;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
+.driver-modal .dm-cancel{background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:12px 20px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+.driver-modal .dm-confirm:hover{background:linear-gradient(135deg,#047857,#065f46);}
+.driver-modal .dm-cancel:hover{background:#e5e7eb;}
+
+/* ── TABLE: pending row highlight ── */
+.ltable tbody tr.row-pending{background:#fefce8;}
+.ltable tbody tr.row-pending:hover{background:#fef9c3;}
+.ltable tbody tr.row-loaded-check{background:#f0fdf4;}
+
+/* ── TABLE: contract date column ── */
+.ltable th.col-date,.ltable td.col-date{min-width:110px;}
+
+/* ── purchase table header ── */
+.ltable.purchase thead tr{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
+.ltable.sale thead tr{background:linear-gradient(135deg,#d97706,#b45309);}
 </style>
 </head>
 <body>
@@ -425,6 +486,9 @@ input[type=file].hidden-file { display:none; }
   </button>
   <button class="master-module-btn" id="btn-supply" onclick="switchModule('supply')">
     <span class="m-icon">⚙️</span> مدیریت تامین <span class="m-badge">SCM</span>
+  </button>
+  <button class="master-module-btn" id="btn-loading" onclick="switchModule('loading')">
+    <span class="m-icon">🚛</span> بارگیری <span class="m-badge">LGS</span>
   </button>
   <div class="master-spacer"></div>
   <div class="master-meta" id="master-meta-bar">
@@ -989,6 +1053,205 @@ input[type=file].hidden-file { display:none; }
 </div><!-- /supply-module -->
 
 <!-- TOAST -->
+
+<!-- ═══════════════ MODULE: LOADING ═══════════════ -->
+<div class="module-panel" id="loading-module">
+<div style="max-width:1600px;margin:0 auto;padding:20px;">
+
+  <div class="header" style="margin-bottom:22px;">
+    <div class="header-left">
+      <h1>🚛 مدیریت بارگیری</h1>
+      <p>حواله‌های خرید و فروش — بارگیری شده — آرشیو</p>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><div class="live-dot"></div>Real-time</div>
+      <div class="master-clock" style="background:rgba(255,255,255,.15);padding:7px 14px;border-radius:20px;font-size:13px;color:white;" id="loading-clock">—</div>
+    </div>
+  </div>
+
+  <div class="loading-tabs">
+    <button class="loading-tab blue active" onclick="lTab('purchase',this)">📥 حواله خرید مواد اولیه</button>
+    <button class="loading-tab orange" onclick="lTab('sale',this)">📤 حواله فروش مواد اولیه</button>
+    <button class="loading-tab green" onclick="lTab('loaded',this)">✅ بارگیری شده‌ها</button>
+    <button class="loading-tab gray" onclick="lTab('archive',this)">🗄️ آرشیو</button>
+  </div>
+
+  <!-- ── TAB: PURCHASE ── -->
+  <div id="loading-purchase" class="loading-section active">
+    <div class="card">
+      <div class="lcard-header">
+        <div class="lcard-title">📥 حواله خرید مواد اولیه</div>
+        <div class="lcard-actions">
+          <span class="table-count" id="purchase-count">0 ردیف</span>
+          <button class="btn btn-primary btn-sm" onclick="lAddRow('purchase')">➕ ردیف جدید</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportExcel('purchase')">📊 خروجی اکسل</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportJSON('purchase')">📥 JSON</button>
+          <label class="io-label green" style="padding:7px 12px;font-size:12px;">📂 بارگذاری<input type="file" class="hidden-file" accept=".json" onchange="lImportJSON(event,'purchase')"></label>
+        </div>
+      </div>
+      <div class="ltable-wrap">
+        <table class="ltable purchase">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th>شماره قرارداد</th>
+              <th>فروشنده</th>
+              <th>محل بارگیری</th>
+              <th>نوع قرارداد</th>
+              <th>شرح</th>
+              <th>نحوه تحویل</th>
+              <th>نحوه تسویه</th>
+              <th>مقدار KG</th>
+              <th>مبلغ واحد با احتساب ارزش</th>
+              <th class="col-date">تاریخ</th>
+              <th style="width:50px;">بارگیری شد</th>
+              <th style="width:40px;">حذف</th>
+            </tr>
+          </thead>
+          <tbody id="purchase-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: SALE ── -->
+  <div id="loading-sale" class="loading-section">
+    <div class="card">
+      <div class="lcard-header">
+        <div class="lcard-title">📤 حواله فروش مواد اولیه</div>
+        <div class="lcard-actions">
+          <span class="table-count" id="sale-count">0 ردیف</span>
+          <button class="btn btn-accent btn-sm" onclick="lAddRow('sale')">➕ ردیف جدید</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportExcel('sale')">📊 خروجی اکسل</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportJSON('sale')">📥 JSON</button>
+          <label class="io-label green" style="padding:7px 12px;font-size:12px;">📂 بارگذاری<input type="file" class="hidden-file" accept=".json" onchange="lImportJSON(event,'sale')"></label>
+        </div>
+      </div>
+      <div class="ltable-wrap">
+        <table class="ltable orange">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th>شماره قرارداد</th>
+              <th>فروشنده</th>
+              <th>محل بارگیری</th>
+              <th>نوع قرارداد</th>
+              <th>شرح</th>
+              <th>نحوه تحویل</th>
+              <th>نحوه تسویه</th>
+              <th>مقدار KG</th>
+              <th>مبلغ واحد با احتساب ارزش</th>
+              <th class="col-date">تاریخ</th>
+              <th style="width:50px;">بارگیری شد</th>
+              <th style="width:40px;">حذف</th>
+            </tr>
+          </thead>
+          <tbody id="sale-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: LOADED ── -->
+  <div id="loading-loaded" class="loading-section">
+    <div class="card">
+      <div class="lcard-header">
+        <div class="lcard-title">✅ بارگیری شده‌ها</div>
+        <div class="lcard-actions">
+          <span class="table-count" id="loaded-count">0 ردیف</span>
+          <button class="btn btn-warning btn-sm" onclick="lExportExcel('loaded')">📊 خروجی اکسل</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportJSON('loaded')">📥 JSON</button>
+        </div>
+      </div>
+      <div class="ltable-wrap">
+        <table class="ltable green">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th>نوع</th>
+              <th>شماره قرارداد</th>
+              <th>فروشنده</th>
+              <th>محل بارگیری</th>
+              <th>شرح</th>
+              <th>مقدار KG</th>
+              <th>مبلغ واحد</th>
+              <th>نام راننده</th>
+              <th>شماره / مشخصات راننده</th>
+              <th>تاریخ بارگیری</th>
+              <th style="width:60px;">آرشیو</th>
+            </tr>
+          </thead>
+          <tbody id="loaded-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: ARCHIVE ── -->
+  <div id="loading-archive" class="loading-section">
+    <div class="card">
+      <div class="lcard-header">
+        <div class="lcard-title">🗄️ آرشیو بارگیری‌ها</div>
+        <div class="lcard-actions">
+          <span class="table-count" id="archive-count">0 ردیف</span>
+          <button class="btn btn-warning btn-sm" onclick="lExportExcel('archive')">📊 خروجی اکسل</button>
+          <button class="btn btn-warning btn-sm" onclick="lExportJSON('archive')">📥 JSON</button>
+        </div>
+      </div>
+      <div class="ltable-wrap">
+        <table class="ltable gray">
+          <thead>
+            <tr>
+              <th style="width:36px;">#</th>
+              <th>نوع</th>
+              <th>شماره قرارداد</th>
+              <th>فروشنده</th>
+              <th>محل بارگیری</th>
+              <th>شرح</th>
+              <th>مقدار KG</th>
+              <th>مبلغ واحد</th>
+              <th>نام راننده</th>
+              <th>شماره / مشخصات راننده</th>
+              <th>تاریخ بارگیری</th>
+              <th>تاریخ آرشیو</th>
+            </tr>
+          </thead>
+          <tbody id="archive-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── DRIVER MODAL ── -->
+<div id="driver-modal" style="display:none;">
+  <div class="driver-modal-overlay" onclick="driverModalCancel()">
+    <div class="driver-modal" onclick="event.stopPropagation()">
+      <h3>🚛 اطلاعات راننده</h3>
+      <p id="driver-modal-subtitle">قبل از انتقال به بارگیری شده‌ها، مشخصات راننده را وارد کنید</p>
+      <div class="dm-field">
+        <label class="dm-label">👤 نام راننده</label>
+        <input class="dm-input" id="dm-driver-name" type="text" placeholder="مثال: علی محمدی">
+      </div>
+      <div class="dm-field">
+        <label class="dm-label">📋 شماره / مشخصات راننده</label>
+        <input class="dm-input" id="dm-driver-info" type="text" placeholder="مثال: پلاک 123 ایران 45 — کامیون">
+      </div>
+      <div class="dm-field">
+        <label class="dm-label">📅 تاریخ بارگیری</label>
+        <input class="dm-input" id="dm-loaded-at" type="text" placeholder="مثال: ۱۴۰۴/۱۱/۲۸">
+      </div>
+      <div class="dm-row">
+        <button class="dm-confirm" onclick="driverModalConfirm()">✅ تأیید و انتقال به بارگیری شده‌ها</button>
+        <button class="dm-cancel" onclick="driverModalCancel()">انصراف</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /loading-module -->
+
 <div class="s-toast" id="s-toast"></div>
 
 <!-- MASTER SCRIPT -->
@@ -2751,6 +3014,367 @@ function importPricesJSON(event) {
 
 </script>
 
+
+
+
+<!-- LOADING SCRIPT -->
+<script>
+// ═══════════════════════════════════════════════
+// LOADING MODULE — حواله خرید / فروش / بارگیری / آرشیو
+// ═══════════════════════════════════════════════
+let lDb = null, lFbOk = false;
+try { lDb = firebase.database(); lFbOk = true; } catch(e) {}
+
+let lData = { purchase: [], sale: [], loaded: [], archive: [] };
+
+const CONTRACT_TYPES  = ['جاری','فرا','دلاری','تهاتر'];
+const DELIVERIES      = ['درب کارخانه','درب کارخانه مشتری','مرز','ماهیرود','وزن و پول'];
+const SETTLEMENTS     = ['تهاتر','تسویه','LC','وزن و پول','50درصد اربیل'];
+
+// ── Firebase / localStorage ──
+function lInit() {
+  const keys = ['purchase','sale','loaded','archive'];
+  if (lFbOk) {
+    keys.forEach(key => {
+      lDb.ref('loading/' + key).on('value', snap => {
+        lData[key] = snap.exists() ? Object.values(snap.val()).filter(Boolean) : [];
+        lRender(key);
+        lUpdateCount(key);
+      });
+    });
+  } else {
+    keys.forEach(key => {
+      try { lData[key] = JSON.parse(localStorage.getItem('loading_' + key) || '[]'); } catch(e) { lData[key] = []; }
+      lRender(key);
+      lUpdateCount(key);
+    });
+  }
+}
+
+function lSave(key) {
+  if (lFbOk) {
+    const obj = {};
+    lData[key].forEach(r => { obj[r.id] = r; });
+    lDb.ref('loading/' + key).set(obj).catch(console.error);
+  } else {
+    localStorage.setItem('loading_' + key, JSON.stringify(lData[key]));
+  }
+}
+
+// ── Row factory ──
+function lNewRow(type) {
+  return {
+    id: Date.now() + Math.random(),
+    type, contractNo:'', seller:'', location:'',
+    contractType:'جاری', description:'', delivery:'درب کارخانه',
+    settlement:'تسویه', qty:'', unitPrice:'', contractDate:'',
+    loaded: false, driverName:'', driverInfo:'',
+    loadedAt:'', archivedAt:'', createdAt: new Date().toISOString()
+  };
+}
+
+function lAddRow(type) {
+  const row = lNewRow(type);
+  lData[type].push(row);
+  lSave(type);
+  lRender(type);
+  lUpdateCount(type);
+  // scroll to bottom of table
+  setTimeout(() => {
+    const el = document.getElementById(type + '-tbody');
+    if (el) el.lastElementChild && el.lastElementChild.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function lDeleteRow(type, id) {
+  if (!confirm('حذف این ردیف؟')) return;
+  lData[type] = lData[type].filter(r => r.id !== id);
+  lSave(type);
+  lRender(type);
+  lUpdateCount(type);
+}
+
+function lUpdateField(type, id, field, value) {
+  const row = lData[type].find(r => String(r.id) === String(id));
+  if (!row) return;
+  row[field] = value;
+  lSave(type);
+}
+
+// ── Driver modal state ──
+let _driverPending = null;
+
+function lMarkLoaded(type, id, checked) {
+  const row = lData[type].find(r => String(r.id) === String(id));
+  if (!row) return;
+  if (!checked) return; // only move on check, not uncheck
+
+  // Show driver modal instead of prompt
+  _driverPending = { type, id: row.id };
+  document.getElementById('dm-driver-name').value = row.driverName || '';
+  document.getElementById('dm-driver-info').value = row.driverInfo || '';
+  document.getElementById('dm-loaded-at').value = row.loadedAt || new Date().toLocaleDateString('fa-IR');
+  document.getElementById('driver-modal-subtitle').textContent =
+    (type === 'purchase' ? '📥 حواله خرید' : '📤 حواله فروش') + ' — ' + (row.contractNo || 'بدون شماره') + ' — ' + (row.seller || '');
+  document.getElementById('driver-modal').style.display = 'block';
+  setTimeout(() => document.getElementById('dm-driver-name').focus(), 100);
+}
+
+function driverModalConfirm() {
+  if (!_driverPending) return;
+  const { type, id } = _driverPending;
+  const row = lData[type].find(r => String(r.id) === String(id));
+  if (!row) { driverModalCancel(); return; }
+
+  const driverName = document.getElementById('dm-driver-name').value.trim();
+  const driverInfo = document.getElementById('dm-driver-info').value.trim();
+  const loadedAt   = document.getElementById('dm-loaded-at').value.trim() || new Date().toLocaleDateString('fa-IR');
+
+  const moved = { ...row, loaded: true, driverName, driverInfo, loadedAt };
+  lData.loaded.push(moved);
+  lData[type] = lData[type].filter(r => r.id !== row.id);
+  lSave(type);
+  lSave('loaded');
+  lRender(type);
+  lRender('loaded');
+  lUpdateCount(type);
+  lUpdateCount('loaded');
+  driverModalCancel();
+  sShowToast('✅ منتقل به بارگیری شده‌ها', '🚛');
+}
+
+function driverModalCancel() {
+  document.getElementById('driver-modal').style.display = 'none';
+  _driverPending = null;
+  // Uncheck the checkbox visually if cancelled
+  document.querySelectorAll('.ltable td input[type=checkbox]:checked').forEach(cb => {
+    // Only uncheck if in purchase/sale table (not loaded)
+    const tbody = cb.closest('tbody');
+    if (tbody && (tbody.id === 'purchase-tbody' || tbody.id === 'sale-tbody')) {
+      const rowEl = cb.closest('tr');
+      if (rowEl && rowEl.classList.contains('row-pending')) cb.checked = false;
+    }
+  });
+}
+
+function lArchiveRow(id) {
+  const row = lData.loaded.find(r => String(r.id) === String(id));
+  if (!row || !confirm('آرشیو این ردیف؟')) return;
+  const archived = { ...row, archivedAt: new Date().toLocaleDateString('fa-IR') };
+  lData.archive.push(archived);
+  lData.loaded = lData.loaded.filter(r => r.id !== row.id);
+  lSave('loaded');
+  lSave('archive');
+  lRender('loaded');
+  lRender('archive');
+  lUpdateCount('loaded');
+  lUpdateCount('archive');
+  sShowToast('✅ آرشیو شد', '🗄️');
+}
+
+function lUpdateCount(key) {
+  const el = document.getElementById(key + '-count');
+  if (el) el.textContent = lData[key].length + ' ردیف';
+}
+
+// ── Safe HTML helpers ──
+function esc(v) {
+  return String(v || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function cellInput(type, row, field, placeholder, extraStyle) {
+  const id = String(row.id).replace(/\./g,'_');
+  return `<input type="text" 
+    value="${esc(row[field])}" 
+    placeholder="${esc(placeholder)}" 
+    style="${extraStyle||''}" 
+    onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">`;
+}
+
+function numInput(type, row, field, placeholder) {
+  const id = String(row.id).replace(/\./g,'_');
+  return `<input type="text" inputmode="numeric"
+    value="${esc(row[field])}"
+    placeholder="${esc(placeholder)}"
+    style="min-width:80px;text-align:left;direction:ltr;"
+    onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">`;
+}
+
+function selectInput(type, row, field, options) {
+  const opts = options.map(o => `<option value="${esc(o)}"${row[field]===o?' selected':''}>${esc(o)}</option>`).join('');
+  return `<select onchange="lUpdateField('${type}',${row.id},'${field}',this.value)">${opts}</select>`;
+}
+
+function typeBadge(type) {
+  return type === 'purchase'
+    ? '<span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">خرید</span>'
+    : '<span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">فروش</span>';
+}
+
+// ── Render ──
+function lRender(key) {
+  if (key === 'purchase' || key === 'sale') {
+    const tbody = document.getElementById(key + '-tbody');
+    if (!tbody) return;
+    const rows = lData[key];
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af;">ردیفی وجود ندارد — از دکمه ➕ ردیف جدید اضافه کنید</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map((row, i) => `<tr class="${row.loaded ? 'row-loaded-check' : 'row-pending'}">
+      <td style="text-align:center;color:#9ca3af;font-size:11px;">${i+1}</td>
+      <td>${cellInput(key, row, 'contractNo', 'شماره قرارداد', 'min-width:110px;')}</td>
+      <td>${cellInput(key, row, 'seller', 'فروشنده', 'min-width:110px;')}</td>
+      <td>${cellInput(key, row, 'location', 'محل بارگیری', 'min-width:100px;')}</td>
+      <td>${selectInput(key, row, 'contractType', CONTRACT_TYPES)}</td>
+      <td>${cellInput(key, row, 'description', 'شرح', 'min-width:80px;')}</td>
+      <td>${selectInput(key, row, 'delivery', DELIVERIES)}</td>
+      <td>${selectInput(key, row, 'settlement', SETTLEMENTS)}</td>
+      <td>${numInput(key, row, 'qty', 'مقدار KG')}</td>
+      <td>${numInput(key, row, 'unitPrice', 'مبلغ واحد')}</td>
+      <td class="col-date">${cellInput(key, row, 'contractDate', 'تاریخ', '')}</td>
+      <td style="text-align:center;">
+        <input type="checkbox" ${row.loaded?'checked':''} 
+          style="width:18px;height:18px;cursor:pointer;"
+          onchange="lMarkLoaded('${key}',${row.id},this.checked)">
+      </td>
+      <td><button class="del-btn" onclick="lDeleteRow('${key}',${row.id})">🗑️</button></td>
+    </tr>`).join('');
+  }
+
+  if (key === 'loaded') {
+    const tbody = document.getElementById('loaded-tbody');
+    if (!tbody) return;
+    const rows = lData.loaded;
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af;">هیچ بارگیری‌ای هنوز ثبت نشده</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map((row, i) => `<tr>
+      <td style="text-align:center;color:#9ca3af;font-size:11px;">${i+1}</td>
+      <td>${typeBadge(row.type)}</td>
+      <td>${cellInput('loaded', row, 'contractNo', 'شماره قرارداد','min-width:100px;')}</td>
+      <td>${cellInput('loaded', row, 'seller', 'فروشنده','min-width:100px;')}</td>
+      <td>${cellInput('loaded', row, 'location', 'محل بارگیری','min-width:100px;')}</td>
+      <td>${cellInput('loaded', row, 'description', 'شرح','min-width:80px;')}</td>
+      <td>${numInput('loaded', row, 'qty', 'مقدار')}</td>
+      <td>${numInput('loaded', row, 'unitPrice', 'مبلغ')}</td>
+      <td>${cellInput('loaded', row, 'driverName', 'نام راننده','min-width:100px;')}</td>
+      <td>${cellInput('loaded', row, 'driverInfo', 'شماره / مشخصات','min-width:120px;')}</td>
+      <td>${cellInput('loaded', row, 'loadedAt', 'تاریخ','min-width:90px;')}</td>
+      <td><button class="arch-btn" onclick="lArchiveRow(${row.id})">🗄️ آرشیو</button></td>
+    </tr>`).join('');
+  }
+
+  if (key === 'archive') {
+    const tbody = document.getElementById('archive-tbody');
+    if (!tbody) return;
+    const rows = lData.archive;
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af;">آرشیوی وجود ندارد</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map((row, i) => `<tr>
+      <td style="text-align:center;color:#9ca3af;font-size:11px;">${i+1}</td>
+      <td>${typeBadge(row.type)}</td>
+      <td>${esc(row.contractNo)||'—'}</td>
+      <td>${esc(row.seller)||'—'}</td>
+      <td>${esc(row.location)||'—'}</td>
+      <td>${esc(row.description)||'—'}</td>
+      <td style="direction:ltr;text-align:left;">${esc(row.qty)||'—'}</td>
+      <td style="direction:ltr;text-align:left;">${esc(row.unitPrice)||'—'}</td>
+      <td>${esc(row.driverName)||'—'}</td>
+      <td>${esc(row.driverInfo)||'—'}</td>
+      <td>${esc(row.loadedAt)||'—'}</td>
+      <td>${esc(row.archivedAt)||'—'}</td>
+    </tr>`).join('');
+  }
+}
+
+function lTab(key, el) {
+  document.querySelectorAll('.loading-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.loading-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('loading-' + key).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── Excel Export ──
+function lExportExcel(key) {
+  const data = lData[key];
+  if (!data.length) { sShowToast('داده‌ای وجود ندارد', '⚠️'); return; }
+  const wb = XLSX.utils.book_new();
+  const sheetNames = { purchase:'حواله خرید', sale:'حواله فروش', loaded:'بارگیری شده', archive:'آرشیو' };
+  const fileNames  = { purchase:'حواله-خرید', sale:'حواله-فروش', loaded:'بارگیری-شده', archive:'آرشیو' };
+
+  let headers, rows;
+  if (key === 'purchase' || key === 'sale') {
+    headers = ['#','شماره قرارداد','فروشنده','محل بارگیری','نوع قرارداد','شرح','نحوه تحویل','نحوه تسویه','مقدار KG','مبلغ واحد','تاریخ','وضعیت'];
+    rows = data.map((r,i) => [i+1, r.contractNo, r.seller, r.location, r.contractType, r.description, r.delivery, r.settlement, r.qty, r.unitPrice, r.contractDate||'', r.loaded?'بارگیری شد':'در انتظار']);
+  } else if (key === 'loaded') {
+    headers = ['#','نوع','شماره قرارداد','فروشنده','محل بارگیری','شرح','مقدار KG','مبلغ واحد','نام راننده','شماره/مشخصات راننده','تاریخ بارگیری'];
+    rows = data.map((r,i) => [i+1, r.type==='purchase'?'خرید':'فروش', r.contractNo, r.seller, r.location, r.description, r.qty, r.unitPrice, r.driverName, r.driverInfo, r.loadedAt]);
+  } else {
+    headers = ['#','نوع','شماره قرارداد','فروشنده','محل بارگیری','شرح','مقدار KG','مبلغ واحد','نام راننده','شماره/مشخصات','تاریخ بارگیری','تاریخ آرشیو'];
+    rows = data.map((r,i) => [i+1, r.type==='purchase'?'خرید':'فروش', r.contractNo, r.seller, r.location, r.description, r.qty, r.unitPrice, r.driverName, r.driverInfo, r.loadedAt, r.archivedAt]);
+  }
+
+  // Style header row
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map((_,i) => ({ wch: i===0 ? 5 : 18 }));
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let C = range.s.c; C <= range.e.c; C++) {
+    const cell = XLSX.utils.encode_cell({r:0, c:C});
+    if (!ws[cell]) continue;
+    ws[cell].s = {
+      font: {bold:true, color:{rgb:'FFFFFF'}, name:'Arial', sz:11},
+      fill: {fgColor:{rgb: key==='purchase'?'1E40AF': key==='sale'?'D97706': key==='loaded'?'059669':'6B7280'}, patternType:'solid'},
+      alignment: {horizontal:'center', vertical:'center'}
+    };
+  }
+  XLSX.utils.book_append_sheet(wb, ws, sheetNames[key]);
+  XLSX.writeFile(wb, fileNames[key] + '-' + new Date().toISOString().split('T')[0] + '.xlsx');
+  sShowToast('✅ اکسل دانلود شد', '📊');
+}
+
+// ── JSON Export ──
+function lExportJSON(key) {
+  if (!lData[key].length) { sShowToast('داده‌ای وجود ندارد', '⚠️'); return; }
+  jsonDownload({ type:'loading-'+key, exportDate:new Date().toISOString(), count:lData[key].length, data:lData[key] },
+    'loading-' + key + '-' + new Date().toISOString().split('T')[0] + '.json');
+  sShowToast('✅ JSON دانلود شد', '📥');
+}
+
+// ── JSON Import ──
+function lImportJSON(event, key) {
+  readJSONFile(event, imported => {
+    let rows = [];
+    if (Array.isArray(imported)) rows = imported;
+    else if (Array.isArray(imported.data)) rows = imported.data;
+    else { alert('❌ فرمت پشتیبانی نمی‌شود'); return; }
+    if (!confirm('بارگذاری ' + rows.length + ' ردیف؟')) return;
+    const existIds = new Set(lData[key].map(r => r.id));
+    let added = 0, updated = 0;
+    rows.forEach(r => {
+      if (existIds.has(r.id)) { const i = lData[key].findIndex(x => x.id === r.id); lData[key][i] = r; updated++; }
+      else { lData[key].push(r); added++; }
+    });
+    lSave(key);
+    lRender(key);
+    lUpdateCount(key);
+    sShowToast('✅ ' + added + ' اضافه، ' + updated + ' بروزرسانی', '📂');
+  });
+}
+
+// ── Init when module activates ──
+const _origSwitchModule = switchModule;
+window.switchModule = function(mod) {
+  _origSwitchModule(mod);
+  if (mod === 'loading' && !window._loadingInited) {
+    window._loadingInited = true;
+    lInit();
+  }
+};
+</script>
 
 
 </body>
