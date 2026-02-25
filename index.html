@@ -444,7 +444,7 @@ input[type=file].hidden-file { display:none; }
 
 /* ── DRIVER MODAL ── */
 .driver-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s;}
-.driver-modal{background:white;border-radius:20px;padding:32px;width:460px;max-width:95vw;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:slideDown .3s ease-out;}
+.driver-modal{background:white;border-radius:20px;padding:32px;width:860px;max-width:95vw;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:slideDown .3s ease-out;}
 .driver-modal h3{font-size:20px;font-weight:900;color:#1f2937;margin-bottom:6px;}
 .driver-modal p{font-size:13px;color:#6b7280;margin-bottom:24px;}
 .driver-modal .dm-field{margin-bottom:16px;}
@@ -468,6 +468,78 @@ input[type=file].hidden-file { display:none; }
 /* ── purchase table header ── */
 .ltable.purchase thead tr{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
 .ltable.sale thead tr{background:linear-gradient(135deg,#d97706,#b45309);}
+
+/* ══ STATUS BADGE ══ */
+.status-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
+.status-pending{background:#fef9c3;color:#854d0e;}
+.status-loaded{background:#d1fae5;color:#065f46;}
+.status-waiting-settle{background:#dbeafe;color:#1e40af;}
+.status-announced{background:#e0e7ff;color:#4338ca;}
+.status-waiting-scale{background:#fce7f3;color:#9d174d;}
+.status-transit{background:#ecfdf5;color:#047857;}
+
+/* ══ WAREHOUSE ══ */
+.wh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px;}
+.wh-card{background:white;border:2px solid #e5e7eb;border-radius:16px;padding:20px;transition:all .3s;}
+.wh-card:hover{border-color:#1e40af;box-shadow:0 8px 25px rgba(30,64,175,.1);}
+.wh-card-name{font-size:18px;font-weight:800;color:#1f2937;margin-bottom:6px;}
+.wh-card-qty{font-size:28px;font-weight:900;color:#1e40af;direction:ltr;}
+.wh-card-unit{font-size:13px;color:#6b7280;font-weight:600;}
+.wh-card-commitment{font-size:13px;color:#dc2626;font-weight:700;margin-top:6px;}
+.wh-progress{height:8px;background:#e5e7eb;border-radius:4px;margin-top:10px;overflow:hidden;}
+.wh-progress-bar{height:100%;background:linear-gradient(90deg,#1e40af,#0891b2);border-radius:4px;transition:width .5s;}
+
+/* ══ OVERVIEW MATRIX ══ */
+.matrix-table{width:100%;border-collapse:collapse;font-size:13px;}
+.matrix-table th{background:linear-gradient(135deg,#1e40af,#1e3a8a);color:white;padding:10px 14px;text-align:center;font-weight:700;white-space:nowrap;}
+.matrix-table th:first-child{text-align:right;}
+.matrix-table td{padding:10px 14px;border-bottom:1px solid #f1f5f9;text-align:center;}
+.matrix-table td:first-child{text-align:right;font-weight:700;color:#1f2937;}
+.matrix-table tbody tr:hover{background:#f0f9ff;}
+.matrix-table tbody tr:last-child td{border-bottom:none;font-weight:800;background:#f8fafc;}
+.matrix-buy{color:#059669;font-weight:700;}
+.matrix-sell{color:#d97706;font-weight:700;}
+.matrix-diff-pos{color:#059669;font-size:11px;}
+.matrix-diff-neg{color:#dc2626;font-size:11px;}
+
+/* ══ FREIGHT TABLE ══ */
+.freight-table{width:100%;border-collapse:collapse;}
+.freight-table th{background:linear-gradient(135deg,#059669,#047857);color:white;padding:10px 12px;text-align:right;font-weight:700;}
+.freight-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.freight-table tbody tr:hover{background:#f0fdf4;}
+.freight-table td input,.freight-table td select{width:100%;padding:5px 7px;border:1.5px solid #d1fae5;border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:13px;}
+.freight-table td input:focus,.freight-table td select:focus{outline:none;border-color:#059669;}
+
+/* ══ REMAINING QTY ══ */
+.qty-remaining{font-size:11px;color:#6b7280;margin-top:2px;}
+.qty-danger{color:#dc2626;}
+.qty-ok{color:#059669;}
+
+/* ══ STATUS SELECT ══ */
+.status-select{padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Vazirmatn',sans-serif;font-size:12px;cursor:pointer;}
+
+/* ══ OVERVIEW PANEL IN NAV ══ */
+.nav-overview-btn{display:flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.nav-overview-btn:hover{background:rgba(255,255,255,.22);}
+.nav-overview-panel{position:absolute;top:calc(100% + 8px);right:12px;width:700px;max-width:96vw;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);z-index:9999;display:none;animation:slideDown .25s ease-out;overflow:hidden;}
+.nav-overview-panel.open{display:block;}
+.nav-ov-header{background:linear-gradient(135deg,#1e40af,#0891b2);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
+.nav-ov-header-title{color:white;font-weight:900;font-size:15px;}
+.nav-ov-close{background:rgba(255,255,255,.2);border:none;color:white;border-radius:8px;padding:4px 10px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:13px;}
+.nav-ov-body{padding:16px;max-height:60vh;overflow-y:auto;}
+.nav-matrix{width:100%;border-collapse:collapse;font-size:13px;}
+.nav-matrix th{background:#f1f5f9;color:#374151;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;border-bottom:2px solid #e5e7eb;}
+.nav-matrix th:first-child{text-align:right;}
+.nav-matrix td{padding:8px 12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:13px;}
+.nav-matrix td:first-child{text-align:right;font-weight:700;color:#1f2937;}
+.nav-matrix tbody tr:hover{background:#f0f9ff;}
+.nav-matrix tfoot td{background:#f8fafc;font-weight:800;border-top:2px solid #e5e7eb;}
+.nav-matrix tfoot td:first-child{text-align:right;}
+.nav-ov-buy{color:#059669;font-weight:700;}
+.nav-ov-sell{color:#d97706;font-weight:700;}
+.nav-ov-diff-pos{color:#059669;}
+.nav-ov-diff-neg{color:#dc2626;}
+.nav-ov-empty{text-align:center;padding:28px;color:#9ca3af;font-size:14px;}
 </style>
 </head>
 <body>
@@ -490,7 +562,41 @@ input[type=file].hidden-file { display:none; }
   <button class="master-module-btn" id="btn-loading" onclick="switchModule('loading')">
     <span class="m-icon">🚛</span> بارگیری <span class="m-badge">LGS</span>
   </button>
+  <button class="master-module-btn" id="btn-warehouse" onclick="switchModule('warehouse')">
+    <span class="m-icon">🏭</span> انبار <span class="m-badge">WH</span>
+  </button>
+  <button class="master-module-btn" id="btn-overview" onclick="switchModule('overview')">
+    <span class="m-icon">📊</span> نمای کلی <span class="m-badge">OV</span>
+  </button>
+  <button class="master-module-btn" id="btn-freight" onclick="switchModule('freight')">
+    <span class="m-icon">🗺️</span> کرایه حمل <span class="m-badge">FR</span>
+  </button>
   <div class="master-spacer"></div>
+
+  <!-- ── OVERVIEW QUICK PANEL ── -->
+  <div style="position:relative;">
+    <button class="nav-overview-btn" onclick="navOvToggle()" id="nav-ov-btn">
+      📊 نمای کلی
+      <span id="nav-ov-badge" style="background:rgba(255,255,255,.25);padding:1px 7px;border-radius:10px;font-size:11px;">—</span>
+    </button>
+    <div class="nav-overview-panel" id="nav-ov-panel">
+      <div class="nav-ov-header">
+        <span class="nav-ov-header-title">📊 نمای کلی — ماتریس قراردادها</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="navOvExcel()" style="background:rgba(255,255,255,.2);border:none;color:white;border-radius:8px;padding:4px 12px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:12px;">📊 اکسل</button>
+          <button class="nav-ov-close" onclick="navOvToggle()">✕ بستن</button>
+        </div>
+      </div>
+      <div class="nav-ov-body">
+        <table class="nav-matrix">
+          <thead id="nav-ov-thead"></thead>
+          <tbody id="nav-ov-tbody"></tbody>
+          <tfoot id="nav-ov-tfoot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="master-meta" id="master-meta-bar">
     <div class="master-user-badge" id="master-user-badge" style="display:none;">
       👤 <span id="master-user-name">—</span>
@@ -1070,8 +1176,8 @@ input[type=file].hidden-file { display:none; }
   </div>
 
   <div class="loading-tabs">
-    <button class="loading-tab blue active" onclick="lTab('purchase',this)">📥 حواله خرید مواد اولیه</button>
-    <button class="loading-tab orange" onclick="lTab('sale',this)">📤 حواله فروش مواد اولیه</button>
+    <button class="loading-tab blue active" onclick="lTab('purchase',this)">📥 ثبت قرارداد خرید</button>
+    <button class="loading-tab orange" onclick="lTab('sale',this)">📤 ثبت قرارداد فروش</button>
     <button class="loading-tab green" onclick="lTab('loaded',this)">✅ بارگیری شده‌ها</button>
     <button class="loading-tab gray" onclick="lTab('archive',this)">🗄️ آرشیو</button>
   </div>
@@ -1080,7 +1186,7 @@ input[type=file].hidden-file { display:none; }
   <div id="loading-purchase" class="loading-section active">
     <div class="card">
       <div class="lcard-header">
-        <div class="lcard-title">📥 حواله خرید مواد اولیه</div>
+        <div class="lcard-title">📥 ثبت قرارداد خرید مواد اولیه</div>
         <div class="lcard-actions">
           <span class="table-count" id="purchase-count">0 ردیف</span>
           <button class="btn btn-primary btn-sm" onclick="lAddRow('purchase')">➕ ردیف جدید</button>
@@ -1093,19 +1199,21 @@ input[type=file].hidden-file { display:none; }
         <table class="ltable purchase">
           <thead>
             <tr>
-              <th style="width:36px;">#</th>
+              <th style="width:30px;">#</th>
               <th>شماره قرارداد</th>
               <th>فروشنده</th>
               <th>محل بارگیری</th>
               <th>نوع قرارداد</th>
-              <th>شرح</th>
+              <th>شرح (محصول)</th>
               <th>نحوه تحویل</th>
               <th>نحوه تسویه</th>
-              <th>مقدار KG</th>
-              <th>مبلغ واحد با احتساب ارزش</th>
-              <th class="col-date">تاریخ</th>
-              <th style="width:50px;">بارگیری شد</th>
-              <th style="width:40px;">حذف</th>
+              <th>مانده قرارداد (تن)</th>
+              <th>تعهد خرید</th>
+              <th>مبلغ واحد</th>
+              <th>تاریخ</th>
+              <th>وضعیت</th>
+              <th style="width:50px;">بارگیری</th>
+              <th style="width:36px;">حذف</th>
             </tr>
           </thead>
           <tbody id="purchase-tbody"></tbody>
@@ -1118,7 +1226,7 @@ input[type=file].hidden-file { display:none; }
   <div id="loading-sale" class="loading-section">
     <div class="card">
       <div class="lcard-header">
-        <div class="lcard-title">📤 حواله فروش مواد اولیه</div>
+        <div class="lcard-title">📤 ثبت قرارداد فروش مواد اولیه</div>
         <div class="lcard-actions">
           <span class="table-count" id="sale-count">0 ردیف</span>
           <button class="btn btn-accent btn-sm" onclick="lAddRow('sale')">➕ ردیف جدید</button>
@@ -1131,19 +1239,20 @@ input[type=file].hidden-file { display:none; }
         <table class="ltable orange">
           <thead>
             <tr>
-              <th style="width:36px;">#</th>
+              <th style="width:30px;">#</th>
               <th>شماره قرارداد</th>
-              <th>فروشنده</th>
+              <th>خریدار</th>
               <th>محل بارگیری</th>
               <th>نوع قرارداد</th>
-              <th>شرح</th>
+              <th>شرح (محصول)</th>
               <th>نحوه تحویل</th>
               <th>نحوه تسویه</th>
-              <th>مقدار KG</th>
-              <th>مبلغ واحد با احتساب ارزش</th>
-              <th class="col-date">تاریخ</th>
-              <th style="width:50px;">بارگیری شد</th>
-              <th style="width:40px;">حذف</th>
+              <th>مانده قرارداد (تن)</th>
+              <th>مبلغ واحد</th>
+              <th>تاریخ</th>
+              <th>وضعیت</th>
+              <th style="width:50px;">بارگیری</th>
+              <th style="width:36px;">حذف</th>
             </tr>
           </thead>
           <tbody id="sale-tbody"></tbody>
@@ -1167,18 +1276,27 @@ input[type=file].hidden-file { display:none; }
         <table class="ltable green">
           <thead>
             <tr>
-              <th style="width:36px;">#</th>
+              <th style="width:30px;">#</th>
               <th>نوع</th>
               <th>شماره قرارداد</th>
-              <th>فروشنده</th>
+              <th>فروشنده/خریدار</th>
               <th>محل بارگیری</th>
               <th>شرح</th>
-              <th>مقدار KG</th>
+              <th>مقدار بارگیری (kg)</th>
               <th>مبلغ واحد</th>
               <th>نام راننده</th>
-              <th>شماره / مشخصات راننده</th>
+              <th>شماره / مشخصات</th>
+              <th>شماره بارنامه</th>
+              <th>شهر مبدا</th>
+              <th>شهر مقصد</th>
+              <th>مسافت (km)</th>
+              <th>کرایه استعلامی</th>
+              <th>کرایه واقعی</th>
+              <th>باسکول</th>
+              <th>وضعیت</th>
               <th>تاریخ بارگیری</th>
               <th style="width:60px;">آرشیو</th>
+              <th style="width:36px;">حذف</th>
             </tr>
           </thead>
           <tbody id="loaded-tbody"></tbody>
@@ -1202,18 +1320,22 @@ input[type=file].hidden-file { display:none; }
         <table class="ltable gray">
           <thead>
             <tr>
-              <th style="width:36px;">#</th>
+              <th style="width:30px;">#</th>
               <th>نوع</th>
               <th>شماره قرارداد</th>
-              <th>فروشنده</th>
+              <th>فروشنده/خریدار</th>
               <th>محل بارگیری</th>
               <th>شرح</th>
-              <th>مقدار KG</th>
+              <th>مقدار (kg)</th>
               <th>مبلغ واحد</th>
               <th>نام راننده</th>
-              <th>شماره / مشخصات راننده</th>
+              <th>شماره بارنامه</th>
+              <th>مبدا → مقصد</th>
+              <th>کرایه واقعی</th>
+              <th>وضعیت</th>
               <th>تاریخ بارگیری</th>
               <th>تاریخ آرشیو</th>
+              <th style="width:36px;">حذف</th>
             </tr>
           </thead>
           <tbody id="archive-tbody"></tbody>
@@ -1228,21 +1350,65 @@ input[type=file].hidden-file { display:none; }
 <div id="driver-modal" style="display:none;">
   <div class="driver-modal-overlay" onclick="driverModalCancel()">
     <div class="driver-modal" onclick="event.stopPropagation()">
-      <h3>🚛 اطلاعات راننده</h3>
-      <p id="driver-modal-subtitle">قبل از انتقال به بارگیری شده‌ها، مشخصات راننده را وارد کنید</p>
-      <div class="dm-field">
-        <label class="dm-label">👤 نام راننده</label>
-        <input class="dm-input" id="dm-driver-name" type="text" placeholder="مثال: علی محمدی">
+      <h3>🚛 اطلاعات بارگیری</h3>
+      <p id="driver-modal-subtitle">مشخصات راننده و بار را وارد کنید</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="dm-field">
+          <label class="dm-label">👤 نام راننده</label>
+          <input class="dm-input" id="dm-driver-name" type="text" placeholder="علی محمدی">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">📋 شماره / مشخصات راننده</label>
+          <input class="dm-input" id="dm-driver-info" type="text" placeholder="پلاک — نوع خودرو">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">📄 شماره بارنامه</label>
+          <input class="dm-input" id="dm-waybill" type="text" placeholder="شماره بارنامه">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">⚖️ مقدار بارگیری (kg)</label>
+          <input class="dm-input" id="dm-load-qty" type="text" inputmode="numeric" placeholder="مقدار به کیلوگرم" style="direction:ltr;">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">🏙️ شهر مبدا</label>
+          <input class="dm-input" id="dm-from-city" type="text" placeholder="مبدا" oninput="dmAutoFreight()">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">🏙️ شهر مقصد</label>
+          <input class="dm-input" id="dm-to-city" type="text" placeholder="مقصد" oninput="dmAutoFreight()">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">📏 مسافت (km)</label>
+          <input class="dm-input" id="dm-distance" type="text" inputmode="numeric" placeholder="مسافت" style="direction:ltr;">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">💰 کرایه استعلامی (تومان/تن)</label>
+          <input class="dm-input" id="dm-freight-quoted" type="text" readonly style="background:#f9fafb;direction:ltr;" placeholder="خودکار از جدول کرایه">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">💵 کرایه واقعی (تومان/تن)</label>
+          <input class="dm-input" id="dm-freight-actual" type="text" inputmode="numeric" placeholder="کرایه واقعی" style="direction:ltr;">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">⚖️ باسکول</label>
+          <input class="dm-input" id="dm-scale" type="text" placeholder="وزن باسکول">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">📅 تاریخ بارگیری</label>
+          <input class="dm-input" id="dm-loaded-at" type="text" placeholder="۱۴۰۴/۱۱/۲۸">
+        </div>
+        <div class="dm-field">
+          <label class="dm-label">🔖 وضعیت</label>
+          <select class="dm-input" id="dm-status">
+            <option value="در انتظار تسویه">در انتظار تسویه</option>
+            <option value="اعلام بار">اعلام بار</option>
+            <option value="در انتظار باسکول">در انتظار باسکول</option>
+            <option value="در مسیر">در مسیر</option>
+            <option value="تحویل داده شده">تحویل داده شده</option>
+          </select>
+        </div>
       </div>
-      <div class="dm-field">
-        <label class="dm-label">📋 شماره / مشخصات راننده</label>
-        <input class="dm-input" id="dm-driver-info" type="text" placeholder="مثال: پلاک 123 ایران 45 — کامیون">
-      </div>
-      <div class="dm-field">
-        <label class="dm-label">📅 تاریخ بارگیری</label>
-        <input class="dm-input" id="dm-loaded-at" type="text" placeholder="مثال: ۱۴۰۴/۱۱/۲۸">
-      </div>
-      <div class="dm-row">
+      <div class="dm-row" style="margin-top:18px;">
         <button class="dm-confirm" onclick="driverModalConfirm()">✅ تأیید و انتقال به بارگیری شده‌ها</button>
         <button class="dm-cancel" onclick="driverModalCancel()">انصراف</button>
       </div>
@@ -1261,14 +1427,16 @@ let activeModule = null;
 function switchModule(mod) {
   document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.master-module-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(mod+'-module').classList.add('active');
-  document.getElementById('btn-'+mod).classList.add('active');
+  const panel = document.getElementById(mod+'-module');
+  const btn   = document.getElementById('btn-'+mod);
+  if (panel) panel.classList.add('active');
+  if (btn)   btn.classList.add('active');
   activeModule = mod;
   sessionStorage.setItem('activeModule', mod);
-  if (mod === 'supply' && !window._supplyInited) {
-    window._supplyInited = true;
-    supplyInit();
-  }
+  if (mod === 'supply' && !window._supplyInited) { window._supplyInited = true; supplyInit(); }
+  if (mod === 'warehouse' && !window._whInited)   { window._whInited = true; whInit(); }
+  if (mod === 'freight'   && !window._frInited)   { window._frInited = true; frInit(); }
+  if (mod === 'overview') { ovRefresh(); }
 }
 
 function masterClock() {
@@ -3040,6 +3208,7 @@ function lInit() {
         lData[key] = snap.exists() ? Object.values(snap.val()).filter(Boolean) : [];
         lRender(key);
         lUpdateCount(key);
+        if (activeModule === 'overview') setTimeout(ovRefresh, 100);
       });
     });
   } else {
@@ -3059,6 +3228,8 @@ function lSave(key) {
   } else {
     localStorage.setItem('loading_' + key, JSON.stringify(lData[key]));
   }
+  // Refresh nav overview badge
+  setTimeout(()=>{ if(typeof navOvRefresh==='function') navOvRefresh(); }, 200);
 }
 
 // ── Row factory ──
@@ -3068,7 +3239,10 @@ function lNewRow(type) {
     type, contractNo:'', seller:'', location:'',
     contractType:'جاری', description:'', delivery:'درب کارخانه',
     settlement:'تسویه', qty:'', unitPrice:'', contractDate:'',
-    loaded: false, driverName:'', driverInfo:'',
+    status:'در انتظار', commitment:'',
+    loaded: false, driverName:'', driverInfo:'', waybill:'',
+    loadQty:'', fromCity:'', toCity:'', distance:'',
+    freightQuoted:'', freightActual:'', scale:'',
     loadedAt:'', archivedAt:'', createdAt: new Date().toISOString()
   };
 }
@@ -3126,11 +3300,37 @@ function driverModalConfirm() {
   const row = lData[type].find(r => String(r.id) === String(id));
   if (!row) { driverModalCancel(); return; }
 
-  const driverName = document.getElementById('dm-driver-name').value.trim();
-  const driverInfo = document.getElementById('dm-driver-info').value.trim();
-  const loadedAt   = document.getElementById('dm-loaded-at').value.trim() || new Date().toLocaleDateString('fa-IR');
+  const driverName    = document.getElementById('dm-driver-name').value.trim();
+  const driverInfo    = document.getElementById('dm-driver-info').value.trim();
+  const waybill       = document.getElementById('dm-waybill').value.trim();
+  const loadQtyKg     = parseFloat(document.getElementById('dm-load-qty').value) || 0;
+  const fromCity      = document.getElementById('dm-from-city').value.trim();
+  const toCity        = document.getElementById('dm-to-city').value.trim();
+  const distance      = document.getElementById('dm-distance').value.trim();
+  const freightQuoted = document.getElementById('dm-freight-quoted').value.trim();
+  const freightActual = document.getElementById('dm-freight-actual').value.trim();
+  const scale         = document.getElementById('dm-scale').value.trim();
+  const dmStatus      = document.getElementById('dm-status').value;
+  const loadedAt      = document.getElementById('dm-loaded-at').value.trim() || new Date().toLocaleDateString('fa-IR');
 
-  const moved = { ...row, loaded: true, driverName, driverInfo, loadedAt };
+  // Subtract loadQtyKg (kg) from contract qty (tons)
+  const loadQtyTon = loadQtyKg / 1000;
+  const currentQty = parseFloat(row.qty) || 0;
+  const newQty = Math.max(0, currentQty - loadQtyTon);
+
+  const moved = { ...row, loaded: true, driverName, driverInfo, waybill,
+    loadQty: loadQtyKg, fromCity, toCity, distance,
+    freightQuoted, freightActual, scale, status: dmStatus, loadedAt };
+
+  // Update remaining qty in original contract
+  if (newQty <= 0) {
+    // Fully loaded - remove from contracts
+    lData[type] = lData[type].filter(r => r.id !== row.id);
+  } else {
+    // Partial - update qty
+    const idx = lData[type].findIndex(r => r.id === row.id);
+    if (idx >= 0) { lData[type][idx].qty = newQty.toFixed(3); lData[type][idx].loaded = false; }
+  }
   lData.loaded.push(moved);
   lData[type] = lData[type].filter(r => r.id !== row.id);
   lSave(type);
@@ -3221,25 +3421,32 @@ function lRender(key) {
       tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af;">ردیفی وجود ندارد — از دکمه ➕ ردیف جدید اضافه کنید</td></tr>`;
       return;
     }
-    tbody.innerHTML = rows.map((row, i) => `<tr class="${row.loaded ? 'row-loaded-check' : 'row-pending'}">
+    const statusOpts = ['در انتظار','در انتظار تسویه','اعلام بار','در انتظار باسکول','در مسیر','تحویل داده شده','بارگیری شده'];
+    tbody.innerHTML = rows.map((row, i) => {
+      const qtyNum = parseFloat(row.qty)||0;
+      const qtyClass = qtyNum <= 0 ? 'qty-danger' : qtyNum < 50 ? 'qty-danger' : 'qty-ok';
+      const commitCell = key==='purchase' ? `<td>${numInput(key, row, 'commitment', 'تعهد')}</td>` : '';
+      return `<tr class="${row.loaded ? 'row-loaded-check' : 'row-pending'}">
       <td style="text-align:center;color:#9ca3af;font-size:11px;">${i+1}</td>
-      <td>${cellInput(key, row, 'contractNo', 'شماره قرارداد', 'min-width:110px;')}</td>
-      <td>${cellInput(key, row, 'seller', 'فروشنده', 'min-width:110px;')}</td>
-      <td>${cellInput(key, row, 'location', 'محل بارگیری', 'min-width:100px;')}</td>
+      <td>${cellInput(key, row, 'contractNo', 'شماره قرارداد', 'min-width:100px;')}</td>
+      <td>${cellInput(key, row, 'seller', key==='purchase'?'فروشنده':'خریدار', 'min-width:100px;')}</td>
+      <td>${cellInput(key, row, 'location', 'محل بارگیری', 'min-width:90px;')}</td>
       <td>${selectInput(key, row, 'contractType', CONTRACT_TYPES)}</td>
-      <td>${cellInput(key, row, 'description', 'شرح', 'min-width:80px;')}</td>
+      <td>${cellInput(key, row, 'description', 'شرح/محصول', 'min-width:90px;')}</td>
       <td>${selectInput(key, row, 'delivery', DELIVERIES)}</td>
       <td>${selectInput(key, row, 'settlement', SETTLEMENTS)}</td>
-      <td>${numInput(key, row, 'qty', 'مقدار KG')}</td>
-      <td>${numInput(key, row, 'unitPrice', 'مبلغ واحد')}</td>
-      <td class="col-date">${cellInput(key, row, 'contractDate', 'تاریخ', '')}</td>
+      <td><div>${numInput(key, row, 'qty', 'مانده (تن)')}</div><div class="qty-remaining ${qtyClass}">${qtyNum.toFixed(2)} تن</div></td>
+      ${commitCell}
+      <td>${numInput(key, row, 'unitPrice', 'مبلغ')}</td>
+      <td>${cellInput(key, row, 'contractDate', 'تاریخ', 'min-width:100px;')}</td>
+      <td>${selectInput(key, row, 'status', statusOpts)}</td>
       <td style="text-align:center;">
-        <input type="checkbox" ${row.loaded?'checked':''} 
+        <input type="checkbox" ${row.loaded?'checked':''}
           style="width:18px;height:18px;cursor:pointer;"
           onchange="lMarkLoaded('${key}','${row.id}',this.checked)">
       </td>
       <td><button class="del-btn" onclick="lDeleteRow('${key}','${row.id}')">🗑️</button></td>
-    </tr>`).join('');
+    </tr>`;}).join('');
   }
 
   if (key === 'loaded') {
@@ -3250,19 +3457,29 @@ function lRender(key) {
       tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af;">هیچ بارگیری‌ای هنوز ثبت نشده</td></tr>`;
       return;
     }
+    const lStatusOpts = ['در انتظار','در انتظار تسویه','اعلام بار','در انتظار باسکول','در مسیر','تحویل داده شده','بارگیری شده'];
     tbody.innerHTML = rows.map((row, i) => `<tr>
       <td style="text-align:center;color:#9ca3af;font-size:11px;">${i+1}</td>
       <td>${typeBadge(row.type)}</td>
-      <td>${cellInput('loaded', row, 'contractNo', 'شماره قرارداد','min-width:100px;')}</td>
-      <td>${cellInput('loaded', row, 'seller', 'فروشنده','min-width:100px;')}</td>
-      <td>${cellInput('loaded', row, 'location', 'محل بارگیری','min-width:100px;')}</td>
+      <td>${cellInput('loaded', row, 'contractNo', 'شماره','min-width:90px;')}</td>
+      <td>${cellInput('loaded', row, 'seller', 'فروشنده/خریدار','min-width:90px;')}</td>
+      <td>${cellInput('loaded', row, 'location', 'محل','min-width:80px;')}</td>
       <td>${cellInput('loaded', row, 'description', 'شرح','min-width:80px;')}</td>
-      <td>${numInput('loaded', row, 'qty', 'مقدار')}</td>
+      <td>${numInput('loaded', row, 'loadQty', 'مقدار kg')}</td>
       <td>${numInput('loaded', row, 'unitPrice', 'مبلغ')}</td>
-      <td>${cellInput('loaded', row, 'driverName', 'نام راننده','min-width:100px;')}</td>
-      <td>${cellInput('loaded', row, 'driverInfo', 'شماره / مشخصات','min-width:120px;')}</td>
+      <td>${cellInput('loaded', row, 'driverName', 'راننده','min-width:90px;')}</td>
+      <td>${cellInput('loaded', row, 'driverInfo', 'مشخصات','min-width:90px;')}</td>
+      <td>${cellInput('loaded', row, 'waybill', 'بارنامه','min-width:80px;')}</td>
+      <td>${cellInput('loaded', row, 'fromCity', 'مبدا','min-width:70px;')}</td>
+      <td>${cellInput('loaded', row, 'toCity', 'مقصد','min-width:70px;')}</td>
+      <td>${numInput('loaded', row, 'distance', 'km')}</td>
+      <td><input type="text" value="${esc(row.freightQuoted||'')}" readonly style="min-width:80px;background:#f9fafb;direction:ltr;padding:5px 7px;border:1.5px solid #e5e7eb;border-radius:6px;"></td>
+      <td>${numInput('loaded', row, 'freightActual', 'کرایه')}</td>
+      <td>${cellInput('loaded', row, 'scale', 'باسکول','min-width:70px;')}</td>
+      <td>${selectInput('loaded', row, 'status', lStatusOpts)}</td>
       <td>${cellInput('loaded', row, 'loadedAt', 'تاریخ','min-width:90px;')}</td>
-      <td><button class="arch-btn" onclick="lArchiveRow('${row.id}')">🗄️ آرشیو</button></td>
+      <td><button class="arch-btn" onclick="lArchiveRow('${row.id}')">🗄️</button></td>
+      <td><button class="del-btn" onclick="lDeleteRow('loaded','${row.id}')">🗑️</button></td>
     </tr>`).join('');
   }
 
@@ -3281,12 +3498,16 @@ function lRender(key) {
       <td>${esc(row.seller)||'—'}</td>
       <td>${esc(row.location)||'—'}</td>
       <td>${esc(row.description)||'—'}</td>
-      <td style="direction:ltr;text-align:left;">${esc(row.qty)||'—'}</td>
-      <td style="direction:ltr;text-align:left;">${esc(row.unitPrice)||'—'}</td>
+      <td style="direction:ltr;">${esc(row.loadQty||row.qty)||'—'} kg</td>
+      <td style="direction:ltr;">${esc(row.unitPrice)||'—'}</td>
       <td>${esc(row.driverName)||'—'}</td>
-      <td>${esc(row.driverInfo)||'—'}</td>
+      <td>${esc(row.waybill)||'—'}</td>
+      <td>${esc(row.fromCity||'')}${row.fromCity&&row.toCity?' → ':''}${esc(row.toCity||'')||'—'}</td>
+      <td style="direction:ltr;">${esc(row.freightActual)||'—'}</td>
+      <td>${esc(row.status)||'—'}</td>
       <td>${esc(row.loadedAt)||'—'}</td>
       <td>${esc(row.archivedAt)||'—'}</td>
+      <td><button class="del-btn" onclick="lDeleteRow('archive','${row.id}')">🗑️</button></td>
     </tr>`).join('');
   }
 }
@@ -3311,8 +3532,8 @@ function lExportExcel(key) {
     headers = ['#','شماره قرارداد','فروشنده','محل بارگیری','نوع قرارداد','شرح','نحوه تحویل','نحوه تسویه','مقدار KG','مبلغ واحد','تاریخ','وضعیت'];
     rows = data.map((r,i) => [i+1, r.contractNo, r.seller, r.location, r.contractType, r.description, r.delivery, r.settlement, r.qty, r.unitPrice, r.contractDate||'', r.loaded?'بارگیری شد':'در انتظار']);
   } else if (key === 'loaded') {
-    headers = ['#','نوع','شماره قرارداد','فروشنده','محل بارگیری','شرح','مقدار KG','مبلغ واحد','نام راننده','شماره/مشخصات راننده','تاریخ بارگیری'];
-    rows = data.map((r,i) => [i+1, r.type==='purchase'?'خرید':'فروش', r.contractNo, r.seller, r.location, r.description, r.qty, r.unitPrice, r.driverName, r.driverInfo, r.loadedAt]);
+    headers = ['#','نوع','شماره قرارداد','فروشنده/خریدار','محل بارگیری','شرح','مقدار بارگیری (kg)','مبلغ','راننده','شماره بارنامه','مبدا','مقصد','مسافت','کرایه استعلامی','کرایه واقعی','باسکول','وضعیت','تاریخ'];
+    rows = data.map((r,i) => [i+1, r.type==='purchase'?'خرید':'فروش', r.contractNo, r.seller, r.location, r.description, r.loadQty||r.qty, r.unitPrice, r.driverName, r.waybill, r.fromCity, r.toCity, r.distance, r.freightQuoted, r.freightActual, r.scale, r.status, r.loadedAt]);
   } else {
     headers = ['#','نوع','شماره قرارداد','فروشنده','محل بارگیری','شرح','مقدار KG','مبلغ واحد','نام راننده','شماره/مشخصات','تاریخ بارگیری','تاریخ آرشیو'];
     rows = data.map((r,i) => [i+1, r.type==='purchase'?'خرید':'فروش', r.contractNo, r.seller, r.location, r.description, r.qty, r.unitPrice, r.driverName, r.driverInfo, r.loadedAt, r.archivedAt]);
@@ -3365,6 +3586,345 @@ function lImportJSON(event, key) {
   });
 }
 
+
+// ═══════════════════════════════════════════════════════
+// WAREHOUSE MODULE
+// ═══════════════════════════════════════════════════════
+let whDb = null, whFbOk = false;
+try { whDb = firebase.database(); whFbOk = true; } catch(e) {}
+let whProducts = []; // [{id, name, qty (tons), commitment}]
+
+function whInit() {
+  if (whFbOk) {
+    whDb.ref('warehouse').on('value', snap => {
+      whProducts = snap.exists() ? Object.values(snap.val()).filter(Boolean) : [];
+      whRenderGrid();
+    });
+  } else {
+    try { whProducts = JSON.parse(localStorage.getItem('wh_products')||'[]'); } catch(e){ whProducts=[]; }
+    whRenderGrid();
+  }
+}
+
+function whSave() {
+  if (whFbOk) {
+    const obj = {};
+    whProducts.forEach(p => { obj[p.id] = p; });
+    whDb.ref('warehouse').set(obj).catch(console.error);
+  } else {
+    localStorage.setItem('wh_products', JSON.stringify(whProducts));
+  }
+}
+
+function whAddProduct() {
+  const name = document.getElementById('wh-new-name').value.trim();
+  const qty  = parseFloat(document.getElementById('wh-new-qty').value) || 0;
+  if (!name) { sShowToast('نام محصول الزامی است', '⚠️'); return; }
+  const existing = whProducts.find(p => p.name === name);
+  if (existing) {
+    existing.qty = (parseFloat(existing.qty)||0) + qty;
+    whSave(); whRenderGrid();
+    sShowToast('✅ موجودی بروزرسانی شد', '📦');
+  } else {
+    whProducts.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2), name, qty, commitment:0 });
+    whSave(); whRenderGrid();
+    sShowToast('✅ محصول اضافه شد', '📦');
+  }
+  document.getElementById('wh-new-name').value = '';
+  document.getElementById('wh-new-qty').value = '';
+}
+
+function whAddFromContract(productName, qtyTon) {
+  // Called when a purchase contract is saved
+  const existing = whProducts.find(p => p.name === productName);
+  if (existing) {
+    existing.qty = (parseFloat(existing.qty)||0) + parseFloat(qtyTon||0);
+    whSave();
+  } else {
+    whProducts.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2), name:productName, qty:parseFloat(qtyTon||0), commitment:0 });
+    whSave();
+  }
+}
+
+function whCheckSaleCommitment(productName, qtyTon) {
+  // Returns true if warehouse has enough, false + marks commitment if not
+  const existing = whProducts.find(p => p.name === productName);
+  const available = existing ? (parseFloat(existing.qty)||0) : 0;
+  return available >= parseFloat(qtyTon||0);
+}
+
+function whRenderGrid() {
+  const grid = document.getElementById('wh-grid');
+  if (!grid) return;
+  if (!whProducts.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">انباری ثبت نشده</div></div>';
+    return;
+  }
+  grid.innerHTML = whProducts.map(p => {
+    const qty = parseFloat(p.qty)||0;
+    const commitment = parseFloat(p.commitment)||0;
+    const available = qty - commitment;
+    const pct = qty > 0 ? Math.min(100, (available/qty)*100) : 0;
+    const avClass = available < 0 ? 'qty-danger' : available < 10 ? 'qty-danger' : 'qty-ok';
+    return `<div class="wh-card">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;">
+        <div class="wh-card-name">📦 ${esc(p.name)}</div>
+        <button class="del-btn" style="font-size:12px;" onclick="whDeleteProduct('${p.id}')">🗑️</button>
+      </div>
+      <div class="wh-card-qty">${qty.toFixed(2)}<span class="wh-card-unit"> تن موجودی کل</span></div>
+      ${commitment > 0 ? `<div class="wh-card-commitment">⚠️ ${commitment.toFixed(2)} تن تعهد خرید</div>` : ''}
+      <div class="wh-progress"><div class="wh-progress-bar" style="width:${pct}%"></div></div>
+      <div class="${avClass}" style="font-size:13px;margin-top:6px;font-weight:700;">${available.toFixed(2)} تن قابل تحویل</div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <input type="text" inputmode="numeric" placeholder="افزودن (تن)" style="flex:1;padding:6px 8px;border:1.5px solid #e5e7eb;border-radius:7px;font-family:'Vazirmatn',sans-serif;font-size:12px;direction:ltr;" id="wh-add-${p.id}">
+        <button class="btn btn-success" style="padding:6px 12px;font-size:12px;" onclick="whAdjust('${p.id}',1)">+</button>
+        <button class="btn btn-warning" style="padding:6px 12px;font-size:12px;" onclick="whAdjust('${p.id}',-1)">−</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function whAdjust(id, sign) {
+  const p = whProducts.find(x => x.id === id);
+  if (!p) return;
+  const val = parseFloat(document.getElementById('wh-add-'+id).value) || 0;
+  p.qty = Math.max(0, (parseFloat(p.qty)||0) + sign*val);
+  whSave(); whRenderGrid();
+}
+
+function whDeleteProduct(id) {
+  if (!confirm('حذف این محصول از انبار؟')) return;
+  whProducts = whProducts.filter(p => p.id !== id);
+  whSave(); whRenderGrid();
+}
+
+function whExportExcel() {
+  if (!whProducts.length) { sShowToast('انباری ثبت نشده', '⚠️'); return; }
+  const wb = XLSX.utils.book_new();
+  const headers = ['نام محصول','موجودی کل (تن)','تعهد خرید (تن)','قابل تحویل (تن)'];
+  const rows = whProducts.map(p => {
+    const qty = parseFloat(p.qty)||0;
+    const com = parseFloat(p.commitment)||0;
+    return [p.name, qty.toFixed(2), com.toFixed(2), (qty-com).toFixed(2)];
+  });
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = [25,18,18,18].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws, 'انبار');
+  XLSX.writeFile(wb, 'انبار-'+new Date().toISOString().split('T')[0]+'.xlsx');
+  sShowToast('✅ اکسل دانلود شد', '📊');
+}
+
+// ═══════════════════════════════════════════════════════
+// FREIGHT MODULE
+// ═══════════════════════════════════════════════════════
+let frDb = null, frFbOk = false;
+try { frDb = firebase.database(); frFbOk = true; } catch(e) {}
+let frRates = []; // [{id, from, to, distance, rate}]
+
+function frInit() {
+  if (frFbOk) {
+    frDb.ref('freight').on('value', snap => {
+      frRates = snap.exists() ? Object.values(snap.val()).filter(Boolean) : [];
+      frRender();
+    });
+  } else {
+    try { frRates = JSON.parse(localStorage.getItem('fr_rates')||'[]'); } catch(e){ frRates=[]; }
+    frRender();
+  }
+}
+
+function frSave() {
+  if (frFbOk) {
+    const obj = {};
+    frRates.forEach(r => { obj[r.id] = r; });
+    frDb.ref('freight').set(obj).catch(console.error);
+  } else {
+    localStorage.setItem('fr_rates', JSON.stringify(frRates));
+  }
+}
+
+function frAdd() {
+  const from = document.getElementById('fr-from').value.trim();
+  const to   = document.getElementById('fr-to').value.trim();
+  const dist = document.getElementById('fr-dist').value.trim();
+  const rate = document.getElementById('fr-rate').value.trim();
+  if (!from || !to || !rate) { sShowToast('مبدا، مقصد و نرخ الزامی است', '⚠️'); return; }
+  frRates.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2), from, to, distance:dist, rate });
+  frSave(); frRender();
+  document.getElementById('fr-from').value='';
+  document.getElementById('fr-to').value='';
+  document.getElementById('fr-dist').value='';
+  document.getElementById('fr-rate').value='';
+  sShowToast('✅ نرخ ثبت شد', '🗺️');
+}
+
+function frDelete(id) {
+  if (!confirm('حذف این نرخ؟')) return;
+  frRates = frRates.filter(r => r.id !== id);
+  frSave(); frRender();
+}
+
+function frGetRate(from, to) {
+  const r = frRates.find(x =>
+    (x.from===from && x.to===to) || (x.from===to && x.to===from));
+  return r ? r.rate : '';
+}
+
+function frGetDist(from, to) {
+  const r = frRates.find(x =>
+    (x.from===from && x.to===to) || (x.from===to && x.to===from));
+  return r ? r.distance : '';
+}
+
+function frRender() {
+  const tbody = document.getElementById('freight-tbody');
+  if (!tbody) return;
+  if (!frRates.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#9ca3af;">نرخی ثبت نشده</td></tr>';
+    return;
+  }
+  tbody.innerHTML = frRates.map((r, i) => `<tr>
+    <td style="text-align:center;color:#9ca3af;">${i+1}</td>
+    <td>${esc(r.from)}</td>
+    <td>${esc(r.to)}</td>
+    <td style="direction:ltr;">${esc(r.distance)||'—'}</td>
+    <td style="direction:ltr;font-weight:700;color:#059669;">${Number(r.rate||0).toLocaleString()}</td>
+    <td><button class="del-btn" onclick="frDelete('${r.id}')">🗑️</button></td>
+  </tr>`).join('');
+}
+
+function frExportExcel() {
+  if (!frRates.length) { sShowToast('داده‌ای وجود ندارد', '⚠️'); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['مبدا','مقصد','مسافت (km)','نرخ کرایه (تومان/تن)'],
+    ...frRates.map(r => [r.from, r.to, r.distance, r.rate])
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws, 'کرایه حمل');
+  XLSX.writeFile(wb, 'کرایه-حمل-'+new Date().toISOString().split('T')[0]+'.xlsx');
+}
+
+// Auto-fill freight in driver modal
+function dmAutoFreight() {
+  const from = document.getElementById('dm-from-city').value.trim();
+  const to   = document.getElementById('dm-to-city').value.trim();
+  if (from && to) {
+    const rate = frGetRate(from, to);
+    const dist = frGetDist(from, to);
+    document.getElementById('dm-freight-quoted').value = rate;
+    if (dist) document.getElementById('dm-distance').value = dist;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// OVERVIEW MODULE
+// ═══════════════════════════════════════════════════════
+function ovRefresh() {
+  const head = document.getElementById('overview-matrix-head');
+  const body = document.getElementById('overview-matrix-body');
+  if (!head || !body) return;
+
+  // Collect all sellers/buyers from contracts
+  const allParties = new Set();
+  [...lData.purchase, ...lData.sale].forEach(r => {
+    if (r.seller) allParties.add(r.seller.trim());
+  });
+  // Also from loaded
+  lData.loaded.forEach(r => { if (r.seller) allParties.add(r.seller.trim()); });
+
+  const parties = [...allParties].sort();
+  if (!parties.length) {
+    head.innerHTML = '<tr><th>نام کارخانه/طرف قرارداد</th><th>خرید (تن)</th><th>فروش (تن)</th><th>بارگیری شده (تن)</th></tr>';
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#9ca3af;">قراردادی ثبت نشده</td></tr>';
+    return;
+  }
+
+  head.innerHTML = `<tr>
+    <th style="text-align:right;">نام کارخانه / طرف قرارداد</th>
+    <th>خرید (تن)</th>
+    <th>فروش (تن)</th>
+    <th>بارگیری شده (kg)</th>
+    <th>خالص (تن)</th>
+  </tr>`;
+
+  let totalBuy=0, totalSell=0, totalLoaded=0;
+
+  body.innerHTML = parties.map(party => {
+    const buyQty  = lData.purchase.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const sellQty = lData.sale.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const loadedQty = lData.loaded.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.loadQty||r.qty)||0),0);
+    const net = buyQty - sellQty;
+    totalBuy+=buyQty; totalSell+=sellQty; totalLoaded+=loadedQty;
+    const netClass = net >= 0 ? 'matrix-diff-pos' : 'matrix-diff-neg';
+    return `<tr>
+      <td>${esc(party)}</td>
+      <td class="matrix-buy">${buyQty.toFixed(2)}</td>
+      <td class="matrix-sell">${sellQty.toFixed(2)}</td>
+      <td style="direction:ltr;">${loadedQty.toLocaleString()}</td>
+      <td class="${netClass}" style="font-weight:700;">${net>=0?'+':''}${net.toFixed(2)}</td>
+    </tr>`;
+  }).join('') + `<tr style="background:#f8fafc;border-top:2px solid #e5e7eb;">
+    <td><strong>جمع کل</strong></td>
+    <td class="matrix-buy"><strong>${totalBuy.toFixed(2)}</strong></td>
+    <td class="matrix-sell"><strong>${totalSell.toFixed(2)}</strong></td>
+    <td style="direction:ltr;"><strong>${totalLoaded.toLocaleString()}</strong></td>
+    <td><strong>${(totalBuy-totalSell)>=0?'+':''}${(totalBuy-totalSell).toFixed(2)}</strong></td>
+  </tr>`;
+}
+
+function ovExportExcel() {
+  const head = document.getElementById('overview-matrix-head');
+  const body = document.getElementById('overview-matrix-body');
+  if (!body || !lData) return;
+  const allParties = new Set();
+  [...lData.purchase,...lData.sale,lData.loaded].flat().forEach(r=>{ if(r&&r.seller) allParties.add(r.seller.trim()); });
+  const parties = [...allParties].sort();
+  const wb = XLSX.utils.book_new();
+  const rows = [['نام طرف قرارداد','خرید (تن)','فروش (تن)','بارگیری شده (kg)','خالص (تن)']];
+  let tb=0,ts=0,tl=0;
+  parties.forEach(p => {
+    const b = lData.purchase.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const s = lData.sale.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const l = lData.loaded.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.loadQty||r.qty)||0),0);
+    rows.push([p, b.toFixed(2), s.toFixed(2), l, (b-s).toFixed(2)]);
+    tb+=b; ts+=s; tl+=l;
+  });
+  rows.push(['جمع کل', tb.toFixed(2), ts.toFixed(2), tl, (tb-ts).toFixed(2)]);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb, ws, 'نمای کلی');
+  XLSX.writeFile(wb, 'نمای-کلی-'+new Date().toISOString().split('T')[0]+'.xlsx');
+  sShowToast('✅ اکسل دانلود شد', '📊');
+}
+
+// ═══════════════════════════════════════════════════════
+// Hook into lAddRow: auto-add to warehouse when purchase contract saved
+// ═══════════════════════════════════════════════════════
+const _origLUpdateField = lUpdateField;
+window.lUpdateField = function(type, id, field, value) {
+  _origLUpdateField(type, id, field, value);
+  // When description or qty changes on a purchase row, we don't auto-add
+  // We add to warehouse when the row is first created and both fields are filled
+  // (handled manually via purchase form - user can also use warehouse module directly)
+};
+
+// When a new purchase row gets description+qty filled → add to warehouse
+// We watch via a debounce on lUpdateField for purchase rows
+let _whPendingTimeout = null;
+const _origLUF2 = window.lUpdateField;
+window.lUpdateField = function(type, id, field, value) {
+  _origLUF2(type, id, field, value);
+  if (type === 'purchase' && (field === 'description' || field === 'qty')) {
+    clearTimeout(_whPendingTimeout);
+    _whPendingTimeout = setTimeout(() => {
+      const row = lData.purchase.find(r => r.id === id);
+      if (row && row.description && parseFloat(row.qty) > 0 && !row._whAdded) {
+        row._whAdded = true;
+        whAddFromContract(row.description, parseFloat(row.qty));
+      }
+    }, 2000);
+  }
+};
+
 // ── Init when module activates ──
 const _origSwitchModule = switchModule;
 window.switchModule = function(mod) {
@@ -3376,6 +3936,214 @@ window.switchModule = function(mod) {
 };
 </script>
 
+
+
+<!-- ══ WAREHOUSE MODULE ══ -->
+<div class="module-panel" id="warehouse-module">
+<div style="max-width:1400px;margin:0 auto;padding:20px;">
+  <div class="header" style="margin-bottom:22px;">
+    <div class="header-left"><h1>🏭 مدیریت انبار</h1><p>موجودی محصولات — تعهدات خرید</p></div>
+  </div>
+  <div class="card" style="margin-bottom:20px;">
+    <div class="lcard-header">
+      <div class="lcard-title">➕ افزودن / ویرایش محصول انبار</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:180px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">نام محصول</label>
+        <input id="wh-new-name" class="form-input" type="text" placeholder="مثال: شمش ۱۲۵">
+      </div>
+      <div style="width:160px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">موجودی اولیه (تن)</label>
+        <input id="wh-new-qty" class="form-input" type="text" inputmode="numeric" placeholder="۰" style="direction:ltr;">
+      </div>
+      <button class="btn btn-success" onclick="whAddProduct()">✅ ثبت</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="lcard-header">
+      <div class="lcard-title">📦 موجودی انبار</div>
+      <div class="lcard-actions">
+        <button class="btn btn-warning btn-sm" onclick="whExportExcel()">📊 خروجی اکسل</button>
+      </div>
+    </div>
+    <div class="wh-grid" id="wh-grid"></div>
+  </div>
+</div>
+</div><!-- /warehouse-module -->
+
+<!-- ══ OVERVIEW MODULE ══ -->
+<div class="module-panel" id="overview-module">
+<div style="max-width:1400px;margin:0 auto;padding:20px;">
+  <div class="header" style="margin-bottom:22px;">
+    <div class="header-left"><h1>📊 نمای کلی</h1><p>ماتریس خرید و فروش به تفکیک کارخانه/خریدار</p></div>
+    <div class="header-right">
+      <button class="btn btn-warning" onclick="ovExportExcel()">📊 خروجی اکسل</button>
+      <button class="btn btn-primary" onclick="ovRefresh()">🔄 به‌روزرسانی</button>
+    </div>
+  </div>
+  <div class="card" id="overview-matrix-card">
+    <div class="lcard-title" style="margin-bottom:18px;">📋 ماتریس قراردادها</div>
+    <div style="overflow-x:auto;">
+      <table class="matrix-table" id="overview-matrix-table">
+        <thead id="overview-matrix-head"></thead>
+        <tbody id="overview-matrix-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div><!-- /overview-module -->
+
+<!-- ══ FREIGHT MODULE ══ -->
+<div class="module-panel" id="freight-module">
+<div style="max-width:1200px;margin:0 auto;padding:20px;">
+  <div class="header" style="margin-bottom:22px;">
+    <div class="header-left"><h1>🗺️ کرایه حمل</h1><p>نرخ کرایه شهر به شهر</p></div>
+  </div>
+  <div class="card" style="margin-bottom:20px;">
+    <div class="lcard-header"><div class="lcard-title">➕ ثبت نرخ کرایه جدید</div></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:140px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">شهر مبدا</label>
+        <input id="fr-from" class="form-input" type="text" placeholder="مثال: تهران">
+      </div>
+      <div style="flex:1;min-width:140px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">شهر مقصد</label>
+        <input id="fr-to" class="form-input" type="text" placeholder="مثال: اصفهان">
+      </div>
+      <div style="width:130px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">مسافت (km)</label>
+        <input id="fr-dist" class="form-input" type="text" inputmode="numeric" placeholder="۰" style="direction:ltr;">
+      </div>
+      <div style="width:160px;">
+        <label style="font-size:13px;font-weight:700;color:#374151;display:block;margin-bottom:5px;">نرخ کرایه (تومان/تن)</label>
+        <input id="fr-rate" class="form-input" type="text" inputmode="numeric" placeholder="۰" style="direction:ltr;">
+      </div>
+      <button class="btn btn-success" onclick="frAdd()">✅ ثبت</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="lcard-header">
+      <div class="lcard-title">📋 جدول نرخ‌های کرایه</div>
+      <div class="lcard-actions">
+        <button class="btn btn-warning btn-sm" onclick="frExportExcel()">📊 خروجی اکسل</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="freight-table">
+        <thead><tr>
+          <th>#</th><th>مبدا</th><th>مقصد</th><th>مسافت (km)</th><th>نرخ کرایه (تومان/تن)</th><th style="width:40px;">حذف</th>
+        </tr></thead>
+        <tbody id="freight-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div><!-- /freight-module -->
+
+
+// ════════════════════════════════════
+// NAV OVERVIEW PANEL
+// ════════════════════════════════════
+function navOvToggle() {
+  const panel = document.getElementById('nav-ov-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) navOvRefresh();
+  // Close on outside click
+  if (panel.classList.contains('open')) {
+    setTimeout(() => document.addEventListener('click', navOvOutsideClick), 50);
+  }
+}
+function navOvOutsideClick(e) {
+  const panel = document.getElementById('nav-ov-panel');
+  const btn   = document.getElementById('nav-ov-btn');
+  if (!panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('open');
+    document.removeEventListener('click', navOvOutsideClick);
+  }
+}
+
+function navOvRefresh() {
+  const thead = document.getElementById('nav-ov-thead');
+  const tbody = document.getElementById('nav-ov-tbody');
+  const tfoot = document.getElementById('nav-ov-tfoot');
+  if (!thead || !tbody) return;
+
+  // Collect all parties
+  const allParties = new Set();
+  const allSources = [
+    ...(typeof lData !== 'undefined' ? [...lData.purchase, ...lData.sale, ...lData.loaded] : [])
+  ];
+  allSources.forEach(r => { if (r && r.seller) allParties.add(r.seller.trim()); });
+  const parties = [...allParties].sort();
+
+  thead.innerHTML = `<tr>
+    <th style="text-align:right;">کارخانه / طرف قرارداد</th>
+    <th>خرید (تن)</th>
+    <th>فروش (تن)</th>
+    <th>بارگیری (kg)</th>
+    <th>خالص (تن)</th>
+  </tr>`;
+
+  if (!parties.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="nav-ov-empty">⬜ هیچ قراردادی ثبت نشده</td></tr>`;
+    tfoot.innerHTML = '';
+    document.getElementById('nav-ov-badge').textContent = '0';
+    return;
+  }
+
+  let tb=0, ts=0, tl=0;
+  tbody.innerHTML = parties.map(party => {
+    const b = lData.purchase.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const s = lData.sale.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const l = lData.loaded.filter(r=>r.seller===party).reduce((s,r)=>s+(parseFloat(r.loadQty||r.qty)||0),0);
+    const net = b - s;
+    tb+=b; ts+=s; tl+=l;
+    const nc = net>=0?'nav-ov-diff-pos':'nav-ov-diff-neg';
+    return `<tr>
+      <td>${party}</td>
+      <td class="nav-ov-buy">${b>0?b.toFixed(2):'—'}</td>
+      <td class="nav-ov-sell">${s>0?s.toFixed(2):'—'}</td>
+      <td style="direction:ltr;">${l>0?l.toLocaleString():'—'}</td>
+      <td class="${nc}">${net>=0?'+':''}${net.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  tfoot.innerHTML = `<tr>
+    <td>جمع کل</td>
+    <td class="nav-ov-buy">${tb.toFixed(2)}</td>
+    <td class="nav-ov-sell">${ts.toFixed(2)}</td>
+    <td style="direction:ltr;">${tl.toLocaleString()}</td>
+    <td class="${(tb-ts)>=0?'nav-ov-diff-pos':'nav-ov-diff-neg'}">${(tb-ts)>=0?'+':''}${(tb-ts).toFixed(2)}</td>
+  </tr>`;
+
+  document.getElementById('nav-ov-badge').textContent = parties.length + ' طرف';
+}
+
+function navOvExcel() {
+  if (typeof lData === 'undefined' || typeof XLSX === 'undefined') return;
+  const allParties = new Set();
+  [...lData.purchase,...lData.sale,...lData.loaded].forEach(r=>{if(r&&r.seller)allParties.add(r.seller.trim());});
+  const parties = [...allParties].sort();
+  const wb = XLSX.utils.book_new();
+  let tb=0,ts=0,tl=0;
+  const rows = [['کارخانه/طرف قرارداد','خرید (تن)','فروش (تن)','بارگیری (kg)','خالص (تن)']];
+  parties.forEach(p => {
+    const b = lData.purchase.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const s = lData.sale.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const l = lData.loaded.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.loadQty||r.qty)||0),0);
+    rows.push([p,b.toFixed(2),s.toFixed(2),l,(b-s).toFixed(2)]);
+    tb+=b;ts+=s;tl+=l;
+  });
+  rows.push(['جمع کل',tb.toFixed(2),ts.toFixed(2),tl,(tb-ts).toFixed(2)]);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:25},{wch:14},{wch:14},{wch:16},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,'نمای کلی');
+  XLSX.writeFile(wb,'نمای-کلی-'+new Date().toISOString().split('T')[0]+'.xlsx');
+}
+
+// Auto-refresh badge every 30s
+setInterval(()=>{ if(typeof lData!=='undefined') navOvRefresh(); }, 30000);
 
 </body>
 </html>
