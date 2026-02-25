@@ -20,7 +20,7 @@
 body { font-family:'Vazirmatn',sans-serif; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); color:var(--text); line-height:1.6; min-height:100vh; padding-top:64px; }
 
 /* MASTER NAV */
-.master-nav { position:fixed; top:0; left:0; right:0; z-index:500; background:linear-gradient(135deg,var(--primary-dark),var(--primary)); box-shadow:0 4px 24px rgba(30,64,175,.35); padding:0 32px; display:flex; align-items:stretch; height:64px; gap:0; }
+.master-nav { position:fixed; top:0; left:0; right:0; z-index:500; background:linear-gradient(135deg,var(--primary-dark),var(--primary)); box-shadow:0 4px 24px rgba(30,64,175,.35); padding:0 32px; display:flex; align-items:stretch; height:64px; gap:0; overflow:visible; }
 .master-logo { display:flex; align-items:center; gap:12px; padding-left:28px; border-left:1px solid rgba(255,255,255,.15); margin-left:8px; }
 .master-logo-icon { font-size:26px; }
 .master-logo-text { font-size:16px; font-weight:900; color:white; }
@@ -521,7 +521,7 @@ input[type=file].hidden-file { display:none; }
 /* ══ OVERVIEW PANEL IN NAV ══ */
 .nav-overview-btn{display:flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .nav-overview-btn:hover{background:rgba(255,255,255,.22);}
-.nav-overview-panel{position:absolute;top:calc(100% + 8px);right:12px;width:700px;max-width:96vw;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);z-index:9999;display:none;animation:slideDown .25s ease-out;overflow:hidden;}
+.nav-overview-panel{position:fixed;top:68px;left:50%;transform:translateX(-50%);width:760px;max-width:96vw;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);z-index:9999;display:none;animation:slideDown .25s ease-out;overflow:hidden;}
 .nav-overview-panel.open{display:block;}
 .nav-ov-header{background:linear-gradient(135deg,#1e40af,#0891b2);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
 .nav-ov-header-title{color:white;font-weight:900;font-size:15px;}
@@ -565,37 +565,12 @@ input[type=file].hidden-file { display:none; }
   <button class="master-module-btn" id="btn-warehouse" onclick="switchModule('warehouse')">
     <span class="m-icon">🏭</span> انبار <span class="m-badge">WH</span>
   </button>
-  <button class="master-module-btn" id="btn-overview" onclick="switchModule('overview')">
-    <span class="m-icon">📊</span> نمای کلی <span class="m-badge">OV</span>
-  </button>
+
   <button class="master-module-btn" id="btn-freight" onclick="switchModule('freight')">
     <span class="m-icon">🗺️</span> کرایه حمل <span class="m-badge">FR</span>
   </button>
   <div class="master-spacer"></div>
 
-  <!-- ── OVERVIEW QUICK PANEL ── -->
-  <div style="position:relative;">
-    <button class="nav-overview-btn" onclick="navOvToggle()" id="nav-ov-btn">
-      📊 نمای کلی
-      <span id="nav-ov-badge" style="background:rgba(255,255,255,.25);padding:1px 7px;border-radius:10px;font-size:11px;">—</span>
-    </button>
-    <div class="nav-overview-panel" id="nav-ov-panel">
-      <div class="nav-ov-header">
-        <span class="nav-ov-header-title">📊 نمای کلی — ماتریس قراردادها</span>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button onclick="navOvExcel()" style="background:rgba(255,255,255,.2);border:none;color:white;border-radius:8px;padding:4px 12px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:12px;">📊 اکسل</button>
-          <button class="nav-ov-close" onclick="navOvToggle()">✕ بستن</button>
-        </div>
-      </div>
-      <div class="nav-ov-body">
-        <table class="nav-matrix">
-          <thead id="nav-ov-thead"></thead>
-          <tbody id="nav-ov-tbody"></tbody>
-          <tfoot id="nav-ov-tfoot"></tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
 
   <div class="master-meta" id="master-meta-bar">
     <div class="master-user-badge" id="master-user-badge" style="display:none;">
@@ -1176,10 +1151,11 @@ input[type=file].hidden-file { display:none; }
   </div>
 
   <div class="loading-tabs">
-    <button class="loading-tab blue active" onclick="lTab('purchase',this)">📥 ثبت قرارداد خرید</button>
-    <button class="loading-tab orange" onclick="lTab('sale',this)">📤 ثبت قرارداد فروش</button>
+    <button class="loading-tab blue active" onclick="lTab('purchase',this)">📥 قرارداد خرید</button>
+    <button class="loading-tab orange" onclick="lTab('sale',this)">📤 قرارداد فروش</button>
     <button class="loading-tab green" onclick="lTab('loaded',this)">✅ بارگیری شده‌ها</button>
     <button class="loading-tab gray" onclick="lTab('archive',this)">🗄️ آرشیو</button>
+    <button class="loading-tab" style="background:#f3f4f6;" onclick="lTab('lOverview',this)">📊 نمای کلی</button>
   </div>
 
   <!-- ── TAB: PURCHASE ── -->
@@ -1416,6 +1392,25 @@ input[type=file].hidden-file { display:none; }
   </div>
 </div>
 
+  <!-- ── TAB: OVERVIEW ── -->
+  <div id="loading-lOverview" class="loading-section">
+    <div class="card">
+      <div class="lcard-header">
+        <div class="lcard-title">📊 نمای کلی — ماتریس قراردادها</div>
+        <div class="lcard-actions">
+          <button class="btn btn-primary btn-sm" onclick="ovRefreshInline()">🔄 به‌روزرسانی</button>
+          <button class="btn btn-warning btn-sm" onclick="navOvExcel()">📊 خروجی اکسل</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="matrix-table" id="inline-ov-table">
+          <thead id="inline-ov-thead"></thead>
+          <tbody id="inline-ov-tbody"></tbody>
+          <tfoot id="inline-ov-tfoot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div><!-- /loading-module -->
 
 <div class="s-toast" id="s-toast"></div>
@@ -1433,10 +1428,12 @@ function switchModule(mod) {
   if (btn)   btn.classList.add('active');
   activeModule = mod;
   sessionStorage.setItem('activeModule', mod);
-  if (mod === 'supply' && !window._supplyInited) { window._supplyInited = true; supplyInit(); }
-  if (mod === 'warehouse' && !window._whInited)   { window._whInited = true; whInit(); }
-  if (mod === 'freight'   && !window._frInited)   { window._frInited = true; frInit(); }
-  if (mod === 'overview') { ovRefresh(); }
+  if (mod === 'supply'    && !window._supplyInited)  { window._supplyInited  = true; supplyInit(); }
+  if (mod === 'loading'   && !window._loadingInited) { window._loadingInited = true; if (typeof lInit==='function') lInit(); }
+  if (mod === 'warehouse' && !window._whInited)      { window._whInited      = true; if (typeof whInit==='function') whInit(); }
+  if (mod === 'freight'   && !window._frInited)      { window._frInited      = true; if (typeof frInit==='function') frInit(); }
+  if (mod === 'overview'  && typeof ovRefresh==='function') { ovRefresh(); }
+  if (typeof navOvRefresh === 'function') setTimeout(navOvRefresh, 300);
 }
 
 function masterClock() {
@@ -3517,6 +3514,7 @@ function lTab(key, el) {
   document.querySelectorAll('.loading-tab').forEach(b => b.classList.remove('active'));
   document.getElementById('loading-' + key).classList.add('active');
   el.classList.add('active');
+  if (key === 'lOverview') setTimeout(ovRefreshInline, 100);
 }
 
 // ── Excel Export ──
@@ -3897,43 +3895,26 @@ function ovExportExcel() {
 }
 
 // ═══════════════════════════════════════════════════════
-// Hook into lAddRow: auto-add to warehouse when purchase contract saved
+// Hook: auto-add to warehouse when purchase contract description+qty filled
 // ═══════════════════════════════════════════════════════
+let _whPendingTimeout = null;
 const _origLUpdateField = lUpdateField;
 window.lUpdateField = function(type, id, field, value) {
   _origLUpdateField(type, id, field, value);
-  // When description or qty changes on a purchase row, we don't auto-add
-  // We add to warehouse when the row is first created and both fields are filled
-  // (handled manually via purchase form - user can also use warehouse module directly)
-};
-
-// When a new purchase row gets description+qty filled → add to warehouse
-// We watch via a debounce on lUpdateField for purchase rows
-let _whPendingTimeout = null;
-const _origLUF2 = window.lUpdateField;
-window.lUpdateField = function(type, id, field, value) {
-  _origLUF2(type, id, field, value);
   if (type === 'purchase' && (field === 'description' || field === 'qty')) {
     clearTimeout(_whPendingTimeout);
     _whPendingTimeout = setTimeout(() => {
       const row = lData.purchase.find(r => r.id === id);
       if (row && row.description && parseFloat(row.qty) > 0 && !row._whAdded) {
         row._whAdded = true;
-        whAddFromContract(row.description, parseFloat(row.qty));
+        if (typeof whAddFromContract === 'function') whAddFromContract(row.description, parseFloat(row.qty));
       }
     }, 2000);
   }
 };
 
-// ── Init when module activates ──
-const _origSwitchModule = switchModule;
-window.switchModule = function(mod) {
-  _origSwitchModule(mod);
-  if (mod === 'loading' && !window._loadingInited) {
-    window._loadingInited = true;
-    lInit();
-  }
-};
+// ── Init loading on first visit ──
+// (loading is inited via DOMContentLoaded below)
 </script>
 
 
@@ -4041,7 +4022,7 @@ window.switchModule = function(mod) {
 </div>
 </div><!-- /freight-module -->
 
-
+<script>
 // ════════════════════════════════════
 // NAV OVERVIEW PANEL
 // ════════════════════════════════════
@@ -4142,8 +4123,58 @@ function navOvExcel() {
   XLSX.writeFile(wb,'نمای-کلی-'+new Date().toISOString().split('T')[0]+'.xlsx');
 }
 
+function ovRefreshInline() {
+  const thead = document.getElementById('inline-ov-thead');
+  const tbody = document.getElementById('inline-ov-tbody');
+  const tfoot = document.getElementById('inline-ov-tfoot');
+  if (!thead || !tbody || typeof lData === 'undefined') return;
+
+  const allParties = new Set();
+  [...lData.purchase, ...lData.sale, ...lData.loaded].forEach(r => {
+    if (r && r.seller) allParties.add(r.seller.trim());
+  });
+  const parties = [...allParties].sort();
+
+  thead.innerHTML = `<tr>
+    <th style="text-align:right;">کارخانه / طرف قرارداد</th>
+    <th>خرید (تن)</th><th>فروش (تن)</th><th>بارگیری (kg)</th><th>خالص (تن)</th>
+  </tr>`;
+
+  if (!parties.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#9ca3af;">قراردادی ثبت نشده</td></tr>';
+    tfoot.innerHTML = '';
+    return;
+  }
+
+  let tb=0,ts=0,tl=0;
+  tbody.innerHTML = parties.map(p => {
+    const b = lData.purchase.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const s = lData.sale.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const l = lData.loaded.filter(r=>r.seller===p).reduce((s,r)=>s+(parseFloat(r.loadQty||r.qty)||0),0);
+    const net=b-s; tb+=b; ts+=s; tl+=l;
+    return `<tr>
+      <td style="text-align:right;font-weight:700;">${p}</td>
+      <td class="matrix-buy">${b>0?b.toFixed(2):'—'}</td>
+      <td class="matrix-sell">${s>0?s.toFixed(2):'—'}</td>
+      <td style="direction:ltr;">${l>0?l.toLocaleString():'—'}</td>
+      <td class="${net>=0?'matrix-diff-pos':'matrix-diff-neg'}">${net>=0?'+':''}${net.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+  tfoot.innerHTML = `<tr style="background:#f8fafc;border-top:2px solid #e5e7eb;">
+    <td style="text-align:right;font-weight:800;">جمع کل</td>
+    <td class="matrix-buy"><strong>${tb.toFixed(2)}</strong></td>
+    <td class="matrix-sell"><strong>${ts.toFixed(2)}</strong></td>
+    <td style="direction:ltr;"><strong>${tl.toLocaleString()}</strong></td>
+    <td class="${(tb-ts)>=0?'matrix-diff-pos':'matrix-diff-neg'}"><strong>${(tb-ts)>=0?'+':''}${(tb-ts).toFixed(2)}</strong></td>
+  </tr>`;
+}
+
+// Also hook lTab to refresh inline overview when opened
+const _origLTab = typeof lTab !== 'undefined' ? lTab : null;
+
 // Auto-refresh badge every 30s
-setInterval(()=>{ if(typeof lData!=='undefined') navOvRefresh(); }, 30000);
+setInterval(()=>{ if(typeof lData!=='undefined') { try{navOvRefresh();}catch(e){} } }, 30000);
+</script>
 
 </body>
 </html>
